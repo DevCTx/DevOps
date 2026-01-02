@@ -1,0 +1,855 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Bash Commands</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="2cb92ed1-1c8a-8080-a8b1-d319352db91f" class="page sans"><header><div class="page-header-icon undefined"><img class="icon" src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Bash_Logo_Colored.svg"/></div><h1 class="page-title" dir="auto">Bash Commands</h1><p class="page-description" dir="auto"></p></header><div class="page-body"><div style="display:contents" dir="auto"><p id="2cd92ed1-1c8a-8032-90eb-cf37b147e65d" class="">0,53870</p></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-805a-b056-f2ba41d15cf9" class="toggle"><li><details open=""><summary><strong>Shebang line</strong></summary><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-80b5-b327-dd6926f91428" class="">This is the first line of a shell/bash .sh file</p></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-8024-97d6-cf9990cf53c6" class=""><code><strong>#!</strong></code><code>/bin/bash</code> or <code>#!/bin/sh</code></p></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-8018-b9a2-ecc913460884" class="">it asks to use the bash command to interpret the script</p></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-80a4-b07c-eeae3c853e02" class="">“<strong>shebang</strong>” because <strong>#</strong> (“<strong>SH</strong>arp”) and <strong>!</strong> (”<strong>BANG</strong> point”)</p></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-80b8-8468-dde99bc75bb2" class=""><strong>sh</strong> or <strong>shell</strong> or <strong>Bourne-Shell</strong> has been developped by Stephen Bourne (UK)</p></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-8085-a877-eec45d3a6d89" class="">when <strong>bash</strong> or <strong>Bourne-Again SHell</strong> is another improved version of sh</p></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-805b-9604-cb6b027eedc9" class="toggle"><li><details open=""><summary><strong>Print and variables</strong></summary><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-805d-b809-f11da2dde6e5" class="bulleted-list"><li style="list-style-type:disc"><code><strong>echo</strong></code><code> &quot;message&quot;</code> : print a message on user screen</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-80a0-9858-e0dfc461d304" class="bulleted-list"><li style="list-style-type:disc"><code>./</code><code><a href="http://script.sh">script.sh</a></code> or <code><strong>bash</strong></code><code> script.sh</code> : execute a script from this file</li></ul></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-8010-9a5b-dcd9d6e82cd9" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-8091-b0a9-cc56589abeba" class="bulleted-list"><li style="list-style-type:disc"><code><strong>variable=</strong></code><code>file_or_data</code> : create any kind of variable (<strong>⚠ no space around =)</strong></li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-802a-bf85-e23f2d8d1f4c" class="bulleted-list"><li style="list-style-type:disc"><code><strong>$variable</strong></code> to use it like <code>echo “running script </code><code><strong>$variable</strong></code><code>”</code></li></ul></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-8078-898e-dc2179d99dcc" class="">
+</p></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-80fc-83e3-c2f2a807a9f4" class="bulleted-list"><li style="list-style-type:disc">bash is able to use<strong> a command as variable </strong>by storing the output of it<div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-80e7-b6c3-dc3384888262" class=""><code>variable=$(command)</code> like <code>config_files=$(ls config*)</code></p></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-8075-8ad3-e064e43e1a7d" class="">then <code>echo “here are the config files : $config_files”</code></p></div></li></ul></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-80e1-ae96-e49cf7a84189" class="toggle"><li><details open=""><summary><strong>Bash conditions</strong></summary><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-80fe-906a-fbf1a9e49344" class="bulleted-list"><li style="list-style-type:disc"><strong>conditions</strong> can be operated with <code>if / then / elif / then / else / fi</code><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2cc92ed1-1c8a-8040-a698-c9f7f65b8654" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">if [ -d &quot;$config_dir&quot; ]
+then
+echo &quot;reading config directory contents&quot;
+ config_files=$(ls &quot;$config_dir&quot;)
+else
+echo &quot;config dir not found. Creating one&quot;
+ mkdir &quot;$config_dir&quot;
+ touch &quot;$config_dir/config.sh&quot;
+fi</code></pre></div></li></ul></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-805c-a5a0-ef94886384ab" class=""><strong>File tests:</strong></p></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-800f-8cd1-e06998fadb58" class="bulleted-list"><li style="list-style-type:disc"><code>-e</code> : exists</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-80f2-a6b6-c7e20a0cf54b" class="bulleted-list"><li style="list-style-type:disc"><code>-f</code> : regular file</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-805a-a425-e14fa105f8c0" class="bulleted-list"><li style="list-style-type:disc"><code>-d</code> : directory</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-804e-82d2-de0ff5d718c7" class="bulleted-list"><li style="list-style-type:disc"><code>-r/-w/-x</code> : readable/writable/executable</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-803e-8344-d7a9a09c542a" class="bulleted-list"><li style="list-style-type:disc"><code>-s</code> : not empty</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-8057-9816-fe53f7b532ea" class="bulleted-list"><li style="list-style-type:disc"><code>-L</code> : symbolic link</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-80f5-8837-cbc075c15fb4" class="bulleted-list"><li style="list-style-type:disc"><code>-nt/-ot</code> : newer/older than</li></ul></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-801a-b33a-f4e615cff4fc" class=""><strong>String tests:</strong></p></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-80eb-8d2f-e4e77ae7268e" class="bulleted-list"><li style="list-style-type:disc"><code>-z</code> : empty string</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-800f-9ba1-f91b0ba53e39" class="bulleted-list"><li style="list-style-type:disc"><code>-n</code> : non-empty string</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-8008-9e2e-fc32762324ca" class="bulleted-list"><li style="list-style-type:disc"><code>=</code> (POSIX) or <code>==</code> (BASH) : equal</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-8070-9f99-dae0b436994b" class="bulleted-list"><li style="list-style-type:disc"><code>!=</code> : not equal</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-8041-b4fc-f1396740f0f4" class="bulleted-list"><li style="list-style-type:disc"><code>&lt;</code> / <code>&gt;</code> : lexicographic order (in <code>[[ ]]</code>)</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-800d-b201-e2bf956b5219" class="bulleted-list"><li style="list-style-type:disc"><code>=~</code> : regex match (in <code>[[ ]]</code> only)</li></ul></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-807c-a6d7-dd62350382a9" class=""><strong>Numeric tests:</strong></p></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-80fb-a781-d2917db5702b" class="bulleted-list"><li style="list-style-type:disc"><code>-eq</code> : equal</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-80f0-916a-d265a8ed4e69" class="bulleted-list"><li style="list-style-type:disc"><code>-ne</code> : not equal</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-807f-b657-eb6a0d73d456" class="bulleted-list"><li style="list-style-type:disc"><code>-lt</code> : less than (&lt;)</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-8045-a9e1-d22ba4691c9d" class="bulleted-list"><li style="list-style-type:disc"><code>-le</code> : less or equal (≤)</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-80a9-a386-c53873c0203f" class="bulleted-list"><li style="list-style-type:disc"><code>-gt</code> : greater than (&gt;)</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-806c-8673-f7b7d2a2de08" class="bulleted-list"><li style="list-style-type:disc"><code>-ge</code> : greater or equal (≥)</li></ul></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-80ab-a082-f83603360340" class=""><strong>Logic:</strong></p></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-808a-a2a5-f5bd0bbd599f" class="bulleted-list"><li style="list-style-type:disc"><code>!</code> : negation</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-80dd-abaf-e91e971eb7bb" class="bulleted-list"><li style="list-style-type:disc"><code>-a</code>  : AND (in <code>[ ]</code>)</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-8042-9a10-ee59be573536" class="bulleted-list"><li style="list-style-type:disc"><code>-o</code> : OR (in <code>[ ]</code>)</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-807d-a89f-cf7dba8ad967" class="bulleted-list"><li style="list-style-type:disc"><code>&amp;&amp;</code> and <code>||</code> : AND/OR (in <code>[[ ]]</code>)</li></ul></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-80a7-9e1f-e361e3201d1c" class=""><strong>Examples:</strong></p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2cc92ed1-1c8a-80de-a644-c14302609ed5" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">if [ -f &quot;file.txt&quot; ] &amp;&amp; [ -r &quot;file.txt&quot; ]; then ...
+if [[ -f &quot;file.txt&quot; &amp;&amp; -r &quot;file.txt&quot; ]]; then ...
+if [[ $age -gt 18 ]]; then ...
+if [[ $name =~ ^[A-Z] ]]; then ...</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-80db-99e2-d6a4d7eb4ac0" class="toggle"><li><details open=""><summary><strong>Bash Loops</strong></summary><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-8027-b9d5-ed34e8b8dd37" class=""><strong>For loop:</strong></p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2cc92ed1-1c8a-8083-9d6a-d290e54391c9" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># Iterate over list
+for item in file1 file2 file3; do
+    echo $item
+done
+
+# Range (C-style)
+for ((i=0; i&lt;10; i++)); do
+    echo $i
+done
+
+# Array
+arr=(a b c)
+for item in &quot;${arr[@]}&quot;; do
+    echo $item
+done</code></pre></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-807b-b4c1-d518b457c0b6" class=""><strong>While loop:</strong></p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2cc92ed1-1c8a-80f7-8e0f-cb4d24572c22" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">while [ $i -lt 10 ]; do
+    echo $i
+    ((i++))
+done
+
+# Read file line by line
+while read line; do
+    echo $line
+done &lt; file.txt</code></pre></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-809f-a632-c13015783bca" class=""><strong>Until loop:</strong></p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2cc92ed1-1c8a-8038-bcb3-f20e7c225a86" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">until [ $i -ge 10 ]; do
+    echo $i
+    ((i++))
+done</code></pre></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-8023-afba-ca34a4e14179" class=""><strong>Control:</strong></p></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-80f4-acea-e1d985597dac" class="bulleted-list"><li style="list-style-type:disc"><code>break</code> : exit loop</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-8078-879a-ec74b331b7fe" class="bulleted-list"><li style="list-style-type:disc"><code>continue</code> : skip to next iteration</li></ul></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-80a4-9963-e8064c11acce" class="toggle"><li><details open=""><summary><strong>Input parameters (arguments):</strong></summary><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-80e6-84af-f8b7a01d46d6" class=""><strong>Special variables:</strong></p></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-80c6-a187-c337d3333140" class="bulleted-list"><li style="list-style-type:disc"><code>$0</code> : script name</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-80b9-93ab-c4f36d2e8690" class="bulleted-list"><li style="list-style-type:disc"><code>$1, $2, $3...</code> : positional arguments</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-805b-ba0d-e78abd951f86" class="bulleted-list"><li style="list-style-type:disc"><code>$#</code> : number of arguments</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-80fa-8a2c-cbe2bc413fc9" class="bulleted-list"><li style="list-style-type:disc"><code>$@</code> : all arguments (as list)</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-802e-b634-d47131314bef" class="bulleted-list"><li style="list-style-type:disc"><code>$*</code> : all arguments (as string)</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-8015-9567-e7297bd8757f" class="bulleted-list"><li style="list-style-type:disc"><code>$?</code> : return code of last command</li></ul></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-80df-ae3e-e0b67457008c" class=""><strong>Examples:</strong></p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2cc92ed1-1c8a-8062-9afb-c6a65dd043fd" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># script.sh arg1 arg2
+echo &quot;Script: $0&quot;  #Script: ./script.sh
+echo &quot;First: $1&quot;   #First: arg1
+echo &quot;All: $@&quot;     #All: arg1 arg2
+echo &quot;Count: $#&quot;   #Count: 2</code></pre></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2cc92ed1-1c8a-803b-ad96-f4b6a796f60a" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">function check() {
+    [[ -f &quot;$1&quot; ]] &amp;&amp; return 0 || return 1
+}
+
+check &quot;file.txt&quot;
+echo $? # 0 or 1</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-8074-b365-f1fa465377ba" class="toggle"><li><details open=""><summary><strong>User / File / Output Readings</strong></summary><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-8086-9b2b-f687f74777f4" class=""><strong>Reading user input:</strong></p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2cc92ed1-1c8a-8027-9fe3-d4aede9374e3" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># Basic read
+read name
+echo &quot;Hello $name&quot;
+
+# With prompt
+read -p &quot;Enter name: &quot; name
+
+# Multiple variables
+read first last
+echo &quot;$first $last&quot;
+
+# Read password (hidden)
+read -s password
+
+# With timeout
+read -t 5 input  # 5 seconds</code></pre></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-8034-ae4b-d32bc03a96bf" class="">
+</p></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-8003-af19-f9a8697c861c" class=""><strong>Reading files:</strong></p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2cc92ed1-1c8a-80bb-a550-e381b8556227" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># Line by line
+while read line; do
+    echo $line
+done &lt; file.txt
+
+# Or with IFS (field separator)
+while IFS=&#x27;,&#x27; read col1 col2 col3; do
+    echo &quot;$col1 - $col2&quot;
+done &lt; data.csv
+
+# Entire file into variable
+content=$(&lt;file.txt)
+# or
+content=$(cat file.txt)</code></pre></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-8058-8ce3-ca797c5a2b09" class="">
+</p></div><div style="display:contents" dir="auto"><p id="2cc92ed1-1c8a-804a-b56a-ca6a7e701d61" class=""><strong>Reading command outputs :</strong></p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2cc92ed1-1c8a-8040-a5f3-d787bd368878" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># With pipe (subshell)
+count=0
+ls -l | while read line; do
+    ((count++))
+done
+echo $count #0 (lost variable!)
+
+# With process substitution (current shell)
+count=0
+while read line; do
+    ((count++))
+done &lt; &lt;(ls -l)
+echo $count # actual number of lines</code></pre></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-8040-874b-fad0f837e0d9" class="bulleted-list"><li style="list-style-type:disc"><code>&lt;(command)</code> : creates a temporary file with the output</li></ul></div><div style="display:contents" dir="auto"><ul id="2cc92ed1-1c8a-805e-83f8-f2c2b45f5ed3" class="bulleted-list"><li style="list-style-type:disc"><code>&lt; &lt;(...)</code> : redirects to stdin</li></ul></div></details></li></ul></div><div style="display:contents" dir="auto"><ul id="2cd92ed1-1c8a-8003-9e91-cc6769e8ecee" class="toggle"><li><details open=""><summary><strong>Functions</strong></summary><div style="display:contents" dir="auto"><p id="2cd92ed1-1c8a-8073-bfc3-ee6978cfd216" class=""><strong>Basic syntax:</strong></p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2cd92ed1-1c8a-800d-99b9-fa0432a36243" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># Two ways to declare
+my_function() {
+    echo &quot;Hello $1&quot;
+}
+
+function another_function {
+    local result=$((${1} + ${2}))
+    echo $result
+}
+
+# Calling
+my_function &quot;World&quot;
+another_function 5 3</code></pre></div><div style="display:contents" dir="auto"><p id="2cd92ed1-1c8a-80e5-85e1-ef9cda4e37b7" class=""><strong>Key points:</strong></p></div><div style="display:contents" dir="auto"><ul id="2cd92ed1-1c8a-80a8-9c8e-eac7e9cd3d71" class="bulleted-list"><li style="list-style-type:disc"><strong>No typing</strong> (like Python/JS, unlike C/C++/Java/C#)</li></ul></div><div style="display:contents" dir="auto"><ul id="2cd92ed1-1c8a-804b-8a06-ea705d43e377" class="bulleted-list"><li style="list-style-type:disc">Arguments via <code>$1</code>, <code>$2</code>, etc. <strong>(no explicit parameter list)</strong></li></ul></div><div style="display:contents" dir="auto"><ul id="2cd92ed1-1c8a-80ce-9354-e1411413a150" class="bulleted-list"><li style="list-style-type:disc">Return via <code>echo</code> or <code>return</code> <strong>(exit code 0-255 only)</strong></li></ul></div><div style="display:contents" dir="auto"><ul id="2cd92ed1-1c8a-803b-83af-d24f85271a7e" class="bulleted-list"><li style="list-style-type:disc">Local variables with <code>local</code></li></ul></div><div style="display:contents" dir="auto"><p id="2cd92ed1-1c8a-8004-9e6d-c5499700a318" class="">
+</p></div><div style="display:contents" dir="auto"><p id="2cd92ed1-1c8a-80a2-9bad-c686d8020417" class=""><strong>Should use </strong><code><strong>local</strong></code><strong> for variable</strong></p></div><div style="display:contents" dir="auto"><p id="2cd92ed1-1c8a-8078-8cfc-ffe937caa59c" class="">Global scope is no longer accessible after a local variable has shadowed it; </p></div><div style="display:contents" dir="auto"><p id="2cd92ed1-1c8a-8089-b823-ff815e93cb05" class="">therefore, use different names or save it beforehand:</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2cd92ed1-1c8a-80b3-9b72-c1c34b805327" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">#!/bin/bash
+
+counter=100
+
+with_workaround() {
+    local global_backup=$counter  # Save global BEFORE declaring local
+    local counter=5
+    
+    echo &quot;Local: $counter&quot;
+    echo &quot;Global (shadowed): $counter&quot;  # Still prints 5, not 100!
+    echo &quot;Global (saved): $global_backup&quot;
+}
+
+with_workaround
+```
+
+**Output:**
+```
+Local: 5
+Global (shadowed): 5
+Global (saved): 100</code></pre></div><div style="display:contents" dir="auto"><p id="2cd92ed1-1c8a-8095-8214-fbe6723cb35f" class="">
+</p></div><div style="display:contents" dir="auto"><p id="2cd92ed1-1c8a-8071-abc0-e8afa72fd50c" class=""><code><strong>return</strong></code><strong> in Bash is only for exit codes (0-255) !</strong></p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2cd92ed1-1c8a-80c4-b75e-cb2e41a1560d" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">#!/bin/bash
+
+function sum() {
+total=$(($1 + $2))
+return $total    # will return an error code
+}
+
+sum 200 300
+echo &quot;Return code: $?&quot;</code></pre></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2cd92ed1-1c8a-8039-91cd-f802af64b4f1" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">Return code: 244 # meaning 500 % 256 = 244</code></pre></div><div style="display:contents" dir="auto"><ul id="2cd92ed1-1c8a-8091-8ab9-f745cd85b604" class="bulleted-list"><li style="list-style-type:disc"><code>$?</code> : return code of last command</li></ul></div><div style="display:contents" dir="auto"><p id="2cd92ed1-1c8a-80eb-a507-e71d35438896" class="">
+</p></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2cd92ed1-1c8a-80e9-b47d-efe1381e4212" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">#!/bin/bash
+
+function sum() {
+total=$(($1 + $2))
+echo $total     # will not return an error 
+}
+
+sum 200 300
+echo &quot;Return code: $?&quot;</code></pre></div><div style="display:contents" dir="auto"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2cd92ed1-1c8a-8044-bcda-d2b8a952d1b3" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">500
+Return code: 0 # meaning No Error</code></pre></div></details></li></ul></div><div style="display:contents" dir="auto"><p id="2cd92ed1-1c8a-809c-913a-e9a6a0217972" class="">
+</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

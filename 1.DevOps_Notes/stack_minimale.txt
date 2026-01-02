@@ -1,0 +1,12 @@
+Gratuits/peu coûteux :
+
+Google Cloud Skills Boost (certifs gratuites)
+AWS re/Start (gratuit, intensif 12 semaines)
+Microsoft Learn (Azure fondamentaux gratuit)
+Kubernetes basics (gratuit)
+
+Ajoutez ces certifications sur CV en 1-2 mois :
+
+Docker Certified Associate (populaire)
+Terraform Associate (très demandé)
+GitHub Actions (via projets)
