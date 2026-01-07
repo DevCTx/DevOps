@@ -6,6 +6,10 @@
 git add .
 git commit -m "modif Bruno's role in index.html"
 
+git log
+
 # then to reset the last commit unpushed
 git reset --hard HEAD~1
+
+git log
 
