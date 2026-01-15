@@ -1,1 +1,37 @@
+# Personal
 invoice/
+
+# Environment
+.env
+.env.local
+.env.*.local
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+
+# Maven
+target/
+.mvn/
+mvnw
+mvnw.cmd
+
+# Gradle
+build/
+*.jar
+!gradle/wrapper/gradle-wrapper.jar  # to use the same Gradle version (no need to install)
+.gradle/
+gradlew
+gradlew.bat
+
+
+# NodeJS
+node_modules/
+dist/
+.next/
+out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
