@@ -37,7 +37,24 @@ java -jar ./build/libs/build-tools-exercises-1.0-SNAPSHOT.jar
 
 ####################
 # Ex 5
+# open ./src/main/java/com/example/Application.java
+# set add snippet on line 16 :
+#Logger log = LoggerFactory.getLogger(Application.class);
+#        try {
+#              String one = args[0];
+#              String two = args[1];
+#              log.info("Application will start with the parameters {} and {}", one, two);
+#        } 
+#        catch (Exception e) {
+#              log.info("No parameters provided");
+#        }
+#
+#
+gradle build
+java -jar ./build/libs/build-tools-exercises-1.0-SNAPSHOT.jar 
+# App indicates "No parameters provided"
+java -jar ./build/libs/build-tools-exercises-1.0-SNAPSHOT.jar param1 param2
+# App indicates "Application will start with the parameters param1 and param2"
 
 
-java - jar 
 
