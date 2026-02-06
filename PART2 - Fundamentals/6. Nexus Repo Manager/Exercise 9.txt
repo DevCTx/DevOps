@@ -1,0 +1,90 @@
+Exercise 9.txt
+
+# AUTOMATE THE PROCESS FROM THE DIGITAL OCEAN DROPLET
+mkdir ~/last_npm_hosted
+cd last_npm_hosted/
+touch ./last_npm_hosted.sh
+chmod +x ./last_npm_hosted.sh
+vi ./last_nom_hosted.sh
+
+########################################
+#!/bin/bash
+set -e
+
+# GET THE NPM-HOSTED LAST REPO URL
+last_npm_hosted_URL=$(curl -s -u team3:team3 'http://144.126.201.150:8081/service/rest/v1/components?repository=npm-hosted&sort=version' \
+        | jq -r '.items[0].assets[0].downloadUrl')
+printf "\nLatest NPM HOSTED URL: $last_npm_hosted_URL\n"
+
+# EXECUTE A COMMAND TO FETCH THE LATEST ARTIFACT WITH THE DOWNLOAD URL
+artifact_name=$(basename "$last_npm_hosted_URL")
+printf "\nDownloading $last_npm_hosted_URL ...\n"
+curl -s -u team3:team3 -X GET "$last_npm_hosted_URL" --output "$artifact_name"
+printf "$artifact_name Downloaded\n"
+
+# GET FILE TO EXECUTE
+printf "\nIdentification of package name and file to execute\n"
+package_name=$(tar -xOzf "$artifact_name" package/package.json | jq -r '.name')
+file_to_execute=$(tar -xOzf "$artifact_name" package/package.json | jq -r '.main')
+printf "Package name: $package_name\n"
+printf "Main file to execute: $file_to_execute\n"
+
+# CLEAN OLD INSTALLATION
+printf "\nClean old installation\n"
+rm -rf node_modules package.json package-lock.json
+npm init -y >/dev/null 2>&1
+printf "Done\n"
+
+# INSTALLATION OF NODE MODULES
+printf "\nInstallation of needed modules\n"
+npm install "./$artifact_name"
+printf "node_modules installed\n"
+
+# RUN IT USING NODE  
+printf "\nStarting application ...\n"
+node "node_modules/$package_name/$file_to_execute"
+
+####################################
+                                                                                                                                  36,0-1        
+
+nexus@ubuntu-8GB-4CPU:~/last_npm_hosted$ ls -lag
+total 12
+drwxrwxr-x 2 nexus 4096 Feb  6 14:39 .
+drwxr-x--- 8 nexus 4096 Feb  6 14:39 ..
+-rwxrwxr-x 1 nexus 1334 Feb  6 14:33 last_npm_hosted.sh
+
+nexus@ubuntu-8GB-4CPU:~/last_npm_hosted$ ./last_npm_hosted.sh 
+
+Latest NPM HOSTED URL: http://144.126.201.150:8081/repository/npm-hosted/bootcamp-node-project/-/bootcamp-node-project-1.0.0.tgz
+
+Downloading http://144.126.201.150:8081/repository/npm-hosted/bootcamp-node-project/-/bootcamp-node-project-1.0.0.tgz ...
+bootcamp-node-project-1.0.0.tgz Downloaded
+
+Identification of package name and file to execute
+Package name: bootcamp-node-project
+Main file to execute: server.js
+
+Clean old installation
+Done
+
+Installation of needed modules
+npm WARN deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+npm WARN deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+npm WARN deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+added 360 packages, and audited 361 packages in 5s
+
+66 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+node_modules installed
+
+Starting application ...
+app listening on port 3000!
+
+
+
+
+
+

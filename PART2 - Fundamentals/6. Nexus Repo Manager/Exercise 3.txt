@@ -1,0 +1,25 @@
+Exercise 3.txt
+
+# create a new role for JS Dev
+On Nexus Repository Manager 
+System > Roles > Create Role
+Type : Nexus Role
+Role ID : nx-dev-js
+Role Name : Nexus Dev JS
+Description : Nexus JS role allowing publications for developers 
+Applied : nx-repository-view-npm-npm-hosted-*
+> Save
+
+# create a new user for team 1
+System > Users > Create local user
+ID : team1
+First name : Team
+Last name : One
+Email : team1@gmail.com
+Password : team1
+Confirm : team1
+Status : Active
+Role : Nexus Dev JS
+> Create local user
+
+

@@ -1,0 +1,70 @@
+Exercise 7.txt
+
+# GET ANOTHER JAVA APP FROM BUILD TOOLS EXERCISES
+git clone https://gitlab.com/twn-devops-bootcamp/latest/04-build-tools/build-tools-exercises
+rm -rf ./build-tools-exercises/.git
+
+# PREPARE ARTIFACT TO CONNECT TO NEXUS
+
+# INTO build.gradle :
+// ##### ADD THIS CODE TO ALLOW THE PUBLISH COMMAND #####
+//
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        create("maven", MavenPublication) {
+            artifact("build/libs/my-app-$version" + ".jar"){
+                extension 'jar'
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name 'nexus'
+            url = project.nexusUrl
+            allowInsecureProtocol = project.allowInsecureProtocol
+            credentials {
+                username = project.repoUser
+                password = project.repoPassword
+            }
+        }
+    }
+}
+//
+//#########################
+
+# CREATE ./gradle.properties
+nexusUrl=http://144.126.201.150:8081/repository/maven2-hosted/
+allowInsecureProtocol=true
+repoUser=team2
+repoPassword=team2
+
+# ADD FILE TO .gitignore
+.idea
+build
+gradle.properties
+
+# BUILD THE ARTIFACT
+cd ~/build-tools-exercises
+gradle build
+#
+#BUILD SUCCESSFUL in 15s
+#7 actionable tasks: 2 executed, 5 up-to-date
+
+# PS : an error appears the first time into AppTest.java at line 22:
+# change "true" by true on
+#        boolean result = myApp.getCondition(true);
+
+
+# PUBLISH THE ARTIFACT
+gradle publish
+#
+#BUILD SUCCESSFUL in 8s
+#2 actionable tasks: 2 executed
+
+
+
+
+

@@ -1,0 +1,126 @@
+Exercise 8.txt
+
+# CREATE A NEW USER WITH ACCESS TO MAVEN2-HOST AND NPM-HOSTED
+On Nexus :
+Settings > Security > Users > Create user
+* ID : team3
+* First name : Team 
+* Last Name : Three
+* Email : team3@gmai.com
+* Password : team3
+* Confirm : team3
+* Status : Active
+* Roles:
+- nx-dev-js
+- nx-maven2-hosted
+
+# ON DIGITAL OCEAN DROPLET, FETCH THE DOWNLOAD URL FOR THE LASTEST NODEJS ARTIFACT
+
+# CONNECT ON DIGITAL OCEAN SERVER
+user@machine:~$ ssh nexus-nexus
+#nexus@ubuntu-8GB-4CPU:~$
+
+# GET THE REPOSITORIES ACCESSIBLE FOR TEAM3
+nexus@ubuntu-8GB-4CPU:~$ curl -u team3:team3 'http://144.126.201.150:8081/service/rest/v1/repositories'
+[ {
+  "name" : "npm-hosted",
+  "format" : "npm",
+  "type" : "hosted",
+  "url" : "http://144.126.201.150:8081/repository/npm-hosted",
+  "size" : 0,
+  "attributes" : { }
+}, {
+  "name" : "maven2-hosted",
+  "format" : "maven2",
+  "type" : "hosted",
+  "url" : "http://144.126.201.150:8081/repository/maven2-hosted",
+  "size" : 0,
+  "attributes" : { }
+} ]
+
+# GET THE NPM-HOSTED LAST REPO URL
+nexus@ubuntu-8GB-4CPU:~$ curl -u team3:team3 'http://144.126.201.150:8081/service/rest/v1/components?repository=npm-hosted'
+{
+  "items" : [ {
+    "id" : "bnBtLWhvc3RlZDo5ZTM3NzliYQ",
+    "repository" : "npm-hosted",
+    "format" : "npm",
+    "group" : "",
+    "name" : "bootcamp-node-project",
+    "version" : "1.0.0",
+    "assets" : [ {
+      "downloadUrl" : "http://144.126.201.150:8081/repository/npm-hosted/bootcamp-node-project/-/bootcamp-node-project-1.0.0.tgz",
+      "path" : "/bootcamp-node-project/-/bootcamp-node-project-1.0.0.tgz",
+      "id" : "bnBtLWhvc3RlZDplZDUzMzY5Nw",
+      "repository" : "npm-hosted",
+      "format" : "npm",
+      "checksum" : {
+        "md5" : "5df62008f6301d447f2141e341769ef0",
+        "sha1" : "61292732bc0a0f9ec10403de67c4f0729759506e"
+      },
+      "contentType" : "application/octet-stream",
+      "lastModified" : "2026-02-06T09:27:45.361+00:00",
+      "lastDownloaded" : null,
+      "uploader" : "team1",
+      "uploaderIp" : "88.173.128.66",
+      "fileSize" : 79403,
+      "blobCreated" : "2026-02-06T09:15:52.060+00:00",
+      "blobStoreName" : "new-blob",
+      "npm" : {
+        "name" : "bootcamp-node-project",
+        "version" : "1.0.0"
+      }
+    } ]
+  } ],
+  "continuationToken" : null
+
+# OR EVEN BETTER
+nexus@ubuntu-8GB-4CPU:~$ curl -s -u team3:team3 'http://144.126.201.150:8081/service/rest/v1/components?repository=npm-hosted'   | jq '.items[0].assets[0].downloadUrl'
+"http://144.126.201.150:8081/repository/npm-hosted/bootcamp-node-project/-/bootcamp-node-project-1.0.0.tgz"
+
+
+# EXECUTE A COMMAND TO FETCH THE LATEST ARTIFACT WITH THE DOWNLOAD URL
+nexus@ubuntu-8GB-4CPU:~$ curl -s -u team3:team3 -X GET "http://144.126.201.150:8081/repository/npm-hosted/bootcamp-node-project/-/bootcamp-node-project-1.0.0.tgz" --output bootcamp-node-project-1.0.0.tgz
+
+nexus@ubuntu-8GB-4CPU:~$ ls -lag
+total 128
+drwxr-x--- 5 nexus  4096 Feb  6 12:51 .
+drwxr-xr-x 3 root   4096 Jan 23 15:13 ..
+-rw------- 1 nexus  2996 Feb  5 16:27 .bash_history
+-rw-r--r-- 1 nexus   220 Jan 23 15:13 .bash_logout
+-rw-r--r-- 1 nexus  3771 Jan 23 15:13 .bashrc
+drwx------ 2 nexus  4096 Jan 26 08:19 .cache
+-rw-r--r-- 1 nexus     0 Jan 23 15:13 .cloud-locale-test.skip
+drwxrwxr-x 3 nexus  4096 Jan 23 15:56 .java
+-rw-r--r-- 1 nexus   807 Jan 23 15:13 .profile
+drwx------ 2 nexus  4096 Feb  2 09:38 .ssh
+-rw------- 1 nexus 12098 Feb  2 09:38 .viminfo
+-rw-rw-r-- 1 nexus 79403 Feb  6 12:51 bootcamp-node-project-1.0.0.tgz
+
+# CHECK WHICH FILE HAS TO BE EXECUTED
+nexus@ubuntu-8GB-4CPU:~/bootcamp-node-project$ tar -xOzf bootcamp-node-project-1.0.0.tgz package/package.json | jq '.main'
+#"server.js"
+
+# TO RUN IT, USE NODE WITH  
+nexus@ubuntu-8GB-4CPU:~/bootcamp-node-project$ node node_modules/bootcamp-node-project/server.js 
+#app listening on port 3000!
+
+# OR ADD A LINE INTO package/package.json
+"scripts": {
+  "start": "node node_modules/bootcamp-node-project/server.js",
+  "test": "echo \"Error: no test specified\" && exit 1"
+}
+# AND USE NPM
+nexus@ubuntu-8GB-4CPU:~/bootcamp-node-project$ npm start
+
+> bootcamp-node-project@1.0.0 start
+> node node_modules/bootcamp-node-project/server.js
+
+app listening on port 3000!
+
+# CHECK THE URL INTO A BROWSER :
+http://144.126.201.150:3000/
+
+
+
+
