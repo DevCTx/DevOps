@@ -1,0 +1,18 @@
+Exercise 2.txt
+On Nexus Repository Manager
+
+# create a new blob store
+> Settings > Blob stores > Create Blob Store
+Type : File
+Name : new-blob
+Path : /opt/sonatype-work/nexus3/blobs/new-blob
+> Save
+
+# create a new npm repository into this new blob store
+> Settings > Repositories > Create repository
+select npm (hosted)
+Name : npm-hosted
+Blob store : new-blob
+Deployment policy : Allowed to avoid to define a new version each time (facilitate the manipulations)
+Cleanup Policies : None
+> Create repository

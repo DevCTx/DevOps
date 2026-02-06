@@ -1,0 +1,25 @@
+Exercise 6.txt
+
+# CREATE A NEW ROLE
+Currently nx-dev-java is defined with nx-repository-view-maven2-maven-snapshots-* privileges
+so we need to create a new role for maven2-hosted
+Go to Settings > Security > Roles > Create Role
+* Role Type : Nexus role
+* Role ID : nx-maven2-hosted
+* Role Name : nx-maven2-hosted
+* Description : Nexus Maven2 Hosted View Privileges
+* Privileges : nx-repository-view-maven2-maven2-hosted-*
+> Save
+
+
+# CREATE A NEW USER
+Got to Settings > Security > Users > Create local user
+* ID : team2
+* First name : Team
+* Last name : Two
+* Email: team2@gmail.com
+* Password : team2
+* Confirm : team2
+* Status : active
+* Role : nx-maven2-hosted
+> Save

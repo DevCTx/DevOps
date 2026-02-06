@@ -1,0 +1,51 @@
+Exercise 4.txt
+
+# AUTORIZE ACCESS TO NEXUS REPOSITORY
+On Nexus Repository Manager
+Go to Settings > Security > Realms
+Active :
+- Local Authenticating for user + password 
+- npm Bearer Token for being able to deposit npm repository
+
+# GET A NODEJS APP
+git clone https://gitlab.com/twn-devops-bootcamp/latest/05-cloud/cloud-basics-exercises
+rm -rf ./cloud-basics-exercises/.git
+
+# SET AN ARTIFACT
+cd ./cloud-basics-exercises/app
+npm pack
+# bootcamp-node-project-1.0.0.tgz created
+
+# CONNECT TO NEXUS REPOSITORY
+npm login --registry=http://144.126.201.150:8081/repository/npm-hosted/
+#npm notice Log in on http://144.126.201.150:8081/repository/npm-hosted/
+#Username: team1
+#Password: team1
+#
+#Logged in on http://144.126.201.150:8081/repository/npm-hosted/.
+
+# PUBLISH THE ARTIFACT
+npm publish --registry=http://144.126.201.150:8081/repository/npm-hosted/ bootcamp-node-project-1.0.0.tgz 
+#npm notice
+#npm notice 📦  bootcamp-node-project@1.0.0
+#npm notice Tarball Contents
+#npm notice 60.5kB images/profile-andrea.jpg
+#npm notice 17.5kB images/profile-ari.jpeg
+#npm notice 1.2kB index.html
+#npm notice 352B package.json
+#npm notice 724B server.js
+#npm notice 205B server.test.js
+#npm notice Tarball Details
+#npm notice name: bootcamp-node-project
+#npm notice version: 1.0.0
+#npm notice filename: bootcamp-node-project-1.0.0.tgz
+#npm notice package size: 79.4 kB
+#npm notice unpacked size: 80.5 kB
+#npm notice shasum: 61292732bc0a0f9ec10403de67c4f0729759506e
+#npm notice integrity: sha512-Cu/D3GCR/EZA+[...]iUxIkVBGdTuNQ==
+#npm notice total files: 6
+#npm notice
+#npm notice Publishing to http://144.126.201.150:8081/repository/npm-hosted/ with tag latest and default access
+#+ bootcamp-node-project@1.0.0
+
+

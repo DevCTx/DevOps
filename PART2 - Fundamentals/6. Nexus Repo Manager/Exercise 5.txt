@@ -1,0 +1,16 @@
+Exercise 5.txt
+
+# CREATE A NEW MAVEN REPOSITORY
+Go to settings > Repository > Repositories > Create repository
+* select maven2(hosted)
+* Name : maven2-hosted
+* policy : snapshot
+* Layout : strict
+* Content : inline
+* Blob store : new-blob
+* Type Validation : strict
+* Deployment: Allow redeploy
+* Proprietary Component : unchecked
+* Cleanup policies: none
+
+
