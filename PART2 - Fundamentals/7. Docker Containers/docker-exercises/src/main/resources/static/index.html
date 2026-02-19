@@ -45,59 +45,64 @@
 <script>
   // HOST must be the server IP or DNS name when app running on a server
   // and localhost when running locally
-  const HOST = "localhost";
+  // const HOST = "127.0.0.1";
   
   (async function init() {
-    const response = await fetch(`http://${HOST}:8080/get-data`);
-    console.log("response", response);
-    const data = await response.json();
-    console.log("stringified data: " + JSON.stringify(data));
+    try {
+        // const response = await fetch(`http://${HOST}:8080/get-data`);
+        const response = await fetch(`/get-data`);
+        console.log("response", response);
+        const data = await response.json();
+        console.log("stringified data: " + JSON.stringify(data));
 
-    let element = document.getElementById('member-roles');
-    let editElement = document.getElementById('member-roles-edit');
-    data.forEach(user => {
-      let li = document.createElement('li');
-      let spanName = document.createElement('span');
-      let spanSpace = document.createElement('span');
-      let spanRole = document.createElement('span');
+        let element = document.getElementById('member-roles');
+        let editElement = document.getElementById('member-roles-edit');
+        data.forEach(user => {
+          let li = document.createElement('li');
+          let spanName = document.createElement('span');
+          let spanSpace = document.createElement('span');
+          let spanRole = document.createElement('span');
 
-      spanRole.setAttribute("id", `role-${user.name}`);
-      spanName.setAttribute("class", "name");
-      li.setAttribute("class", "member-role");
+          spanRole.setAttribute("id", `role-${user.name}`);
+          spanName.setAttribute("class", "name");
+          li.setAttribute("class", "member-role");
 
-      spanName.innerText = user.name;
-      spanSpace.innerText = ": ";
-      spanRole.innerText = user.role;
+          spanName.innerText = user.name;
+          spanSpace.innerText = ": ";
+          spanRole.innerText = user.role;
 
-      li.appendChild(spanName);
-      li.appendChild(spanSpace);
-      li.appendChild(spanRole);
-      element.appendChild(li);
+          li.appendChild(spanName);
+          li.appendChild(spanSpace);
+          li.appendChild(spanRole);
+          element.appendChild(li);
 
 
-      let editLi = document.createElement('li');
-      let name = document.createElement('span');
-      let label = document.createElement('label');
-      let input = document.createElement('input');
+          let editLi = document.createElement('li');
+          let name = document.createElement('span');
+          let label = document.createElement('label');
+          let input = document.createElement('input');
 
-      name.innerText = user.name;
-      name.setAttribute("class", "name-edit");
-      label.setAttribute("for", `input-role-${user.name}`);
-      input.setAttribute("id", `input-role-${user.name}`);
-      input.setAttribute("type", "text");
-      editLi.setAttribute("class", "member-role-edit");
+          name.innerText = user.name;
+          name.setAttribute("class", "name-edit");
+          label.setAttribute("for", `input-role-${user.name}`);
+          input.setAttribute("id", `input-role-${user.name}`);
+          input.setAttribute("type", "text");
+          editLi.setAttribute("class", "member-role-edit");
 
-      editLi.appendChild(name);
-      editLi.appendChild(label);
-      editLi.appendChild(input);
+          editLi.appendChild(name);
+          editLi.appendChild(label);
+          editLi.appendChild(input);
 
-      editElement.appendChild(editLi);
-    });
+          editElement.appendChild(editLi);
+        });
 
-    const cont = document.getElementById('container');
-    cont.style.display = 'block';
+        const cont = document.getElementById('container');
+        cont.style.display = 'block';
+    } catch (err) {
+        console.error(err);
+        alert("Error on loading data");
+    }
   })();
-
 
   async function handleUpdateProfileRequest() {
     const contEdit = document.getElementById('container-edit');
@@ -116,27 +121,33 @@
       });
     });
 
-    const response = await fetch(`http://${HOST}:8080/update-roles`, {
-      method: "POST",
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    });
+    try {
+        // const response = await fetch(`http://${HOST}:8080/update-roles`, {
+        const response = await fetch(`/update-roles`, {
+          method: "POST",
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
 
-    const jsonResponse = await response.json();
+        const jsonResponse = await response.json();
 
-    jsonResponse.forEach(member => {
-      document.getElementById(`role-${member.name}`).textContent = member.role;
-    });
+        jsonResponse.forEach(member => {
+          document.getElementById(`role-${member.name}`).textContent = member.role;
+        });
 
 
-    cont.style.display = 'block';
-    contEdit.style.display = 'none';
-  }
+        cont.style.display = 'block';
+        contEdit.style.display = 'none';
+      } catch (err) {
+        console.error(err);
+        alert("Error on updating data");
+      }
+    }
 
-  function updateRole() {
+    function updateRole() {
     const contEdit = document.getElementById('container-edit');
     const cont = document.getElementById('container');
 
