@@ -1,0 +1,63 @@
+services:
+
+    mysql:
+        image: mysql:9.6.0-oraclelinux9
+        container_name: mysql
+        networks: 
+            - "mysql-network"
+        ports:
+            - "3306:3306"
+        volumes:
+            - ./secrets:/run/secrets:ro
+            - mysql-data:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_password
+            - MYSQL_USER_FILE=/run/secrets/mysql_user
+            - MYSQL_PASSWORD_FILE=/run/secrets/mysql_password
+            - MYSQL_HOST_SERVER_FILE=/run/secrets/mysql_host_server
+            - MYSQL_DATABASE_FILE=/run/secrets/mysql_database
+        healthcheck:
+            test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    phpmyadmin:
+        image: phpmyadmin
+        container_name: phpmyadmin
+        networks: 
+            - "mysql-network"
+        ports:
+            - "8083:80"
+        depends_on:
+            - mysql
+        restart: always
+        environment:
+            - PMA_HOST=${DB_SERVER}
+            - PMA_PORT=${DB_PORT}
+  
+    js-app:
+        image: 161.35.75.247:8084/js-app:1.0
+        container_name: js-app
+        networks:
+            - "mysql-network"
+        ports:
+            - "8080:8080"
+        depends_on:
+            mysql:
+                condition: service_healthy
+        environment:
+            - DB_USER=${DB_USER}
+            - DB_PWD=${DB_PWD}
+            - DB_SERVER=${DB_SERVER}
+            - DB_NAME=${DB_NAME}
+
+volumes:
+    mysql-data:
+        name: mysql-data
+        driver: local
+
+networks:
+    mysql-network:
+        name: mysql-network
+        driver: bridge

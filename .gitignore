@@ -1,38 +1,129 @@
 # Personal
 invoice/
 
-# Environment
-.env
-.env.local
-.env.*.local
-.DS_Store
 
-# IDE
-.idea/
-.vscode/
+# + Generated .gitignore file for: Node, Python, Java, React, VSCode, IntelliJ, Linux, npm, Maven, Gradle, MongoDB, MySQL, Terraform, Ansible, Kubernetes, Docker, Jenkins, GitHub Actions, SQLite, PostgreSQL
+# Created with FOSSA's DevOps Tools
+
+# Node
+node_modules/
+npm-debug.log*
+npm-error.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.DS_Store
+dist/
+.cache/
+coverage/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+venv/
+env/
+.env
+*.so
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.logs
+.mtj.tmp/
+hs_err_pid*
+target/
+build/
+
+# React
+node_modules/
+build/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# IntelliJ
+# Add IntelliJ-specific ignores here
+
+# Linux
+# Add Linux-specific ignores here
+
+# npm
+# Add npm-specific ignores here
 
 # Maven
+# Add Maven-specific ignores here
 target/
 .mvn/
 mvnw
 mvnw.cmd
 
 # Gradle
-build/
-*.jar
+# Add Gradle-specific ignores here
 !gradle/wrapper/gradle-wrapper.jar  # to use the same Gradle version (no need to install)
 .gradle/
 gradlew
 gradlew.bat
 gradle.properties
 
+# MongoDB
+# Add MongoDB-specific ignores here
 
-# NodeJS
-node_modules/
-dist/
-.next/
-out/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# MySQL
+# Add MySQL-specific ignores here
 
+# Terraform
+# Add Terraform-specific ignores here
+
+# Ansible
+# Add Ansible-specific ignores here
+
+# Kubernetes
+# Add Kubernetes-specific ignores here
+
+# Docker
+docker-compose.override.yml
+Dockerfile.override
+.dockerignore
+
+# Jenkins
+# Add Jenkins-specific ignores here
+
+# GitHub Actions
+# Add GitHub Actions-specific ignores here
+
+# SQLite
+# Add SQLite-specific ignores here
+
+# PostgreSQL
+# Add PostgreSQL-specific ignores here
+
+# Common
+.DS_Store
+Thumbs.db
+*.log
+*.bak
+*.tmp
+*.swp
+*~
+
+# IDE and editor generated files
+.idea/
+*.sublime-*
+
+# Local environment files
+.env
+.env.local
+.env.*.local
