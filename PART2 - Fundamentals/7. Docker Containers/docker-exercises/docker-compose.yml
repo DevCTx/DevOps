@@ -3,6 +3,7 @@ services:
     mysql:
         image: mysql:9.6.0-oraclelinux9
         container_name: mysql
+        restart: always
         networks: 
             - "mysql-network"
         ports:
@@ -25,32 +26,31 @@ services:
     phpmyadmin:
         image: phpmyadmin
         container_name: phpmyadmin
+        restart: always
         networks: 
             - "mysql-network"
         ports:
             - "8083:80"
         depends_on:
             - mysql
-        restart: always
         environment:
-            - PMA_HOST=${DB_SERVER}
-            - PMA_PORT=${DB_PORT}
-  
+            - PMA_HOST=mysql
+            - PMA_PORT=3306
+
     js-app:
         image: 161.35.75.247:8084/js-app:1.0
         container_name: js-app
+        user: "javauser"
+        restart: unless-stopped
         networks:
             - "mysql-network"
         ports:
             - "8080:8080"
+        volumes:
+            - ./secrets:/run/secrets:ro
         depends_on:
             mysql:
                 condition: service_healthy
-        environment:
-            - DB_USER=${DB_USER}
-            - DB_PWD=${DB_PWD}
-            - DB_SERVER=${DB_SERVER}
-            - DB_NAME=${DB_NAME}
 
 volumes:
     mysql-data:

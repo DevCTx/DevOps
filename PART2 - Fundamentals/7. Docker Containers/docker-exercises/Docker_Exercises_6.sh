@@ -79,7 +79,7 @@ env | grep DB
 #DB_SERVER=mysql
 #DB_PWD=team1
 
-# RUN THE DOCKER COMPOSE
+# RUN THE DOCKER COMPOSE FROM LOCAL PC
 $ docker images
 #IMAGE   ID             DISK USAGE   CONTENT SIZE   EXTRA
 $ docker ps -a
