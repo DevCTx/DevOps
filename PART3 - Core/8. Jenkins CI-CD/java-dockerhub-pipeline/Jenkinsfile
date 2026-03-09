@@ -7,19 +7,24 @@ pipeline {
 	tools {
 		maven "3.9.12"
 	}
+
+    parameters {
+        string( name: 'VERSION', defaultValue: '2.0', description: 'App Version')
+    }
 	
 	stages {
 	
 		stage("init") {
 			steps {
 				script {
-					gv = load "PART3 - Core/8. Jenkins CI-CD/java-maven-app/script.groovy"
+					gv = load "PART3 - Core/8. Jenkins CI-CD/java-dockerhub-pipeline/script.groovy"
 				}
 			}
 		}		
 		
 		stage("build jar") {			
 			steps {
+                
 			    gv.buildJar()
 			}
 		}
