@@ -9,7 +9,7 @@ def testApp() {
 }
 
 def deployApp() {
-	echo "Deploying to ${params.ENV}"
+	echo "Deploying to ${params.ENVIRONMENT}"
 }
 
 return this
