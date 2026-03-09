@@ -1,0 +1,33 @@
+def gv
+
+pipeline {
+
+	agent any
+
+	tools {
+		maven "3.9.12"
+	}
+	
+	stages {
+	
+		stage("init") {
+			steps {
+				script {
+					gv = load "PART3 - Core/8. Jenkins CI-CD/java-maven-app/script.groovy"
+				}
+			}
+		}		
+		
+		stage("build jar") {			
+			steps {
+			    gv.buildJar()
+			}
+		}
+		
+		stage("build and push image") {			
+			steps {
+			    gv.buildAndPushImage()
+			}
+		}
+	}
+}
