@@ -6,7 +6,7 @@ pipeline {
 	
 	parameters {
 		string(name: 'VERSION', defaultValue: '1.0', description: 'Application version')
-		booleanParam(name: 'RUN_TESTS', defaultValue: true, description: 'Run tests?')
+		booleanParam(name: 'RUN_TESTS', defaultValue: false, description: 'Run tests?')
 	}
 	
 	stages {
