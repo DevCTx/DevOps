@@ -18,7 +18,7 @@ pipeline {
 	stages {
 		stage('Init') {
 			steps {
-				script { gv = load "script.groovy" }
+				script { gv = load "PART3 - Core/8. Jenkins CI-CD/java-maven-app/script.groovy" }
 			}
 		}
 	
