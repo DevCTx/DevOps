@@ -1,26 +1,42 @@
+def gv
+
 pipeline {
 
 	agent any
 	
+	parameters {
+		string(name: 'VERSION', defaultValue: '1.0', description: 'Application version')
+		choice(name: 'ENVIRONMENT',
+           choices: ['dev', 'test', 'prod'],
+           description: 'Select environment')
+		booleanParam(name: 'RUN_TESTS', defaultValue: true, description: 'Run tests?')
+		text(name: 'MESSAGE',
+         defaultValue: 'Deployment message',
+         description: 'Write a message on several lines')
+	}
+	
 	stages {
-		
-		stage("build") {
-			
+		stages('Init') {
 			steps {
-			    echo "building the application ..."
+				script { gv = load "script.groovy" }
 			}
 		}
-		stage("test") {
-			
+	
+		stage('Build') {
 			steps {
-			    echo "testing the application ..."
+				script { gv.buildApp() }
 			}
 		}
 
-		stage("deploy") {
-			
+		stage('Test') {
 			steps {
-			    echo "deploying the application ..."
+				script { gv.testApp() }
+			}
+		}
+
+		stage('Deploy') {
+			steps {
+				script { gv.deployApp()	}
 			}
 		}
 	}
