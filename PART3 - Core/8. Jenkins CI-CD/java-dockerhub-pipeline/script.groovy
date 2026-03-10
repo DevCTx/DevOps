@@ -1,5 +1,6 @@
 def buildJar() {
 	echo "Building JAR file ..."
+    sh "cd ./PART3 - Core/8. Jenkins CI-CD/java-dockerhub-pipeline/"
 	sh "mvn clean package"
 }
 
