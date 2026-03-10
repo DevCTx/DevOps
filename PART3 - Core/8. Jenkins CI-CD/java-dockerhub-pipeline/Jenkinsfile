@@ -12,27 +12,29 @@ pipeline {
         string( name: 'VERSION', defaultValue: '2.0', description: 'App Version')
     }
 	
-	stages {
+    stages {
+        stage("init") {
+            steps {
+                script {
+                    gv = load "PART3 - Core/8. Jenkins CI-CD/java-dockerhub-pipeline/script.groovy"
+                }
+            }
+        }
 
-        stage("init") {
-			steps {
-				script {
-					gv = load "PART3 - Core/8. Jenkins CI-CD/java-dockerhub-pipeline/script.groovy"
-				}
-			}
-		}		
-		
-		stage("build jar") {			
-			steps {
-                
-			    gv.buildJar()
-			}
-		}
-		
-		stage("build and push image") {			
-			steps {
-			    gv.buildAndPushImage()
-			}
-		}
-	}
+        stage("build jar") {
+            steps {
+                script {
+                    gv.buildJar()
+                }
+            }
+        }
+
+        stage("build and push image") {
+            steps {
+                script {
+                    gv.buildAndPushImage()
+                }
+            }
+        }
+    }
 }
