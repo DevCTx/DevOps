@@ -13,8 +13,8 @@ pipeline {
     }
 	
 	stages {
-	
-		stage("init") {
+
+        stage("init") {
 			steps {
 				script {
 					gv = load "PART3 - Core/8. Jenkins CI-CD/java-dockerhub-pipeline/script.groovy"
