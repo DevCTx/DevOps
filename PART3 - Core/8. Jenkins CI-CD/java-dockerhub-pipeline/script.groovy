@@ -2,6 +2,8 @@ def buildJar() {
 	echo "Building JAR file ..."
 
     dir("./PART3 - Core/8. Jenkins CI-CD/java-dockerhub-pipeline/") {
+        sh "pwd"
+        sh "ls -la"
     	sh "mvn clean package"
     }
 }
@@ -11,7 +13,7 @@ def buildAndPushImage() {
 
     dir("./PART3 - Core/8. Jenkins CI-CD/java-dockerhub-pipeline/") {
 	    withCredentials( [
-		    usernamePassword( credentials: 'dockerhub-credentials',
+		    usernamePassword( credentialsId: 'dockerhub-credentials',
                             usernameVariable: 'DOCKER_USERNAME',
 						    passwordVariable: 'DOCKER_PASSWORD' )
 	    ]) {
