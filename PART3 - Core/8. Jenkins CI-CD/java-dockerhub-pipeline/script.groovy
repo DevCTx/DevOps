@@ -6,7 +6,7 @@ def buildJar() {
         sh "ls -la"
 
     	echo "Building JAR file ..."
-    	sh "mvn clean package"
+    	sh "mvn --no-transfer-progress clean package"
     }
 }
 
@@ -23,9 +23,13 @@ def buildAndPushImage() {
                             usernameVariable: 'DOCKER_USERNAME',
 						    passwordVariable: 'DOCKER_PASSWORD' )
 	    ]) {
+            // Diagnoses 90% of jenkins+docker errors
             echo "check docker"
+            sh "whoami"
+            sh "id"
             sh "docker --version"
             sh "docker ps"
+
         	echo "docker build image ..."
 		    sh "docker build -t devct/demo-java-app:${params.VERSION} ."
         	echo "login docker ..."
