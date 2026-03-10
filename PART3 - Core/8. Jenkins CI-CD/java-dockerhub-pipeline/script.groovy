@@ -23,12 +23,15 @@ def buildAndPushImage() {
                             usernameVariable: 'DOCKER_USERNAME',
 						    passwordVariable: 'DOCKER_PASSWORD' )
 	    ]) {
+            echo "check docker"
+            sh "docker --version"
+            sh "docker ps"
         	echo "docker build image ..."
-		    sh "docker build -t devct/demo-java-app:${VERSION} ."
+		    sh "docker build -t devct/demo-java-app:${params.VERSION} ."
         	echo "login docker ..."
 		    sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
         	echo "docker push image ..."
-		    sh "docker push devct/demo-java-app:${VERSION}"
+		    sh "docker push devct/demo-java-app:${params.VERSION}"
 	    }
     }
 }
