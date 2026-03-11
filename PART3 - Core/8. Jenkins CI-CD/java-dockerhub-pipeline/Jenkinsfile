@@ -31,9 +31,9 @@ pipeline {
 
         stage("build jar") {
             steps {
-                condition {
+                when {
                     expression {
-                        BRANCH_NAME == "main"
+                        env.BRANCH_NAME == "main"
                     }
                 }
                 script {
@@ -44,9 +44,9 @@ pipeline {
 
         stage("build and push image") {
             steps {
-                condition {
+                when {
                     expression {
-                        BRANCH_NAME == "main"
+                        env.BRANCH_NAME == "main"
                     }
                 }
                 script {
