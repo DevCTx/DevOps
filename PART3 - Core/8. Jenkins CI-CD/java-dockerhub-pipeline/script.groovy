@@ -8,7 +8,7 @@ def testApp() {
         sh "ls -la"
 
     	echo "Test Java App ..."
-    	sh "mvn test"
+    	sh "mvn --no-transfer-progress test"
     }
 }
 
