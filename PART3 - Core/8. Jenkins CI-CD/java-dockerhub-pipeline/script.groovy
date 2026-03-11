@@ -1,3 +1,5 @@
+#!/user/bin/env groovy
+
 def testApp() {
 	echo "testApp()"
 
