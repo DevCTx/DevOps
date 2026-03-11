@@ -21,8 +21,21 @@ pipeline {
             }
         }
 
+        stage("test app") {
+            steps {
+                script {
+                    gv.testApp()
+                }
+            }
+        }
+
         stage("build jar") {
             steps {
+                condition {
+                    expression {
+                        BRANCH_NAME == "main"
+                    }
+                }
                 script {
                     gv.buildJar()
                 }
@@ -31,6 +44,11 @@ pipeline {
 
         stage("build and push image") {
             steps {
+                condition {
+                    expression {
+                        BRANCH_NAME == "main"
+                    }
+                }
                 script {
                     gv.buildAndPushImage()
                 }

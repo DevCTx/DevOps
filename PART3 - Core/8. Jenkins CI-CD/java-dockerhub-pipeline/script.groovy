@@ -1,3 +1,15 @@
+def testApp() {
+	echo "testApp()"
+
+    dir("./PART3 - Core/8. Jenkins CI-CD/java-dockerhub-pipeline/") {
+        sh "pwd"
+        sh "ls -la"
+
+    	echo "Test Java App ..."
+    	sh "mvn --no-transfer-progress clean test"
+    }
+}
+
 def buildJar() {
 	echo "buildjar()"
 
