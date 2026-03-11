@@ -1,0 +1,60 @@
+#!/usr/bin/env groovy
+
+def gv
+
+pipeline {
+
+	agent any
+
+	tools {
+		maven "maven-3.9.9"
+	}
+
+    parameters {
+        string( name: 'VERSION', defaultValue: '2.0', description: 'App Version')
+    }
+	
+    stages {
+        stage("init") {
+            steps {
+                script {
+                    gv = load "PART3 - Core/8. Jenkins CI-CD/java-dockerhub-pipeline/script.groovy"
+                }
+            }
+        }
+
+        stage("test app") {
+            steps {
+                script {
+                    gv.testApp()
+                }
+            }
+        }
+
+        stage("build jar") {
+            when {
+                expression {
+                    env.BRANCH_NAME == "main"
+                }
+            }
+            steps {
+                script {
+                    gv.buildJar()
+                }
+            }
+        }
+
+        stage("build and push image") {
+            when {
+                expression {
+                    env.BRANCH_NAME == "main"
+                }
+            }
+            steps {
+                script {
+                    gv.buildAndPushImage()
+                }
+            }
+        }
+    }
+}
