@@ -1,5 +1,7 @@
 #!/usr/bin/env groovy
 
+// This project used the global shared library
+
 @Library('jenkins-shared-library') _ // underscore needed if no instruction before pipeline
 def gv
 
