@@ -3,8 +3,8 @@
 // This project used a shared library within the project scope only
 
 library identifier: 'jenkins-shared-library@main', 
-        retriever: modernSCM( [
-            $class: 'GitSCMSource', 
+        retriever: modernSMC( [
+            $class: 'GitSMCSource', 
             remote: "https://github.com/DevCTx/DevOps.git",
             credentials: 'github-credentials'
         ])
