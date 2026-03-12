@@ -31,6 +31,7 @@ pipeline {
         stage("init") {
             steps {
                 script {
+                    echo "Init script.groovy ..."
                     gv = load "${APP_DIR}/script.groovy"
                 }
             }
