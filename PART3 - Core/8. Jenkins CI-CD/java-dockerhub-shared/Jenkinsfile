@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-@Library('jenkins-shared-library')
+@Library('jenkins-shared-library') _ // underscore needed if no instruction before pipeline
 def gv
 
 def APP_DIR = "PART3 - Core/8. Jenkins CI-CD/java-dockerhub-shared"
