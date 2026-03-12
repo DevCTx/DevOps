@@ -2,7 +2,7 @@
 
 // This project used a shared library within the project scope only
 
-library identifier: "jenkins-shared-library@main", 
+library identifier: "jenkins-shared-library@main:PART3 - Core/8. Jenkins CI-CD/jenkins-shared-library/", 
     retriever: modernSCM([
         $class: "GitSCMSource", 
         remote: "https://github.com/DevCTx/DevOps.git",
@@ -10,10 +10,9 @@ library identifier: "jenkins-shared-library@main",
     ])
 
 
-
 def gv
 
-def APP_DIR = "PART3 - Core/8. Jenkins CI-CD/java-dockerhub-shared"
+def APP_DIR = "PART3 - Core/8. Jenkins CI-CD/java-dockerhub-limited-shared"
 
 pipeline {
 
