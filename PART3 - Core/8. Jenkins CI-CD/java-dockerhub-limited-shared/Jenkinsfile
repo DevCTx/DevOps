@@ -1,0 +1,71 @@
+#!/usr/bin/env groovy
+
+// This project used a shared library within the project scope only
+
+library identifier: 'jenkins-shared-library@main', 
+        retriever: modernSCM( [
+            $class: 'GitSCMSource', 
+            remote: "https://github.com/DevCTx/DevOps.git",
+            credentials: 'github-credentials'
+        ])
+
+
+def gv
+
+def APP_DIR = "PART3 - Core/8. Jenkins CI-CD/java-dockerhub-shared"
+
+pipeline {
+
+	agent any
+
+	tools {
+		maven "maven-3.9.9"
+	}
+
+    parameters {        
+        string( name: 'IMAGE_NAME', defaultValue: 'devct/demo-java-app', description: 'Image Name')
+        string( name: 'VERSION', defaultValue: '2.0', description: 'App Version')
+    }
+	
+    stages {
+        stage("init") {
+            steps {
+                script {
+                    gv = load "${APP_DIR}/script.groovy"
+                }
+            }
+        }
+
+        stage("test app") {
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        gv.testApp()  // calls the script function
+                    }
+                }
+            }
+        }
+
+        stage("build jar") {
+            when { expression { env.GIT_BRANCH == "main" } }  //BRANCH_NAME in Multibranch only
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        buildJar()  // calls the Library function
+                    }
+                }
+            }
+        }
+
+        stage("build and push image") {
+            when { expression { env.GIT_BRANCH == "main" } }  //BRANCH_NAME in Multibranch only
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        buildAndPushImage() // calls the Library function
+                    }
+                }
+            }
+        }
+    }
+}
