@@ -2,7 +2,7 @@
 
 // This project used a shared library within the project scope only
 
-library identifier: "jenkins-shared-library@main", 
+library identifier: "jenkins-limited-shared-library@main", 
     retriever: modernSCM([
         $class: "GitSCMSource", 
         remote: "https://github.com/DevCTx/jenkins-limited-shared-library.git",
