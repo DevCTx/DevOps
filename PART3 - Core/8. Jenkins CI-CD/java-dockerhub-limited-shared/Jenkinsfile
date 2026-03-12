@@ -46,6 +46,12 @@ pipeline {
             }
         }
 
+        stage("debug") {
+            steps {
+                echo "GIT_BRANCH = ${env.GIT_BRANCH}"
+            }
+        }
+
         stage("build jar") {
             when { expression { env.GIT_BRANCH == "main" } }  //BRANCH_NAME in Multibranch only
             steps {
