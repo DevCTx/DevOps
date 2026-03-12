@@ -1,6 +1,9 @@
 #!/usr/bin/env groovy
 
+@Library('jenkins-shared-library')
 def gv
+
+def APP_DIR = "PART3 - Core/8. Jenkins CI-CD/java-dockerhub-shared"
 
 pipeline {
 
@@ -18,7 +21,7 @@ pipeline {
         stage("init") {
             steps {
                 script {
-                    gv = load "PART3 - Core/8. Jenkins CI-CD/java-dockerhub-pipeline/script.groovy"
+                    gv = load "${APP_DIR}/script.groovy"
                 }
             }
         }
@@ -26,7 +29,10 @@ pipeline {
         stage("test app") {
             steps {
                 script {
-                    gv.testApp()
+                    dir("${APP_DIR}/") {
+
+                        gv.testApp()
+                    }
                 }
             }
         }
@@ -39,7 +45,10 @@ pipeline {
             }
             steps {
                 script {
-                    gv.buildJar()
+                    dir("${APP_DIR}/") {
+
+                        buildJar()  // calls the Library function
+                    }
                 }
             }
         }
@@ -52,7 +61,10 @@ pipeline {
             }
             steps {
                 script {
-                    gv.buildAndPushImage()
+                    dir("${APP_DIR}/") {
+
+                        buildAndPushImage() // calls the Library function
+                    }
                 }
             }
         }
