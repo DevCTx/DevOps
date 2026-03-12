@@ -3,13 +3,13 @@
 // This project used a shared library within the project scope only
 
 library 
-    identifier: 'jenkins-shared-library@main', 
+    identifier: "jenkins-shared-library@main", 
     retriever: modernSCM([
-        $class: 'GitSCMSource', 
-        remote: 'https://github.com/DevCTx/DevOps.git',
-        credentialsId: 'github-credentials'
+        $class: "GitSCMSource", 
+        remote: "https://github.com/DevCTx/DevOps.git",
+        credentialsId: "github-credentials"
     ]),
-    libraryPath: 'PART3 - Core/8. Jenkins CI-CD/jenkins-shared-library/'
+    libraryPath: "PART3 - Core/8. Jenkins CI-CD/jenkins-shared-library/"
 
 
 def gv
