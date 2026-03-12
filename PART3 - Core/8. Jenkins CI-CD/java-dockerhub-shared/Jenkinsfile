@@ -30,23 +30,17 @@ pipeline {
             steps {
                 script {
                     dir("${APP_DIR}/") {
-
-                        gv.testApp()
+                        gv.testApp()  // calls the script function
                     }
                 }
             }
         }
 
         stage("build jar") {
-            when {
-                expression {
-                    env.BRANCH_NAME == "main"
-                }
-            }
+            when { expression { env.BRANCH_NAME == "main" } }
             steps {
                 script {
                     dir("${APP_DIR}/") {
-
                         buildJar()  // calls the Library function
                     }
                 }
@@ -54,15 +48,10 @@ pipeline {
         }
 
         stage("build and push image") {
-            when {
-                expression {
-                    env.BRANCH_NAME == "main"
-                }
-            }
+            when { expression { env.BRANCH_NAME == "main" } }
             steps {
                 script {
                     dir("${APP_DIR}/") {
-
                         buildAndPushImage() // calls the Library function
                     }
                 }
