@@ -13,7 +13,8 @@ pipeline {
 		maven "maven-3.9.9"
 	}
 
-    parameters {
+    parameters {        
+        string( name: 'IMAGE_NAME', defaultValue: 'devct/demo-java-app', description: 'Image Name')
         string( name: 'VERSION', defaultValue: '2.0', description: 'App Version')
     }
 	
