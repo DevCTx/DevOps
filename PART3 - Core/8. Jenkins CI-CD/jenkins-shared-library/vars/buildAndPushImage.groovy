@@ -8,15 +8,14 @@ def call() {
 				        passwordVariable: 'DOCKER_PASSWORD' )
     ]) {
         // Diagnoses 90% of jenkins+docker errors
-        echo "check docker"
-        sh "whoami"
-        sh "id"
-        sh "docker --version"
-        sh "docker ps"
+        echo "check docker env"
+        sh "whoami && id && docker --version && docker ps"
 
-	    echo "docker build and push image ..."
-        sh "docker build -t devct/demo-java-app:${params.VERSION} ."
+	    echo "docker build image ..."
+        sh "docker build -t ${params.IMAGE_NAME}:${params.VERSION} ."
+        
+	    echo "docker login and push image ..."
         sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
-        sh "docker push devct/demo-java-app:${params.VERSION}"
+        sh "docker push ${params.IMAGE_NAME}:${params.VERSION}"
     }
 }
