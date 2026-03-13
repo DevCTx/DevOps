@@ -31,11 +31,6 @@ pipeline {
 
                         def matcher = readFile('pom.xml') =~ '<version>(.+)</version>'
                         def version = matcher[0][1]
-                        // Récupération fiable de la version effective
-                        //def version = sh(
-                        //    script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout",
-                        //    returnStdout: true
-                        //).trim()
 
                         env.VERSION = "$version-$BUILD_NUMBER"
                         echo "env.VERSION = ${env.VERSION}"
