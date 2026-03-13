@@ -77,7 +77,7 @@ pipeline {
                             
 	                        echo "docker login and push image ..."
                             sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
-                            sh 'docker push ${env.IMAGE}:${env.VERSION}'
+                            sh "docker push ${env.IMAGE}:${env.VERSION}"
                         }
                     }
                 }
