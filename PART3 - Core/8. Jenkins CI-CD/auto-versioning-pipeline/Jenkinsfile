@@ -13,7 +13,7 @@ pipeline {
 		maven "maven-3.9.9"
 	}
 
-    environment
+    environment {
         IMAGE = "devct/demo-java-app"
         VERSION = "Major.Minor.Increment-Jenkins_Build"
     }
