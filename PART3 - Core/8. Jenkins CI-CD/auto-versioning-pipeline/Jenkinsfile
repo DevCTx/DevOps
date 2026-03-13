@@ -40,7 +40,7 @@ pipeline {
                         //    returnStdout: true
                         //).trim()
 
-                        env.VERSION = "$version-$BUILD_NUMBER"
+                        env.VERSION = "${version}-${BUILD_NUMBER}"
                         echo "env.VERSION = ${env.VERSION}"
                     }
                 }
