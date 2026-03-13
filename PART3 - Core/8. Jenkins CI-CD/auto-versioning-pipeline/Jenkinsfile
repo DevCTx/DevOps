@@ -28,7 +28,7 @@ pipeline {
                         // Auto-increment patch
                         sh '''
                         mvn build-helper:parse-version
-                        mvn versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}
+                        mvn versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion}
                         mvn versions:commit
                         '''
 
