@@ -46,7 +46,7 @@ pipeline {
         }
 
         stage("build jar") {
-            when { expression { env.GIT_BRANCH == "main" } }  //BRANCH_NAME in Multibranch only
+            when { expression { env.GIT_BRANCH == "origin/main" } }  
             steps {
                 script {
                     dir("${APP_DIR}/") {
@@ -58,7 +58,7 @@ pipeline {
         }
 
         stage("build and push image") {
-            when { expression { env.GIT_BRANCH == "main" } }  //BRANCH_NAME in Multibranch only
+            when { expression { env.GIT_BRANCH == "origin/main" } }
             steps {
                 script {
                     dir("${APP_DIR}/") {
