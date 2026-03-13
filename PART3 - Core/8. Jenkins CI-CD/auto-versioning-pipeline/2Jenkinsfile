@@ -15,7 +15,6 @@ pipeline {
 
     environment {
         IMAGE = "devct/demo-java-app"
-        VERSION = "Major.Minor.Increment-Jenkins_Build"
     }
 
     stages {
