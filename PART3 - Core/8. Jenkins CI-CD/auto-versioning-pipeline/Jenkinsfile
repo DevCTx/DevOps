@@ -31,7 +31,7 @@ pipeline {
                             mvn --no-transfer-progress versions:commit
                         '''
                         // Read this version into pom.xml
-                        def matcher = readFile('pom.xml') =~  '<version>(.*)</version>'
+                        def matcher = readFile('pom.xml') =~  '<version>(.+)</version>'
                         echo "matcher = ${matcher}"
                         def version = matcher[0][1]
                         env.VERSION = "$version-$BUILD_NUMBER"
