@@ -25,11 +25,9 @@ pipeline {
                         echo "Incrementing app version ..."
 
                         // Auto-increment patch
-                        sh '''
-                            mvn --no-transfer-progress build-helper:parse-version
-                            mvn --no-transfer-progress versions:set -DnextSnapshot=true
-                            mvn --no-transfer-progress versions:commit
-                        '''
+                        sh 'mvn build-helper:parse-version \
+                        versions:set -DnextSnapshot=true \
+                        versions:commit'
 
                         // Récupération fiable de la version effective
                         def version = sh(
