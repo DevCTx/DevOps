@@ -46,7 +46,7 @@ pipeline {
         }
 
         stage("build jar") {
-            when { expression { env.GIT_BRANCH == "origin/main" } }  
+            when { expression { env.GIT_BRANCH == "origin/main" } }
             steps {
                 script {
                     dir("${APP_DIR}/") {
@@ -73,11 +73,11 @@ pipeline {
                             sh "whoami && id && docker --version && docker ps"
 
 	                        echo "docker build image ..."
-                            sh "docker build -t ${env.IMAGE}:${env.VERSION} ."
+                            sh 'docker build -t ${env.IMAGE}:${env.VERSION} .'
                             
 	                        echo "docker login and push image ..."
-                            sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
-                            sh "docker push ${env.IMAGE}:${env.VERSION}"
+                            sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                            sh 'docker push ${env.IMAGE}:${env.VERSION}'
                         }
                     }
                 }
