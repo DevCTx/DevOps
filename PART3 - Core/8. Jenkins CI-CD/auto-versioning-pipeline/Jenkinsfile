@@ -3,7 +3,7 @@
 // To simplify the understanding,
 // this project is not using the global shared library
 
-def APP_DIR = "PART3 - Core/8. Jenkins CI-CD/auto-versioning-pipeline/"
+def APP_DIR = "PART3 - Core/8. Jenkins CI-CD/auto-versioning-pipeline"
 
 pipeline {
 
