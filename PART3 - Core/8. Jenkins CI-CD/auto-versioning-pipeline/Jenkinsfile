@@ -24,18 +24,21 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         echo "Incrementing app version ..."
-                        // Auto-increment snapshot version
+
+                        // Auto-increment patch
                         sh '''
                             mvn --no-transfer-progress build-helper:parse-version
                             mvn --no-transfer-progress versions:set -DnextSnapshot=true
                             mvn --no-transfer-progress versions:commit
                         '''
-                        // Reliable recovery of the effective version
-                        env.VERSION = sh(
+
+                        // Récupération fiable de la version effective
+                        def version = sh(
                             script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout",
                             returnStdout: true
-                        ).trim() + "-${BUILD_NUMBER}"
+                        ).trim()
 
+                        env.VERSION = "${version}-${BUILD_NUMBER}"
                         echo "env.VERSION = ${env.VERSION}"
                     }
                 }
@@ -74,7 +77,7 @@ pipeline {
                             
 	                        echo "docker login and push image ..."
                             sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
-                            sh "docker push ${env.IMAGE}:${env.IMAGE_VERSION}"
+                            sh "docker push ${env.IMAGE}:${env.VERSION}"
                         }
                     }
                 }
