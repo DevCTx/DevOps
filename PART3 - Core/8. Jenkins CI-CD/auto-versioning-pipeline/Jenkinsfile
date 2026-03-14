@@ -67,7 +67,7 @@ pipeline {
                 }
             }
         }
-        stage("update repo version") {
+        stage("commit version") {
             when { expression { env.GIT_BRANCH == "origin/main" } }
             steps {
                 script {
