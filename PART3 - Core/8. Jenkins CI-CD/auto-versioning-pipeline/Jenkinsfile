@@ -99,7 +99,7 @@ pipeline {
                                 git add .
                                 git status
                                 git diff --cached --quiet || git commit -m 'CI: version Update'
-		                            git push origin HEAD:main
+		                        git push origin HEAD:main
                             """
                         }
                     }
