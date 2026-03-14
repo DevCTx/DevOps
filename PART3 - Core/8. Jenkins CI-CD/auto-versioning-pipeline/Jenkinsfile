@@ -77,6 +77,35 @@ pipeline {
                 }
             }
         }
+
+        stage("update repo version") {
+            when { expression { env.GIT_BRANCH == "origin/main" } }
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        echo "Update version into git repository ..."
+                        withCredentials( [
+                            usernamePassword( credentialsId: 'github-credentials',
+                                              usernameVariable: 'USER',
+					                                    passwordVariable: 'PASS' )
+                        ]) {
+                            echo "declare jenkins as new global user"
+                            sh "git config --global user.email 'jenkins@example.com' "
+                            sh "git config --global user.name 'jenkins' "
+                            
+                            echo "declare the git repo to use"
+                            sh "git remote set-url origin https://${USER}:${PASS}@github.com/DevCTx/DevOps.git"
+
+                            echo "git add/status/commit/push ..."
+                            sh "git add ."
+                            sh "git status"
+                            sh "git commit -m 'CI: version Update' "
+                            sh "git push origin HEAD:main"
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
