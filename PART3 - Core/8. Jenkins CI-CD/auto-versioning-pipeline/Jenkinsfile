@@ -90,13 +90,13 @@ pipeline {
 					                          passwordVariable: 'PASS' )
                         ]) {
                             sh """
-                                git config --global user.email 'jenkins@example.com'
-                                git config --global user.name 'jenkins'
-                                git remote set-url origin https://\${USER}:\${PASS}@github.com/DevCTx/DevOps.git
-                                git add .
-                                git status
-                                git diff --cached --quiet || git commit -m 'CI: version Update'
-                                git push origin HEAD:main
+                            git config --global user.email 'jenkins@example.com'
+                            git config --global user.name 'jenkins'
+                            git remote set-url origin https://\${USER}:\${PASS}@github.com/DevCTx/DevOps.git
+                            git add .
+                            git status
+                            git diff --cached --quiet || git commit -m 'CI: version Update'
+                            git push origin HEAD:main
                             """
                         }
                     }
