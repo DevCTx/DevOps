@@ -79,7 +79,10 @@ pipeline {
         }
 
         stage("update repo version") {
-            when { expression { env.GIT_BRANCH == "origin/main" } }
+            when {
+                expression { env.GIT_BRANCH == "origin/main" }
+                not { changelog '.*CI: version Update.*' }
+            }
             steps {
                 script {
                     dir("${APP_DIR}/") {
@@ -87,7 +90,7 @@ pipeline {
                         withCredentials( [
                             usernamePassword( credentialsId: 'github-token',
                                               usernameVariable: 'USER',
-					                          passwordVariable: 'PASS' )
+						                                  passwordVariable: 'PASS' )
                         ]) {
                             sh """
                                 git config --global user.email 'jenkins@example.com'
@@ -96,7 +99,7 @@ pipeline {
                                 git add .
                                 git status
                                 git diff --cached --quiet || git commit -m 'CI: version Update'
-                            git push origin HEAD:main
+		                            git push origin HEAD:main
                             """
                         }
                     }
