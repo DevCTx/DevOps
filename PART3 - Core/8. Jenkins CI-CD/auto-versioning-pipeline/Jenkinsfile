@@ -3,19 +3,25 @@
 def APP_DIR = "PART3 - Core/8. Jenkins CI-CD/auto-versioning-pipeline"
 
 pipeline {
+    
     agent any
+
     tools {
         maven "maven-3.9.9"
     }
+
     environment {
         IMAGE = "devct/demo-java-app"
     }
+
     stages {
+
         stage('Check commit') {
             steps {
                 scmSkip(deleteBuild: true, skipPattern: '.*CI: version Update.*')
             }
         }
+
         stage('Increment Version') {
             steps {
                 script {
@@ -34,6 +40,7 @@ pipeline {
                 }
             }
         }
+
         stage("build jar") {
             when { expression { env.GIT_BRANCH == "origin/main" } }
             steps {
@@ -45,6 +52,7 @@ pipeline {
                 }
             }
         }
+
         stage("build and push image") {
             when { expression { env.GIT_BRANCH == "origin/main" } }
             steps {
@@ -67,6 +75,7 @@ pipeline {
                 }
             }
         }
+
         stage("commit version") {
             when { expression { env.GIT_BRANCH == "origin/main" } }
             steps {
