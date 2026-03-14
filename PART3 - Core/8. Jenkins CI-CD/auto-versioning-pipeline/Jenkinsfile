@@ -13,17 +13,7 @@ pipeline {
     stages {
         stage('Check commit') {
             steps {
-                script {
-                    def lastCommit = sh(
-                        script: "git log -1 --format='%s'",
-                        returnStdout: true
-                    ).trim()
-                    echo "Last commit message: ${lastCommit}"
-                    if (lastCommit == "CI: version Update") {
-                        currentBuild.result = 'NOT_BUILT'
-                        error("Jenkins commit detected, skipping build.")
-                    }
-                }
+                scmSkip(deleteBuild: true, skipPattern: '.*CI: version Update.*')
             }
         }
         stage('Increment Version') {
