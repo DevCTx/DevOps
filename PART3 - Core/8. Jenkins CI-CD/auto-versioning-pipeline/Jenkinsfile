@@ -1,5 +1,7 @@
 #!/usr/bin/env groovy
+
 def APP_DIR = "PART3 - Core/8. Jenkins CI-CD/auto-versioning-pipeline"
+
 pipeline {
     agent any
     tools {
