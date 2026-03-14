@@ -85,20 +85,22 @@ pipeline {
                     dir("${APP_DIR}/") {
                         echo "Update version into git repository ..."
                         withCredentials( [
-                            usernamePassword( credentialsId: 'github-credentials',
+                            usernamePassword( credentialsId: 'github-token',
                                               usernameVariable: 'USER',
-					                                    passwordVariable: 'PASS' )
+					                          passwordVariable: 'PASS' )
                         ]) {
-                            echo "update git repo ..."
-                            sh """
-                                git config --global user.email 'jenkins@example.com'
-                                git config --global user.name 'jenkins'
-                                git remote set-url origin https://github.com/DevCTx/DevOps.git
-                                git add .
-                                git status
-                                git diff --cached --quiet || git commit -m 'CI: version Update'
-                                git -c credential.helper='!f() { echo username=\${USER}; echo password=\${PASS}; }; f' push origin HEAD:main
-                            """
+                            echo "declare jenkins as new global user"
+                            sh "git config --global user.email 'jenkins@example.com' "
+                            sh "git config --global user.name 'jenkins' "
+                            
+                            echo "declare the git repo to use"
+                            sh "git remote set-url origin https://${USER}:${PASS}@github.com/DevCTx/DevOps.git"
+
+                            echo "git add/status/commit/push ..."
+                            sh "git add ."
+                            sh "git status"
+                            sh "git commit -m 'CI: version Update' "
+                            sh "git push origin HEAD:main"
                         }
                     }
                 }
