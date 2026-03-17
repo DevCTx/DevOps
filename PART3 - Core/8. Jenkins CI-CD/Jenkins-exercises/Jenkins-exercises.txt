@@ -305,8 +305,8 @@ def call(String credentialsId, String imageName, String version) {
         sh "whoami && id && docker --version && docker ps"
 
         // Remove all old images of this repository
-        echo "Removing all existing images of ${imageName}..."
-        sh "docker images ${imageName} -q | xargs -r docker rmi -f"
+        echo "Removing all existing images of ${imageName} skipping in-use images..."
+        sh "docker images ${imageName} -q | xargs -r -n1 docker rmi -f || true"
 
         // Build the new image
         echo "Building new image ${imageName}:${version}..."
@@ -392,4 +392,367 @@ Behaviors :
  - Filter by name (with reg ex ) : .*
  - Sparse Checkout paths : Path : PART3 - Core/8. Jenkins CI-CD/jenkins-shared-library/
 Library Path (optional) : PART3 - Core/8. Jenkins CI-CD/jenkins-shared-library/
+
+
+# Logs from Jenkins
+Started by GitHub push by DevCTx
+Obtained PART3 - Core/8. Jenkins CI-CD/Jenkins-exercises/jenkins-exercises/Jenkinsfile from git https://github.com/DevCTx/DevOps.git
+Loading library jenkins-shared-library@main:PART3 - Core/8. Jenkins CI-CD/jenkins-shared-library/
+Attempting to resolve main from remote references...
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+using GIT_ASKPASS to set credentials GitHub credentials
+ > git ls-remote -h -- https://github.com/DevCTx/DevOps.git # timeout=10
+Found match: refs/heads/main revision 17c29604c37629987636d71e1b9cce4962ee861a
+The recommended git tool is: git
+using credential github-credentials
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/jenkins-nodejs-exercise@libs/cca4987113b3bd754f4cd4919f00da653fe06624dd07ad81f083c19fe4ef8233/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/DevCTx/DevOps.git # timeout=10
+Fetching without tags
+Fetching upstream changes from https://github.com/DevCTx/DevOps.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+using GIT_ASKPASS to set credentials GitHub credentials
+ > git fetch --no-tags --force --progress -- https://github.com/DevCTx/DevOps.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+Checking out Revision 17c29604c37629987636d71e1b9cce4962ee861a (main)
+ > git config core.sparsecheckout # timeout=10
+ > git read-tree -mu HEAD # timeout=10
+ > git checkout -f 17c29604c37629987636d71e1b9cce4962ee861a # timeout=10
+Commit message: "Update Jenkins Exercises"
+ > git rev-list --no-walk 912b1a94ce688eac5e3445d819747f86a3b3630d # timeout=10
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/jenkins-nodejs-exercise
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+The recommended git tool is: git
+using credential github-credentials
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/jenkins-nodejs-exercise/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/DevCTx/DevOps.git # timeout=10
+Fetching upstream changes from https://github.com/DevCTx/DevOps.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+using GIT_ASKPASS to set credentials GitHub credentials
+ > git fetch --tags --force --progress -- https://github.com/DevCTx/DevOps.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 17c29604c37629987636d71e1b9cce4962ee861a (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git read-tree -mu HEAD # timeout=10
+ > git checkout -f 17c29604c37629987636d71e1b9cce4962ee861a # timeout=10
+Commit message: "Update Jenkins Exercises"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Tool Install)
+[Pipeline] tool
+[Pipeline] envVarsForTool
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Check commit)
+[Pipeline] tool
+[Pipeline] envVarsForTool
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] scmSkip
+SCM Skip: Pattern .*CI: version update.* NOT matched on message: Update Jenkins Exercises
+
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Increment Version)
+[Pipeline] tool
+[Pipeline] envVarsForTool
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] script
+[Pipeline] {
+[Pipeline] dir
+Running in /var/jenkins_home/workspace/jenkins-nodejs-exercise/PART3 - Core/8. Jenkins CI-CD/Jenkins-exercises/jenkins-exercises/app
+[Pipeline] {
+[Pipeline] echo
+Incrementing NodeJS patch version ...
+[Pipeline] sh
++ npm version patch --no-git-tag-version
+[Pipeline] echo
+env.VERSION = 1.2.7-35
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Run tests)
+[Pipeline] tool
+[Pipeline] envVarsForTool
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] script
+[Pipeline] {
+[Pipeline] dir
+Running in /var/jenkins_home/workspace/jenkins-nodejs-exercise/PART3 - Core/8. Jenkins CI-CD/Jenkins-exercises/jenkins-exercises/app
+[Pipeline] {
+[Pipeline] echo
+Running NodeJS test ...
+[Pipeline] sh
++ npm install
+
+up to date, audited 343 packages in 2s
+
+46 packages are looking for funding
+  run `npm fund` for details
+
+2 vulnerabilities (1 moderate, 1 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+[Pipeline] sh
++ npm run test
+
+> bootcamp-node-project@1.2.7 test
+> jest
+
+PASS ./server.test.js
+  ✓ main index.html file exists (4 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        0.554 s, estimated 1 s
+Ran all test suites.
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (build and push image)
+[Pipeline] tool
+[Pipeline] envVarsForTool
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] script
+[Pipeline] {
+[Pipeline] dir
+Running in /var/jenkins_home/workspace/jenkins-nodejs-exercise/PART3 - Core/8. Jenkins CI-CD/Jenkins-exercises/jenkins-exercises
+[Pipeline] {
+[Pipeline] withCredentials
+Masking supported pattern matches of $DOCKER_USERNAME or $DOCKER_PASSWORD
+[Pipeline] {
+[Pipeline] echo
+Checking Docker environment...
+[Pipeline] sh
++ whoami
+jenkins
++ id
+uid=1000(jenkins) gid=1000(jenkins) groups=1000(jenkins),112(docker)
++ docker --version
+Docker version 26.1.5+dfsg1, build a72d7cd
++ docker ps
+CONTAINER ID   IMAGE                                    COMMAND                  CREATED       STATUS       PORTS                                                                                      NAMES
+a7a57e1beb28   devct/jenkins-nodejs-exercise:1.2.6-25   "docker-entrypoint.s…"   2 hours ago   Up 2 hours   0.0.0.0:3000->3000/tcp, :::3000->3000/tcp                                                  mystifying_sinoussi
+9183862ec54e   my-jenkins-docker                        "/usr/bin/tini -- /u…"   7 hours ago   Up 6 hours   0.0.0.0:8080->8080/tcp, :::8080->8080/tcp, 0.0.0.0:50000->50000/tcp, :::50000->50000/tcp   jenkins
+[Pipeline] echo
+Removing all existing images of devct/jenkins-nodejs-exercise skipping in-use images...
+[Pipeline] sh
++ docker images devct/jenkins-nodejs-exercise -q
++ xargs -r -n1 docker rmi -f
+Error response from daemon: conflict: unable to delete 67e839f4fb5d (cannot be forced) - image is being used by running container a7a57e1beb28
++ true
+[Pipeline] echo
+Building new image devct/jenkins-nodejs-exercise:1.2.7-35...
+[Pipeline] sh
++ docker build -t devct/jenkins-nodejs-exercise:1.2.7-35 .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 202B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:20-alpine
+#2 ...
+
+#3 [auth] library/node:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:20-alpine
+#2 DONE 0.7s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [1/6] FROM docker.io/library/node:20-alpine@sha256:b88333c42c23fbd91596ebd7fd10de239cedab9617de04142dde7315e3bc0afa
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 transferring context: 720.36kB 0.4s done
+#6 DONE 0.4s
+
+#7 [2/6] RUN mkdir -p /home/app
+#7 CACHED
+
+#8 [3/6] WORKDIR /home/app
+#8 CACHED
+
+#9 [4/6] COPY ./app/package.json ./
+#9 DONE 0.1s
+
+#10 [5/6] RUN npm install
+#10 33.76 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#10 36.02 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#10 36.59 npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#10 38.19 
+#10 38.19 added 353 packages, and audited 354 packages in 38s
+#10 38.19 
+#10 38.19 66 packages are looking for funding
+#10 38.19   run `npm fund` for details
+#10 38.19 
+#10 38.19 found 0 vulnerabilities
+#10 38.19 npm notice
+#10 38.19 npm notice New major version of npm available! 10.8.2 -> 11.11.1
+#10 38.19 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.11.1
+#10 38.19 npm notice To update run: npm install -g npm@11.11.1
+#10 38.19 npm notice
+#10 DONE 38.5s
+
+#11 [6/6] COPY ./app/ .
+#11 DONE 3.8s
+
+#12 exporting to image
+#12 exporting layers
+#12 exporting layers 2.9s done
+#12 writing image sha256:5665a9dc1cacaf2d4ab07f69d5d579b85e6f86dead39fff9865e8721e1162258 done
+#12 naming to docker.io/devct/jenkins-nodejs-exercise:1.2.7-35 done
+#12 DONE 3.0s
+[Pipeline] echo
+Docker login and push image...
+[Pipeline] sh
++ echo ****
++ docker login -u **** --password-stdin
+WARNING! Your password will be stored unencrypted in /var/jenkins_home/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+[Pipeline] sh
++ docker push devct/jenkins-nodejs-exercise:1.2.7-35
+The push refers to repository [docker.io/devct/jenkins-nodejs-exercise]
+98ac7fd9f7ea: Preparing
+30711e95c37d: Preparing
+f7a73e0e0a5d: Preparing
+5f70bf18a086: Preparing
+bea8d4bd827b: Preparing
+ce29895978ec: Preparing
+6e7f71700cfd: Preparing
+ad8a028fb847: Preparing
+989e799e6349: Preparing
+ce29895978ec: Waiting
+6e7f71700cfd: Waiting
+ad8a028fb847: Waiting
+989e799e6349: Waiting
+5f70bf18a086: Layer already exists
+bea8d4bd827b: Layer already exists
+ce29895978ec: Layer already exists
+6e7f71700cfd: Layer already exists
+ad8a028fb847: Layer already exists
+989e799e6349: Layer already exists
+f7a73e0e0a5d: Pushed
+98ac7fd9f7ea: Pushed
+30711e95c37d: Pushed
+1.2.7-35: digest: sha256:c6b8bc3057c0c1999dbe4ff12fecf511c2b670e69435cf4c116a455fb10fb957 size: 2201
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (commit version)
+[Pipeline] tool
+[Pipeline] envVarsForTool
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] script
+[Pipeline] {
+[Pipeline] dir
+Running in /var/jenkins_home/workspace/jenkins-nodejs-exercise/PART3 - Core/8. Jenkins CI-CD/Jenkins-exercises/jenkins-exercises
+[Pipeline] {
+[Pipeline] withCredentials
+Masking supported pattern matches of $GIT_USER or $GIT_PASS
+[Pipeline] {
+[Pipeline] echo
+Updating version in Git repository...
+[Pipeline] sh
+Warning: A secret was passed to "sh" using Groovy String interpolation, which is insecure.
+		 Affected argument(s) used the following variable(s): [GIT_USER]
+		 See https://jenkins.io/redirect/groovy-string-interpolation for details.
++ git config user.email jenkins@example.com
++ git config user.name jenkins
++ git remote set-url origin https://****:****@github.com/****/DevOps.git
++ git add .
++ git status
+HEAD detached at 17c2960
+You are in a sparse checkout with 4% of tracked files present.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   app/package-lock.json
+	modified:   app/package.json
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	../jenkins-exercises@tmp/
+
++ git diff --cached --quiet
++ git commit -m CI: version update
+[detached HEAD 3387c41] CI: version update
+ 2 files changed, 3 insertions(+), 3 deletions(-)
++ git push origin HEAD:main
+To https://github.com/****/DevOps.git
+   17c2960..3387c41  HEAD -> main
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
 
