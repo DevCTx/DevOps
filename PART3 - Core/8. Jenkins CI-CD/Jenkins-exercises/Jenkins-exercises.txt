@@ -1,0 +1,33 @@
+# Start Docker on local
+sudo systemctl start docker
+
+# Clone the project from Modules Exercises Gitlab
+mkdir Jenkins-exercises
+cd Jenkins-exercises
+git clone https://gitlab.com/twn-devops-bootcamp/latest/08-jenkins/jenkins-exercises
+rm -r */.git*
+
+
+### Exercise 1
+
+# Create a Dockerfile
+FROM node:20-alpine
+
+RUN mkdir -p /home/app
+
+WORKDIR /home/app
+
+COPY ./app/package.json ./
+
+RUN npm install
+
+COPY ./app/ .
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]st
+
+
+### Exercise 2
+
+
