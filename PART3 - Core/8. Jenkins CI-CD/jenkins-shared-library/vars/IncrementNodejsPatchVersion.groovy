@@ -7,5 +7,6 @@ def call() {
         returnStdout: true
     ).trim()
     version = version.replace("v", "")
+    return version
 }
 

@@ -33,7 +33,7 @@ pipeline {
             steps {
                 script {
                     dir("${APP_DIR}/") {
-                        IncrementNodejsPatchVersion()
+                        def version = IncrementNodejsPatchVersion()
                         env.VERSION = "$version-$BUILD_NUMBER"
                         echo "env.VERSION = ${env.VERSION}"
                     }
