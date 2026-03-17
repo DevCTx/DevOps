@@ -1,5 +1,9 @@
 #!/usr/bin/env groovy
 
+// This project used the global shared library
+
+@Library('jenkins-shared-library') _ // underscore needed if no instruction before pipeline
+
 def ROOT_DIR = "PART3 - Core/8. Jenkins CI-CD/Jenkins-exercises/jenkins-exercises"
 def APP_DIR = "${ROOT_DIR}/app"
 
@@ -27,12 +31,7 @@ pipeline {
             steps {
                 script {
                     dir("${APP_DIR}/") {
-                        echo "Incrementing app version ..."
-                        def version = sh(
-                            script: "npm version patch --no-git-tag-version", 
-                            returnStdout: true
-                        ).trim()
-                        version = version.replace("v", "")
+                        IncrementNodejsPatchVersion()
                         env.VERSION = "$version-$BUILD_NUMBER"
                         echo "env.VERSION = ${env.VERSION}"
                     }
@@ -44,9 +43,7 @@ pipeline {
             steps {
                 script {
                     dir("${APP_DIR}/") {
-                        echo "Building NodeJS App ..."
-                        sh "npm install"
-                        sh "npm run test"
+                        RunNodejsTests()
                     }
                 }
             }
@@ -56,24 +53,11 @@ pipeline {
             steps {
                 script {
                     dir("${ROOT_DIR}/") {
-                        withCredentials([
-                            usernamePassword(credentialsId: 'docker-credentials',
-                                            usernameVariable: 'USER',
-                                            passwordVariable: 'PSWD')
-                        ]) {
-                            echo "check docker env"
-                            sh "whoami && id && docker --version && docker ps"
-                            
-                            echo "Remove all existing images of ${env.IMAGE}..."
-                            sh "docker images ${env.IMAGE} -q | xargs -r docker rmi -f"
-
-                            echo "Build new image ${env.IMAGE}:${env.VERSION}..."
-                            sh "docker build -t ${env.IMAGE}:${env.VERSION} . "
-
-                            echo "Login and Push image to Docker Hub..."
-                            sh 'echo $PSWD | docker login -u $USER --password-stdin'
-                            sh "docker push ${env.IMAGE}:${env.VERSION}"
-                        }
+                        buildAndPushDockerImage(
+                            "docker-credentials", 
+                            env.IMAGE,
+                            env.VERSION
+                        )
                     }
                 }
             }
@@ -83,22 +67,7 @@ pipeline {
             steps {
                 script {
                     dir("${ROOT_DIR}/") {
-                        echo "Update version into git repository ..."
-                        withCredentials([
-                            usernamePassword(credentialsId: 'github-token',
-                                            usernameVariable: 'USER',
-                                            passwordVariable: 'PASS')
-                        ]) {
-                            sh """
-                                git config user.email 'jenkins@example.com'
-                                git config user.name 'jenkins'
-                                git remote set-url origin https://\${USER}:\${PASS}@github.com/DevCTx/DevOps.git
-                                git add .
-                                git status
-                                git diff --cached --quiet || git commit -m 'CI: version update'
-                                git push origin HEAD:main
-                            """
-                        }
+                        commitVersionToGit("github-token", "CI: version update")
                     }
                 }
             }
