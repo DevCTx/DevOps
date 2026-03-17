@@ -202,3 +202,180 @@ a7a57e1beb28   devct/jenkins-nodejs-exercise:1.2.6-25   "docker-entrypoint.s…"
 
 
 
+### Exercise 4
+
+# Modify the Jenkinsfile by adding the PART3 - Core/8. Jenkins CI-CD/jenkins-shared-library
+#
+#!/usr/bin/env groovy
+
+// This project used the global shared library
+
+@Library('jenkins-shared-library') _ // underscore needed if no instruction before pipeline
+
+def ROOT_DIR = "PART3 - Core/8. Jenkins CI-CD/Jenkins-exercises/jenkins-exercises"
+def APP_DIR = "${ROOT_DIR}/app"
+
+def CI_MSG = 'CI: version update'
+
+pipeline {
+    
+    agent any
+
+    tools {
+        nodejs "nodejs-24.12.0"
+    }
+
+    environment {
+        IMAGE = "devct/jenkins-nodejs-exercise"
+    }
+
+    stages {
+
+        stage('Check commit') {
+            steps {
+                scmSkip(deleteBuild: true, skipPattern: ".*${CI_MSG}.*")
+            }
+        }
+
+        stage('Increment Version') {
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        IncrementNodejsPatchVersion()
+                        env.VERSION = "$version-$BUILD_NUMBER"
+                        echo "env.VERSION = ${env.VERSION}"
+                    }
+                }
+            }
+        }
+
+        stage("Run tests") {
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        RunNodejsTests()
+                    }
+                }
+            }
+        }
+
+        stage("build and push image") {
+            steps {
+                script {
+                    dir("${ROOT_DIR}/") {
+                        BuildAndPushDockerImage(
+                            "docker-credentials", 
+                            env.IMAGE,
+                            env.VERSION
+                        )
+                    }
+                }
+            }
+        }
+
+        stage("commit version") {
+            steps {
+                script {
+                    dir("${ROOT_DIR}/") {
+                        CommitVersionToGit("github-token", CI_MSG)
+                    }
+                }
+            }
+        }
+    }
+}
+
+# Into PART3 - Core/8. Jenkins CI-CD/jenkins-shared-library/vars/
+::::::::::::::
+jenkins-shared-library/vars/BuildAndPushDockerImage.groovy
+::::::::::::::
+#!/usr/bin/env groovy
+
+// Function to clean, build, and push a Docker image
+def call(String credentialsId, String imageName, String version) {
+    withCredentials([
+        usernamePassword(
+            credentialsId: credentialsId,
+            usernameVariable: 'DOCKER_USERNAME',
+            passwordVariable: 'DOCKER_PASSWORD'
+        )
+    ]) {
+        // Quick environment check
+        echo "Checking Docker environment..."
+        sh "whoami && id && docker --version && docker ps"
+
+        // Remove all old images of this repository
+        echo "Removing all existing images of ${imageName}..."
+        sh "docker images ${imageName} -q | xargs -r docker rmi -f"
+
+        // Build the new image
+        echo "Building new image ${imageName}:${version}..."
+        sh "docker build -t ${imageName}:${version} ."
+
+        // Login and push
+        echo "Docker login and push image..."
+        sh "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin"
+        sh "docker push ${imageName}:${version}"
+    }
+}
+::::::::::::::
+jenkins-shared-library/vars/buildJar.groovy
+::::::::::::::
+#!/usr/bin/env groovy
+
+def call() {
+    echo "Building JAR file ..."
+    sh "mvn --no-transfer-progress clean package"
+}
+::::::::::::::
+jenkins-shared-library/vars/CommitVersionToGit.groovy
+::::::::::::::
+#!/usr/bin/env groovy
+
+// Function to commit version changes to Git
+def call(String credentialsId, String commitMessage = "CI: version update") {
+    withCredentials([
+        usernamePassword(
+            credentialsId: credentialsId,
+            usernameVariable: 'GIT_USER',
+            passwordVariable: 'GIT_PASS'
+        )
+    ]) {
+        echo "Updating version in Git repository..."
+        sh """
+            git config user.email 'jenkins@example.com'
+            git config user.name 'jenkins'
+            git remote set-url origin https://\${GIT_USER}:\${GIT_PASS}@github.com/DevCTx/DevOps.git
+            git add .
+            git status
+            git diff --cached --quiet || git commit -m '${commitMessage}'
+            git push origin HEAD:main
+        """
+    }
+}
+::::::::::::::
+jenkins-shared-library/vars/IncrementNodejsPatchVersion.groovy
+::::::::::::::
+#!/usr/bin/env groovy
+
+def call() {
+    echo "Incrementing NodeJS patch version ..."
+    def version = sh(
+        script: "npm version patch --no-git-tag-version", 
+        returnStdout: true
+    ).trim()
+    version = version.replace("v", "")
+}
+
+::::::::::::::
+jenkins-shared-library/vars/RunNodejsTests.groovy
+::::::::::::::
+#!/usr/bin/env groovy
+
+def call() {
+    echo "Running NodeJS test ..."
+    sh "npm install"
+    sh "npm run test"
+}
+
+
