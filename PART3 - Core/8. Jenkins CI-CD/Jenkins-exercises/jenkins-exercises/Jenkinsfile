@@ -19,7 +19,7 @@ pipeline {
 
         stage('Check commit') {
             steps {
-                scmSkip(deleteBuild: true, skipPattern: '^CI: version Update$')
+                scmSkip(deleteBuild: true, skipPattern: '^CI: version update$')
             }
         }
 
@@ -92,10 +92,8 @@ pipeline {
                                 git remote set-url origin https://\${USER}:\${PASS}@github.com/DevCTx/DevOps.git
                                 git add .
                                 git status
-                                git diff --cached --quiet || git commit -m 'CI: version Update'
-                                git checkout main
-                                git pull origin main
-                                git push origin main
+                                git diff --cached --quiet || git commit -m 'CI: version update'
+                                git push origin HEAD:main
                             """
                         }
                     }
