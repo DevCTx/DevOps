@@ -79,7 +79,7 @@ pipeline {
         stage("commit version") {
             steps {
                 script {
-                    dir("${APP_DIR}/") {
+                    dir("${ROOT_DIR}/") {
                         echo "Update version into git repository ..."
                         withCredentials([
                             usernamePassword(credentialsId: 'github-token',
