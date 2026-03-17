@@ -378,4 +378,16 @@ def call() {
     sh "npm run test"
 }
 
+# Then into Global Trusted Pipeline Libraries of Settings > System of Jenkins
+Name : jenkins-shared-library
+Check Allow default version to be overridden
+Check Include @Library changes in job recent changes
+Method : Modern SCM
+Source : Git
+Projec Repository : https://github.com/DevCTx/DevOps.git
+Credentials : GitHub Credentials
+Behaviors : 
+ - Filter by name (with reg ex ) : .*
+ - Sparse Checkout paths : Path : PART3 - Core/8. Jenkins CI-CD/jenkins-shared-library/
+Library Path (optional) : PART3 - Core/8. Jenkins CI-CD/jenkins-shared-library/
 
