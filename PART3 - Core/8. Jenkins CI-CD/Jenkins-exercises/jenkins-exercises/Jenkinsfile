@@ -56,7 +56,7 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         withCredentials([
-                            usernamePassword(credentialsId: 'dockerhub-credentials',
+                            usernamePassword(credentialsId: 'docker-credentials',
                                             usernameVariable: 'USER',
                                             passwordVariable: 'PSWD')
                         ]) {
