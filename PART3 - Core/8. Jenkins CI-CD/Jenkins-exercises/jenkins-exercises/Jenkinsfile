@@ -51,17 +51,6 @@ pipeline {
             }
         }
 
-        stage("build app") {
-            steps {
-                script {
-                    dir("${APP_DIR}/") {
-                        echo "Building NodeJS App ..."
-                        sh "npm run build"
-                    }
-                }
-            }
-        }
-
         stage("build and push image") {
             steps {
                 script {
