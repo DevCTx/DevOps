@@ -65,10 +65,10 @@ pipeline {
                             sh "whoami && id && docker --version && docker ps"
                             
                             echo "Remove all existing images of ${env.IMAGE}..."
-                            docker images ${env.IMAGE} -q | xargs -r docker rmi -f
+                            sh "docker images ${env.IMAGE} -q | xargs -r docker rmi -f"
 
                             echo "Build new image ${env.IMAGE}:${env.VERSION}..."
-                            docker build -t ${env.IMAGE}:${env.VERSION} .
+                            sh "docker build -t ${env.IMAGE}:${env.VERSION} . "
 
                             echo "Login and Push image to Docker Hub..."
                             sh 'echo $PSWD | docker login -u $USER --password-stdin'
