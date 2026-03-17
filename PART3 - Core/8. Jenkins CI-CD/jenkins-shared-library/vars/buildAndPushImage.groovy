@@ -14,8 +14,8 @@ def buildAndPushDockerImage(String credentialsId, String imageName, String versi
         sh "whoami && id && docker --version && docker ps"
 
         // Remove all old images of this repository
-        echo "Removing all existing images of ${imageName} skipping in-use images..."
-        sh "docker images ${imageName} -q | xargs -r -n1 docker rmi -f || true"
+        echo "Removing all existing images of ${imageName}..."
+        sh "docker images ${imageName} -q | xargs -r docker rmi -f"
 
         // Build the new image
         echo "Building new image ${imageName}:${version}..."
