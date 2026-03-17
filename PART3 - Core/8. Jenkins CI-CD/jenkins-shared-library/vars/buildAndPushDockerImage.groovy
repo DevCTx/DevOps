@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 // Function to clean, build, and push a Docker image
-def buildAndPushDockerImage(String credentialsId, String imageName, String version) {
+def call(String credentialsId, String imageName, String version) {
     withCredentials([
         usernamePassword(
             credentialsId: credentialsId,

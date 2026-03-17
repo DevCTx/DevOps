@@ -30,4 +30,175 @@ CMD ["node", "server.js"]st
 
 ### Exercise 2
 
+Requires github credentials to verify commit
+Requires credentials for Docker Hub to push images
+Requires a token (with content read-write permissions) from github for jenkins to update the version in the repo
+
+Requires a new pipeline in Jenkins 
+- with GitHub hook trigger for GITScm polling
+Pipeline Script From SCM :
+- Git repo : https://github.com/DevCTx/DevOps.git
+- GitHub Credentials
+- Branch : */main
+- Sparse Checkout paths : PART3 - Core/8. Jenkins CI-CD/Jenkins-exercises/jenkins-exercises
+- Script Path : PART3 - Core/8. Jenkins CI-CD/Jenkins-exercises/jenkins-exercises/Jenkinsfile
+
+and a Jenkinsfile into jenkins-exercises :
+#!/usr/bin/env groovy
+
+def ROOT_DIR = "PART3 - Core/8. Jenkins CI-CD/Jenkins-exercises/jenkins-exercises"
+def APP_DIR = "${ROOT_DIR}/app"
+
+pipeline {
+    
+    agent any
+
+    tools {
+        nodejs "nodejs-24.12.0"
+    }
+
+    environment {
+        IMAGE = "devct/jenkins-nodejs-exercise"
+    }
+
+    stages {
+
+        stage('Check commit') {
+            steps {
+                scmSkip(deleteBuild: true, skipPattern: '.*CI: version update.*')
+            }
+        }
+
+        stage('Increment Version') {
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        echo "Incrementing app version ..."
+                        def version = sh(
+                            script: "npm version patch --no-git-tag-version", 
+                            returnStdout: true
+                        ).trim()
+                        version = version.replace("v", "")
+                        env.VERSION = "$version-$BUILD_NUMBER"
+                        echo "env.VERSION = ${env.VERSION}"
+                    }
+                }
+            }
+        }
+
+        stage("Run tests") {
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        echo "Building NodeJS App ..."
+                        sh "npm install"
+                        sh "npm run test"
+                    }
+                }
+            }
+        }
+
+        stage("build and push image") {
+            steps {
+                script {
+                    dir("${ROOT_DIR}/") {
+                        withCredentials([
+                            usernamePassword(credentialsId: 'docker-credentials',
+                                            usernameVariable: 'USER',
+                                            passwordVariable: 'PSWD')
+                        ]) {
+                            echo "check docker env"
+                            sh "whoami && id && docker --version && docker ps"
+                            
+                            echo "Remove all existing images of ${env.IMAGE}..."
+                            sh "docker images ${env.IMAGE} -q | xargs -r docker rmi -f"
+
+                            echo "Build new image ${env.IMAGE}:${env.VERSION}..."
+                            sh "docker build -t ${env.IMAGE}:${env.VERSION} . "
+
+                            echo "Login and Push image to Docker Hub..."
+                            sh 'echo $PSWD | docker login -u $USER --password-stdin'
+                            sh "docker push ${env.IMAGE}:${env.VERSION}"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage("commit version") {
+            steps {
+                script {
+                    dir("${ROOT_DIR}/") {
+                        echo "Update version into git repository ..."
+                        withCredentials([
+                            usernamePassword(credentialsId: 'github-token',
+                                            usernameVariable: 'USER',
+                                            passwordVariable: 'PASS')
+                        ]) {
+                            sh """
+                                git config user.email 'jenkins@example.com'
+                                git config user.name 'jenkins'
+                                git remote set-url origin https://\${USER}:\${PASS}@github.com/DevCTx/DevOps.git
+                                git add .
+                                git status
+                                git diff --cached --quiet || git commit -m 'CI: version update'
+                                git push origin HEAD:main
+                            """
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+### Exercises 3
+
+on the jenkins-server droplet :
+
+# Delete the app
+root@jenkins-server:~# docker rmi devct/jenkins-nodejs-exercise:1.2.6-25 
+Untagged: devct/jenkins-nodejs-exercise:1.2.6-25
+Untagged: devct/jenkins-nodejs-exercise@sha256:338257fa90cb53d8d2927186d72b8364a703271db4b30063b96273b5fce2c98b
+Deleted: sha256:67e839f4fb5de2734ef5b2b5daacaa75a979ac020c3ff8164b634ae04a2ad729
+
+root@jenkins-server:~# docker images
+REPOSITORY          TAG       IMAGE ID       CREATED       SIZE
+my-jenkins-docker   latest    5d38b7ef1f27   5 hours ago   920MB
+jenkins/jenkins     lts       6c9cebd3534e   3 weeks ago   486MB
+
+# Download the app from docker hub 
+root@jenkins-server:~# docker pull devct/jenkins-nodejs-exercise:1.2.6-25
+1.2.6-25: Pulling from devct/jenkins-nodejs-exercise
+589002ba0eae: Already exists 
+ed2fdcee5269: Already exists 
+7ad115895a6a: Already exists 
+9d10d4687fae: Already exists 
+7d2c32fb97b0: Already exists 
+4f4fb700ef54: Already exists 
+3e4c79c0c258: Already exists 
+d31324ebc77e: Already exists 
+0a7f9220bac7: Already exists 
+Digest: sha256:338257fa90cb53d8d2927186d72b8364a703271db4b30063b96273b5fce2c98b
+Status: Downloaded newer image for devct/jenkins-nodejs-exercise:1.2.6-25
+docker.io/devct/jenkins-nodejs-exercise:1.2.6-25
+
+root@jenkins-server:~# docker images
+REPOSITORY                      TAG        IMAGE ID       CREATED          SIZE
+devct/jenkins-nodejs-exercise   1.2.6-25   67e839f4fb5d   17 minutes ago   300MB
+my-jenkins-docker               latest     5d38b7ef1f27   5 hours ago      920MB
+jenkins/jenkins                 lts        6c9cebd3534e   3 weeks ago      486MB
+
+# Run the app
+root@jenkins-server:~# docker run -d -p 3000:3000 devct/jenkins-nodejs-exercise:1.2.6-25
+a7a57e1beb2898c9782baa466315295106bcf54f25d8e3b15e2e185fc09a09d8
+root@jenkins-server:~# docker ps -a
+CONTAINER ID   IMAGE                                    COMMAND                  CREATED         STATUS         PORTS                                                                                          NAMES
+a7a57e1beb28   devct/jenkins-nodejs-exercise:1.2.6-25   "docker-entrypoint.s…"   4 seconds ago   Up 3 seconds   0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp                                                    mystifying_sinoussi
+9183862ec54e   my-jenkins-docker                        "/usr/bin/tini -- /u…"   5 hours ago     Up 4 hours     0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp, 0.0.0.0:50000->50000/tcp, [::]:50000->50000/tcp   jenkins
+
+# And Open the firewall on port 3000 for the droplet into Digital Ocean
+
+
 
