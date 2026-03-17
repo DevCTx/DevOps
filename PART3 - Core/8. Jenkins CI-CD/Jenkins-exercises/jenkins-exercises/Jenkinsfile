@@ -18,7 +18,7 @@ pipeline {
 
         stage('Check commit') {
             steps {
-                scmSkip(deleteBuild: true, skipPattern: '.*CI: version Update.*')
+                scmSkip(deleteBuild: true, skipPattern: '^CI: version Update$')
             }
         }
 
@@ -27,8 +27,11 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         echo "Incrementing app version ..."
-                        def version = sh "npm version minor --no-git-tag-version"
-                        echo "version = $version"
+                        def version = sh(
+                            script: "npm version minor --no-git-tag-version", 
+                            returnStdout: true
+                        ).trim()
+                        version = version.replace("v", "")
                         env.VERSION = "$version-$BUILD_NUMBER"
                         echo "env.VERSION = ${env.VERSION}"
                     }
@@ -41,7 +44,7 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         echo "Building NodeJS App ..."
-                        sh "npm install"
+                        sh "npm ci"
                         sh "npm run test"
                     }
                 }
@@ -94,13 +97,15 @@ pipeline {
                                             passwordVariable: 'PASS')
                         ]) {
                             sh """
-                                git config --global user.email 'jenkins@example.com'
-                                git config --global user.name 'jenkins'
+                                git config user.email 'jenkins@example.com'
+                                git config user.name 'jenkins'
                                 git remote set-url origin https://\${USER}:\${PASS}@github.com/DevCTx/DevOps.git
                                 git add .
                                 git status
                                 git diff --cached --quiet || git commit -m 'CI: version Update'
-                                git push origin HEAD:main
+                                git checkout main
+                                git pull origin main
+                                git push origin main
                             """
                         }
                     }
