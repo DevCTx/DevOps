@@ -1,6 +1,7 @@
 #!/usr/bin/env groovy
 
-def APP_DIR = "PART3 - Core/8. Jenkins CI-CD/Jenkins-exercises/jenkins-exercises/app/"
+def ROOT_DIR = "PART3 - Core/8. Jenkins CI-CD/Jenkins-exercises/jenkins-exercises"
+def APP_DIR = "${ROOT_DIR}/app"
 
 pipeline {
     
@@ -54,20 +55,22 @@ pipeline {
         stage("build and push image") {
             steps {
                 script {
-                    withCredentials([
-                        usernamePassword(credentialsId: 'docker-credentials',
-                                        usernameVariable: 'USER',
-                                        passwordVariable: 'PSWD')
-                    ]) {
-                        echo "check docker env"
-                        sh "whoami && id && docker --version && docker ps"
-                        
-                        echo "docker build image ..."
-                        sh "docker build -t ${env.IMAGE}:${env.VERSION} ."
+                    dir("${ROOT_DIR}/") {
+                        withCredentials([
+                            usernamePassword(credentialsId: 'docker-credentials',
+                                            usernameVariable: 'USER',
+                                            passwordVariable: 'PSWD')
+                        ]) {
+                            echo "check docker env"
+                            sh "whoami && id && docker --version && docker ps"
+                            
+                            echo "docker build image ..."
+                            sh "docker build -t ${env.IMAGE}:${env.VERSION} ."
 
-                        echo "docker login and push image ..."
-                        sh 'echo $PSWD | docker login -u $USER --password-stdin'
-                        sh "docker push ${env.IMAGE}:${env.VERSION}"
+                            echo "docker login and push image ..."
+                            sh 'echo $PSWD | docker login -u $USER --password-stdin'
+                            sh "docker push ${env.IMAGE}:${env.VERSION}"
+                        }
                     }
                 }
             }
