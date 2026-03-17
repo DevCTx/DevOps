@@ -28,7 +28,7 @@ pipeline {
                     dir("${APP_DIR}/") {
                         echo "Incrementing app version ..."
                         def version = sh(
-                            script: "npm version minor --no-git-tag-version", 
+                            script: "npm version patch --no-git-tag-version", 
                             returnStdout: true
                         ).trim()
                         version = version.replace("v", "")
@@ -44,8 +44,7 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         echo "Building NodeJS App ..."
-                        sh "npm ci"
-
+                        sh "npm install"
                         sh "npm run test"
                     }
                 }
