@@ -45,6 +45,7 @@ pipeline {
                     dir("${APP_DIR}/") {
                         echo "Building NodeJS App ..."
                         sh "npm ci"
+
                         sh "npm run test"
                     }
                 }
