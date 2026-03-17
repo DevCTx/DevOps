@@ -7,6 +7,8 @@
 def ROOT_DIR = "PART3 - Core/8. Jenkins CI-CD/Jenkins-exercises/jenkins-exercises"
 def APP_DIR = "${ROOT_DIR}/app"
 
+def CI_MSG = 'CI: version update'
+
 pipeline {
     
     agent any
@@ -23,7 +25,7 @@ pipeline {
 
         stage('Check commit') {
             steps {
-                scmSkip(deleteBuild: true, skipPattern: '.*CI: version update.*')
+                scmSkip(deleteBuild: true, skipPattern: ".*${CI_MSG}.*")
             }
         }
 
@@ -53,7 +55,7 @@ pipeline {
             steps {
                 script {
                     dir("${ROOT_DIR}/") {
-                        buildAndPushDockerImage(
+                        BuildAndPushDockerImage(
                             "docker-credentials", 
                             env.IMAGE,
                             env.VERSION
@@ -67,7 +69,7 @@ pipeline {
             steps {
                 script {
                     dir("${ROOT_DIR}/") {
-                        commitVersionToGit("github-token", "CI: version update")
+                        CommitVersionToGit("github-token", CI_MSG)
                     }
                 }
             }
