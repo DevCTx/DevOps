@@ -241,7 +241,7 @@ pipeline {
             steps {
                 script {
                     dir("${APP_DIR}/") {
-                        IncrementNodejsPatchVersion()
+                        def version = IncrementNodejsPatchVersion()
                         env.VERSION = "$version-$BUILD_NUMBER"
                         echo "env.VERSION = ${env.VERSION}"
                     }
@@ -365,6 +365,7 @@ def call() {
         returnStdout: true
     ).trim()
     version = version.replace("v", "")
+    return version
 }
 
 ::::::::::::::
@@ -380,6 +381,7 @@ def call() {
 
 # Then into Global Trusted Pipeline Libraries of Settings > System of Jenkins
 Name : jenkins-shared-library
+Default version: main
 Check Allow default version to be overridden
 Check Include @Library changes in job recent changes
 Method : Modern SCM
