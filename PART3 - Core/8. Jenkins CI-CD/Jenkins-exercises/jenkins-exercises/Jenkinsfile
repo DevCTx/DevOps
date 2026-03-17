@@ -1,0 +1,111 @@
+#!/usr/bin/env groovy
+
+def APP_DIR = "PART3 - Core/8. Jenkins CI-CD/Jenkins-exercises/jenkins-exercises/app"
+
+pipeline {
+    
+    agent any
+
+    tools {
+        nodejs "nodejs-24.12.0"
+    }
+
+    environment {
+        IMAGE = "devct/jenkins-nodejs-exercise"
+    }
+
+    stages {
+
+        stage('Check commit') {
+            steps {
+                scmSkip(deleteBuild: true, skipPattern: '.*CI: version Update.*')
+            }
+        }
+
+        stage('Increment Version') {
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        echo "Incrementing app version ..."
+                        def version = sh "npm version minor --no-git-tag-version"
+                        echo "version = $version"
+                        env.VERSION = "$version-$BUILD_NUMBER"
+                        echo "env.VERSION = ${env.VERSION}"
+                    }
+                }
+            }
+        }
+
+        stage("Run tests") {
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        echo "Building NodeJS App ..."
+                        sh "npm install"
+                        sh "npm run test"
+                    }
+                }
+            }
+        }
+
+        stage("build app") {
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        echo "Building NodeJS App ..."
+                        sh "npm run build"
+                    }
+                }
+            }
+        }
+
+        stage("build and push image") {
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        withCredentials([
+                            usernamePassword(credentialsId: 'dockerhub-credentials',
+                                            usernameVariable: 'USER',
+                                            passwordVariable: 'PSWD')
+                        ]) {
+                            echo "check docker env"
+                            sh "whoami && id && docker --version && docker ps"
+                            
+                            echo "docker build image ..."
+                            sh "docker build -t ${env.IMAGE}:${env.VERSION} ."
+
+                            echo "docker login and push image ..."
+                            sh 'echo $PSWD | docker login -u $USER --password-stdin'
+                            sh "docker push ${env.IMAGE}:${env.VERSION}"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage("commit version") {
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        echo "Update version into git repository ..."
+                        withCredentials([
+                            usernamePassword(credentialsId: 'github-token',
+                                            usernameVariable: 'USER',
+                                            passwordVariable: 'PASS')
+                        ]) {
+                            sh """
+                                git config --global user.email 'jenkins@example.com'
+                                git config --global user.name 'jenkins'
+                                git remote set-url origin https://\${USER}:\${PASS}@github.com/DevCTx/DevOps.git
+                                git add .
+                                git status
+                                git diff --cached --quiet || git commit -m 'CI: version Update'
+                                git push origin HEAD:main
+                            """
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
