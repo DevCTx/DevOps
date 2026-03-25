@@ -1,5 +1,7 @@
 #!/usr/bin.env groovy
 
+def APP_DIR = "PART3 - Core/9. AWS Services/java-maven-app"
+
 pipeline {   
     agent any
     stages {
@@ -22,7 +24,13 @@ pipeline {
         stage("deploy") {
             steps {
                 script {
-                    echo "Deploying the application..."
+                    dir("${APP_DIR}/") {
+                        echo "Deploying the application..."
+                        def dockerCmd = 'docker run -d -p 3080:3080 devct/demo-java-app:2.0'
+                        sshagent(['ec2-server-key']) {
+                            sh "ssh -o StrictHostKeyChecking=no ec2-user@13.38.130.100 ${dockerCmd}"
+                        }
+                    }
                 }
             }
         }               
