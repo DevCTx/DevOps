@@ -286,6 +286,7 @@ pipeline {
 }
 
 # Into PART3 - Core/8. Jenkins CI-CD/jenkins-shared-library/vars/
+PART3 - Core/8. Jenkins CI-CD/
 ::::::::::::::
 jenkins-shared-library/vars/BuildAndPushDockerImage.groovy
 ::::::::::::::
@@ -317,15 +318,6 @@ def call(String credentialsId, String imageName, String version) {
         sh "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin"
         sh "docker push ${imageName}:${version}"
     }
-}
-::::::::::::::
-jenkins-shared-library/vars/buildJar.groovy
-::::::::::::::
-#!/usr/bin/env groovy
-
-def call() {
-    echo "Building JAR file ..."
-    sh "mvn --no-transfer-progress clean package"
 }
 ::::::::::::::
 jenkins-shared-library/vars/CommitVersionToGit.groovy
@@ -378,6 +370,9 @@ def call() {
     sh "npm install"
     sh "npm run test"
 }
+
+
+
 
 # Then into Global Trusted Pipeline Libraries of Settings > System of Jenkins
 Name : jenkins-shared-library
