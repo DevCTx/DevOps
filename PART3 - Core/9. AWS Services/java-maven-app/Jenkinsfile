@@ -1,4 +1,4 @@
-#!/usr/bin.env groovy
+#!/usr/bin/env groovy
 
 // This project used a limited shared library within the project scope only
 
@@ -55,9 +55,11 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         echo "Deploying the application..."
-                        def dockerRunCmd = 'docker run -d -p ${params.HOST_PORT}:${params.CONT_PORT} ${params.IMAGE_NAME}:${params.VERSION}'                        
+                        def dockerRunCmd = "docker run -d -p ${params.HOST_PORT}:${params.CONT_PORT} ${params.IMAGE_NAME}:${params.VERSION}"
                         sshagent(['ec2-server-key']) {
-                            sh "ssh -o StrictHostKeyChecking=no ec2-user@13.38.130.100 ${dockerRunCmd}"
+                            sh '''
+                                ssh -o StrictHostKeyChecking=no ec2-user@13.38.130.100 "${dockerRunCmd}"
+                            '''
                         }
                     }
                 }
