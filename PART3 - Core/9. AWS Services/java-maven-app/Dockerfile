@@ -1,6 +1,6 @@
 FROM amazoncorretto:17-alpine-jdk
 
-EXPOSE 3080
+EXPOSE 8080
 
 COPY ./target/java-maven-app-*.jar /usr/app/
 
