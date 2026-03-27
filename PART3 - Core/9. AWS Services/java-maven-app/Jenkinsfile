@@ -29,7 +29,7 @@ pipeline {
     stages {
 
         stage("build jar") {
-            when { expression { env.BRANCH_NAME == "origin/jenkins-jobs" } }  //GIT_BRANCH in single pipeline
+            when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
             steps {
                 script {
                     dir("${APP_DIR}/") {
@@ -40,7 +40,7 @@ pipeline {
         }
 
         stage("build and push image") {
-            when { expression { env.BRANCH_NAME == "origin/jenkins-jobs" } }  //GIT_BRANCH in single pipeline
+            when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
             steps {
                 script {
                     dir("${APP_DIR}/") {
