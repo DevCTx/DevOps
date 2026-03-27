@@ -56,21 +56,21 @@ pipeline {
                     dir("${APP_DIR}/") {
                         echo "Deploying the application..."
 
-                        def dockerRunCmd = '
+                        def dockerRunCmd = """
                             docker pull ${params.IMAGE_NAME}:${params.VERSION} &&
                             docker stop java-app || true &&
                             docker rm java-app || true &&
                             docker run -d --name java-app -p ${params.HOST_PORT}:${params.CONT_PORT} ${params.IMAGE_NAME}:${params.VERSION}
-                        '
+                        """
 
                         sshagent(['ec2-server-key']) {
-                            sh '''
-                                ssh -o StrictHostKeyChecking=no ec2-user@13.38.130.100 "${dockerRunCmd}"
-                            '''
+                            sh """
+                                ssh -o StrictHostKeyChecking=no ec2-user@13.38.130.100 '${dockerRunCmd}'
+                            """
                         }
                     }
                 }
             }
-        }               
+        }              
     }
 } 
