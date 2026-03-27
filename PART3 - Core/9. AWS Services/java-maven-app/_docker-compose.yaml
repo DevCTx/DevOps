@@ -1,0 +1,16 @@
+services:
+
+    java-maven-app:
+        container_name: java-maven-app
+        image: devct/demo-java-app:2.0
+        user: "javauser"
+        restart: unless-stopped
+        networks:
+            - "mysql-network"
+        ports:
+            - "8080:8080"
+        volumes:
+            - ./secrets:/run/secrets:ro
+        depends_on:
+            mysql:
+                condition: service_healthy
