@@ -26,6 +26,11 @@ pipeline {
         string( name: 'CONT_PORT', defaultValue: '3080', description: 'Container Port')
     }
 
+	environment {
+	    EC2_HOST = credentials('EC2_HOST')
+	    EC2_USER = credentials('EC2_USER')
+	}
+		
     stages {
 
         stage("build jar") {
@@ -65,7 +70,7 @@ pipeline {
 
                         sshagent(['ec2-server-key']) {
                             sh """
-                                ssh -o StrictHostKeyChecking=no ec2-user@13.38.130.100 '${dockerRunCmd}'
+                                ssh -o StrictHostKeyChecking=no ${env.EC2_USER}@${env.EC2_HOST} '${dockerRunCmd}'
                             """
                         }
                     }
