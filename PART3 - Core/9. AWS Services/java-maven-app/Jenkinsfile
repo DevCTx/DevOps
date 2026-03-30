@@ -71,13 +71,13 @@ pipeline {
                         """
 
                         sshagent(['ec2-server-key']) {
-                            // Passer les secrets via environment, pas directement dans l'interpolation
-                            sh(script: "ssh -o StrictHostKeyChecking=no \$EC2_USER@\$EC2_HOST '\$DOCKER_CMD'",
-                               environment: [
-                                   EC2_USER: env.EC2_USER,
-                                   EC2_HOST: env.EC2_HOST,
-                                   DOCKER_CMD: dockerRunCmd
-                               ])
+                            // Injection sécurisée en utilisant export dans le shell
+                            sh """
+                                export EC2_USER=${env.EC2_USER}
+                                export EC2_HOST=${env.EC2_HOST}
+                                export DOCKER_CMD='${dockerRunCmd}'
+                                ssh -o StrictHostKeyChecking=no \$EC2_USER@\$EC2_HOST "\$DOCKER_CMD"
+                            """
                         }
                     }
                 }
