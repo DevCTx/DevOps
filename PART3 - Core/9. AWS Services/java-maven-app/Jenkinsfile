@@ -1,5 +1,6 @@
 #!/usr/bin/env groovy
 
+//
 // This project uses a limited shared library within the project scope only
 
 library identifier: "jenkins-limited-shared-library@main", 
