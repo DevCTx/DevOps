@@ -64,20 +64,20 @@ pipeline {
 
                         // Construire la commande Docker sur une seule ligne
                         def dockerRunCmd = """
-                            docker pull ${params.IMAGE_NAME}:${params.VERSION} && 
-                            docker stop java-app || true && 
-                            docker rm java-app || true && 
+                            docker pull ${params.IMAGE_NAME}:${params.VERSION} && \
+                            docker stop java-app || true && \
+                            docker rm java-app || true && \
                             docker run -d --name java-app -p ${params.HOST_PORT}:${params.CONT_PORT} ${params.IMAGE_NAME}:${params.VERSION}
-                        """
+                        """.stripMargin().replaceAll("\n", " ")
 
+                        // Utiliser sshagent avec la clé SSH stockée dans Jenkins
                         sshagent(['ec2-server-key']) {
-                            withCredentials([usernamePassword(credentialsId: 'ec2-ssh', usernameVariable: 'EC2_USER', passwordVariable: 'EC2_HOST')]) {
-                                sh "ssh -o StrictHostKeyChecking=no \$EC2_USER@\$EC2_HOST '${dockerRunCmd}'"
-                            }
+                            // EC2_USER et EC2_HOST doivent être définis dans environment ou en paramètres
+                            sh "ssh -o StrictHostKeyChecking=no ${env.EC2_USER}@${env.EC2_HOST} '${dockerRunCmd}'"
                         }
                     }
                 }
             }
-        }              
+        }
     }
 } 
