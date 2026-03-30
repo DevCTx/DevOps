@@ -27,11 +27,6 @@ pipeline {
         string( name: 'CONT_PORT', defaultValue: '3080', description: 'Container Port')
     }
 
-	environment {
-	    EC2_HOST = credentials('EC2_HOST')
-	    EC2_USER = credentials('EC2_USER')
-	}
-		
     stages {
 
         stage("build jar") {
@@ -71,13 +66,13 @@ pipeline {
                         """
 
                         sshagent(['ec2-server-key']) {
-                            // Injection sécurisée en utilisant export dans le shell
-                            sh """
-                                export EC2_USER=${env.EC2_USER}
-                                export EC2_HOST=${env.EC2_HOST}
-                                export DOCKER_CMD='${dockerRunCmd}'
-                                ssh -o StrictHostKeyChecking=no \$EC2_USER@\$EC2_HOST "\$DOCKER_CMD"
-                            """
+                            withCredentials([usernamePassword(
+                                credentialsId: 'ec2-ssh', 
+                                usernameVariable: credentials('EC2_USER'), 
+                                passwordVariable: credentials('EC2_HOST')
+                            )]) {
+                                sh "ssh -o StrictHostKeyChecking=no \$EC2_USER@\$EC2_HOST '${dockerRunCmd}'"
+                            }
                         }
                     }
                 }
