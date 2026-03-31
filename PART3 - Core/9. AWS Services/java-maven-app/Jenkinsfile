@@ -71,9 +71,8 @@ pipeline {
                         """.stripMargin().replaceAll("\n", " ")
 
                         // Utiliser sshagent avec la clé SSH stockée dans Jenkins
-                        sshagent(['ec2-server-key']) {
-                            // EC2_USER et EC2_HOST doivent être définis dans environment ou en paramètres
-                            sh "ssh -o StrictHostKeyChecking=no ${env.EC2_USER}@${env.EC2_HOST} '${dockerRunCmd}'"
+                        withEnv(["SSH_USER=${env.EC2_USER}", "SSH_HOST=${env.EC2_HOST}"]) {
+                            sh 'ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST \'' + dockerCmd + '\''
                         }
                     }
                 }
