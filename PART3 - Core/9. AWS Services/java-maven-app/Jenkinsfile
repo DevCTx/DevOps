@@ -27,11 +27,6 @@ pipeline {
         string( name: 'CONT_PORT', defaultValue: '3080', description: 'Container Port')
     }
 
-	environment {
-	    EC2_HOST = credentials('EC2_HOST')
-	    EC2_USER = credentials('EC2_USER')
-	}
-		
     stages {
 
         stage("build jar") {
@@ -62,16 +57,21 @@ pipeline {
                     dir("${APP_DIR}/") {
                         echo "Deploying the application..."
 
-                        def dockerRunCmd = """
+                        def dockerCmd = """
                             docker pull ${params.IMAGE_NAME}:${params.VERSION} &&
                             docker stop java-app || true &&
                             docker rm java-app || true &&
                             docker run -d --name java-app -p ${params.HOST_PORT}:${params.CONT_PORT} ${params.IMAGE_NAME}:${params.VERSION}
                         """
 
-                        withEnv(["DOCKER_CMD=${dockerCmd}"]) {
-                            sshagent(['ec2-server-key']) {
-                                sh 'ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "$DOCKER_CMD"'
+                        sshagent(['ec2-server-key']) {
+                            withCredentials([
+                                string(credentialsId: 'EC2_USER', variable: 'EC2_USER'),
+                                string(credentialsId: 'EC2_HOST', variable: 'EC2_HOST')
+                            ]) {
+                                sh '''
+                                    ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "$DOCKER_CMD"
+                                '''
                             }
                         }
                     }
