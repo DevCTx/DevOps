@@ -62,12 +62,12 @@ pipeline {
                     dir("${APP_DIR}/") {
                         echo "Deploying the application..."
 
-                        def dockerRunCmd = """
-                            docker pull ${params.IMAGE_NAME}:${params.VERSION} && \
-                            docker stop java-app || true && \
-                            docker rm java-app || true && \
-                            docker run -d --name java-app -p ${params.HOST_PORT}:${params.CONT_PORT} ${params.IMAGE_NAME}:${params.VERSION}
-                        """
+                        def dockerCmd = "docker pull ${params.IMAGE_NAME}:${params.VERSION} && " +
+                                        "docker stop java-app || true && " +
+                                        "docker rm java-app || true && " +
+                                        "docker run -d --name java-app " +
+                                        "-p ${params.HOST_PORT}:${params.CONT_PORT} " +
+                                        "${params.IMAGE_NAME}:${params.VERSION}"
 
                         withEnv(["DOCKER_CMD=${dockerCmd}"]) {
                         sshagent(['ec2-server-key']) {
