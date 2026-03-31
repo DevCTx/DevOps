@@ -81,5 +81,22 @@ pipeline {
                 }
             }
         }
+        
+        stage("cleanup") {
+            steps {
+                script {
+                    // clean on Jenkins server
+                    sh '''
+                        docker image prune -f
+                        docker images ${params.IMAGE_NAME} --format "{{.Tag}} {{.ID}}" | \
+                          grep -v "${env.IMAGE_TAG}" | awk '{print $2}' | xargs -r docker rmi -f
+                    '''
+                    // clean on EC2 server
+                    sshagent(['ec2-server-key']) {
+                        sh 'ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "docker image prune -f"'
+                    }
+                }
+            }
+        }
     }
 } 
