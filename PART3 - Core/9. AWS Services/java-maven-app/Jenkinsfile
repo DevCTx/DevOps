@@ -85,15 +85,24 @@ pipeline {
         stage("cleanup") {
             steps {
                 script {
-                    // clean on Jenkins server
-                    sh '''
-                        docker image prune -f
-                        docker images ${params.IMAGE_NAME} --format "{{.Tag}} {{.ID}}" | \
-                          grep -v "${env.IMAGE_TAG}" | awk '{print $2}' | xargs -r docker rmi -f
-                    '''
-                    // clean on EC2 server
+                    // Clean on Jenkins server
+                    def imgName = params.IMAGE_NAME
+                    def imgTag = env.IMAGE_TAG
+                    withEnv(["IMG_NAME=${imgName}", "IMG_TAG=${imgTag}"]) {
+                        sh '''
+                            docker image prune -f
+                            docker images "$IMG_NAME" --format "{{.Tag}} {{.ID}}" | \
+                              grep -v "$IMG_TAG" | awk '{print $2}' | xargs -r docker rmi -f
+                        '''
+                    }
+                    // Clean on EC2 server
                     sshagent(['ec2-server-key']) {
-                        sh 'ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "docker image prune -f"'
+                        withCredentials([
+                            string(credentialsId: 'EC2_USER', variable: 'EC2_USER'),
+                            string(credentialsId: 'EC2_HOST', variable: 'EC2_HOST')
+                        ]) {
+                            sh 'ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "docker image prune -f"'
+                        }
                     }
                 }
             }
