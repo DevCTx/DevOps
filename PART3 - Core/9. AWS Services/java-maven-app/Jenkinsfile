@@ -5,8 +5,7 @@
 library identifier: "jenkins-limited-shared-library@main", 
     retriever: modernSCM([
         $class: "GitSCMSource", 
-        remote: "https://github.com/DevCTx/jenkins-limited-shared-library.git",
-        credentialsId: "github-token"
+        remote: "https://github.com/DevCTx/jenkins-limited-shared-library.git"
     ])
 
 def APP_DIR = "PART3 - Core/9. AWS Services/java-maven-app"
@@ -32,7 +31,7 @@ pipeline {
     }
 
     stages {
-
+        
         stage("build jar") {
             when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
             steps {
