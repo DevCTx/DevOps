@@ -38,6 +38,7 @@ pipeline {
             steps {
                 script {
                     dir("${APP_DIR}/") {
+                        // build maven java app
                         buildJar()  // calls the Library function
                     }
                 }
@@ -49,6 +50,7 @@ pipeline {
             steps {
                 script {
                     dir("${APP_DIR}/") {
+                        // build and push docker image on docker hub
                         buildAndPushImage(params.IMAGE_NAME, env.IMAGE_TAG) // calls the Library function
                     }
                 }
@@ -59,7 +61,8 @@ pipeline {
             steps {
                 script {
                     dir("${APP_DIR}/") {
-                        ec2Deploy( params.CONTAINER_NAME, params.HOST_PORT, params.CONTAINER_PORT, params.IMAGE_NAME, env.IMAGE_TAG)
+                        // deploy docker image on AWS EC2 server
+                        ec2Deploy(params.CONTAINER_NAME, params.HOST_PORT, params.CONTAINER_PORT, params.IMAGE_NAME, env.IMAGE_TAG)
                     }
                 }
             }
@@ -68,26 +71,11 @@ pipeline {
         stage("cleanup") {
             steps {
                 script {
-                    echo "Cleaning on Jenkins server..."
+                    // clean docker image on Jenkins server
+                    localCleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
 
-                    withEnv(["IMG_NAME=${params.IMAGE_NAME}", "IMG_TAG=${env.IMAGE_TAG}"]) {
-                        // clean the images with no tag or <none>
-                        // 
-                        sh '''
-                            docker image prune -f
-                            docker images "$IMG_NAME" --format "{{.Tag}} {{.ID}}" | \
-                              grep -v "$IMG_TAG" | awk '{print $2}' | xargs -r docker rmi -f
-                        '''
-                    }
-                    // Clean on EC2 server
-                    sshagent(['ec2-server-key']) {
-                        withCredentials([
-                            string(credentialsId: 'EC2_USER', variable: 'EC2_USER'),
-                            string(credentialsId: 'EC2_HOST', variable: 'EC2_HOST')
-                        ]) {
-                            sh 'ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "docker image prune -f"'
-                        }
-                    }
+                    // clean docker image on AWS EC2 server
+                    ec2CleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
                 }
             }
         }
