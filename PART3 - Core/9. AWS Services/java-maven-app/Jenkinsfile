@@ -1,7 +1,10 @@
 #!/usr/bin/env groovy
 //
+// Jenkinsfile
+//
 // This project uses a limited shared library within the project scope only
 
+// This tells Jenkins to download a Shared Library from GitHub before running this pipeline
 library identifier: "jenkins-limited-shared-library@main", 
     retriever: modernSCM([
         $class: "GitSCMSource", 
@@ -16,7 +19,7 @@ pipeline {
 	agent any
 
     options {
-        skipDefaultCheckout(true)
+        skipDefaultCheckout(true)   // disable the automatic checkout
     }
 	
     tools {
@@ -37,6 +40,12 @@ pipeline {
 
     stages {
 
+        // define a custom checkout
+        //    on the same branch that triggered the pipeline
+        //    enabling submodules, and loading them recursively
+        //    reusing the same GitHub credentials than parent
+        // with the specified git and parent credentials
+        //
         stage('Checkout SCM') {
             steps {
                 checkout([
