@@ -1,3 +1,3 @@
 [submodule "PART3 - Core/8. Jenkins CI-CD/jenkins-limited-shared-library"]
 	path = PART3 - Core/8. Jenkins CI-CD/jenkins-limited-shared-library
-	url = git@github.com:DevCTx/jenkins-limited-shared-library.git
+	url = git@/github.com:DevCTx/jenkins-limited-shared-library.git
