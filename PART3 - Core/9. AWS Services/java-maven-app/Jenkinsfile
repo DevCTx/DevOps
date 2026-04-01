@@ -41,7 +41,8 @@ pipeline {
                     extensions: [
                         [$class: 'SubmoduleOption',
                          recursiveSubmodules: true,
-                         trackingSubmodules: true]
+                         trackingSubmodules: true,
+                         parentCredentials: true]
                     ],
                     userRemoteConfigs: [[
                         url: 'https://github.com/DevCTx/DevOps.git'
