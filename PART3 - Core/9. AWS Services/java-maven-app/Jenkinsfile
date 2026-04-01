@@ -32,19 +32,23 @@ pipeline {
 
     stages {
 
-        checkout([
-            $class: 'GitSCM',
-            branches: [[name: '*/main']],
-            doGenerateSubmoduleConfigurations: false,
-            extensions: [
-                [$class: 'SubmoduleOption',
-                 recursiveSubmodules: true,
-                 trackingSubmodules: true]
-            ],
-            userRemoteConfigs: [[
-                url: 'https://github.com/DevCTx/DevOps.git'
-            ]]
-        ])
+        stage('Checkout SCM') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [
+                        [$class: 'SubmoduleOption',
+                         recursiveSubmodules: true,
+                         trackingSubmodules: true]
+                    ],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/DevCTx/DevOps.git'
+                    ]]
+                ])
+            }
+        }
         
         stage("build jar") {
             when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
