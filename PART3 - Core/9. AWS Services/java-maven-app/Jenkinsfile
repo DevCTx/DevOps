@@ -23,7 +23,8 @@ pipeline {
         string( name: 'IMAGE_NAME', defaultValue: 'devct/demo-java-app', description: 'Image Name')
         string( name: 'VERSION', defaultValue: '3.0', description: 'App Version')
         string( name: 'HOST_PORT', defaultValue: '3080', description: 'Host Port')
-        string( name: 'CONT_PORT', defaultValue: '3080', description: 'Container Port')
+        string( name: 'CONTAINER_PORT', defaultValue: '3080', description: 'Container Port')
+        string( name: 'CONTAINER_NAME', defaultValue: 'java-app', description: 'Container Name')
     }
 
     environment {
@@ -58,25 +59,7 @@ pipeline {
             steps {
                 script {
                     dir("${APP_DIR}/") {
-                        echo "Deploying the application..."
-
-                        def dockerCmd = """
-                            docker pull ${params.IMAGE_NAME}:${env.IMAGE_TAG} &&
-                            docker stop java-app || true &&
-                            docker rm java-app || true &&
-                            docker run -d --name java-app -p ${params.HOST_PORT}:${params.CONT_PORT} ${params.IMAGE_NAME}:${env.IMAGE_TAG}
-                        """
-
-                        sshagent(['ec2-server-key']) {
-                            withCredentials([
-                                string(credentialsId: 'EC2_USER', variable: 'EC2_USER'),
-                                string(credentialsId: 'EC2_HOST', variable: 'EC2_HOST')
-                            ]) {
-                                withEnv(["DOCKER_CMD=${dockerCmd}"]) {
-                                    sh 'ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "$DOCKER_CMD"'
-                                }
-                            }
-                        }
+                        ec2Deploy( params.CONTAINER_NAME, params.HOST_PORT, params.CONTAINER_PORT, params.IMAGE_NAME, env.IMAGE_TAG)
                     }
                 }
             }
@@ -85,10 +68,11 @@ pipeline {
         stage("cleanup") {
             steps {
                 script {
-                    // Clean on Jenkins server
-                    def imgName = params.IMAGE_NAME
-                    def imgTag = env.IMAGE_TAG
-                    withEnv(["IMG_NAME=${imgName}", "IMG_TAG=${imgTag}"]) {
+                    echo "Cleaning on Jenkins server..."
+
+                    withEnv(["IMG_NAME=${params.IMAGE_NAME}", "IMG_TAG=${env.IMAGE_TAG}"]) {
+                        // clean the images with no tag or <none>
+                        // 
                         sh '''
                             docker image prune -f
                             docker images "$IMG_NAME" --format "{{.Tag}} {{.ID}}" | \
