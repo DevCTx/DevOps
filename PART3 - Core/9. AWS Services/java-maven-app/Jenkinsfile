@@ -98,6 +98,9 @@ pipeline {
 
                     // clean docker image on AWS EC2 server
                     ec2CleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
+
+                    // clean docker image on Docker Hub (cause not access to Tag Retention with personal account)
+                    dockerhubCleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
                 }
             }
         }
