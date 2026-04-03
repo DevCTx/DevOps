@@ -1,11 +1,11 @@
 services:
 
     java-maven-app:
-        container_name: java-app
-        image: ${IMAGE_TAG}
+        container_name: ${CONTAINER}
+        image: ${IMAGE_NAME}:${IMAGE_TAG}
         restart: unless-stopped
         ports:
-            - "8080:8080"
+            - "${HOST_PORT}:${CONTAINER_PORT}"
 
     postgres:
         container_name: postgres
