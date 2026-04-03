@@ -2,7 +2,7 @@ services:
 
     java-maven-app:
         container_name: java-app
-        image: devct/demo-java-app:3.0
+        image: "${IMAGE_TAG}"
         restart: unless-stopped
         ports:
             - "8080:8080"
