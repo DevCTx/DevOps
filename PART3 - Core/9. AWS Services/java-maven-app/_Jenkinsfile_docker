@@ -93,10 +93,7 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         // deploy docker image on AWS EC2 server
-                        // ec2Deploy(params.CONTAINER_NAME, params.HOST_PORT, params.CONTAINER_PORT, params.IMAGE_NAME, env.IMAGE_TAG)
-
-                        // deploy the docker-compose.yaml and use docker compose to create the image on AWS EC2 server
-                        ec2DockerComposeDeploy(params.CONTAINER_NAME, params.HOST_PORT, params.CONTAINER_PORT, params.IMAGE_NAME, env.IMAGE_TAG)
+                        ec2Deploy(params.CONTAINER_NAME, params.HOST_PORT, params.CONTAINER_PORT, params.IMAGE_NAME, env.IMAGE_TAG)
                     }
                 }
             }
