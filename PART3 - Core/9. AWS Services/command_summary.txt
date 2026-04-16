@@ -122,5 +122,12 @@ From local PC :
         - MyUserCli.csv : AKIA4IIAVZARQFKVBMMD
 
     Configure a profile : ~/.aws/credentials with the access key
+        -> Allows MyUserCli to access AWS CLI like cli-user with --profile MyUserCli
+
+    
+
+
+
+
 
     
