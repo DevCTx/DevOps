@@ -12,7 +12,7 @@ library identifier: "jenkins-limited-shared-library@main",
         credentialsId: "github-token"
     ])
 
-def APP_DIR = "PART3 - Core/9. AWS Services/jma-dockerhub-ec2"
+def APP_DIR = "PART3 - Core/9. AWS Services/java-maven-app"
 
 pipeline {
 
