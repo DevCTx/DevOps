@@ -1,0 +1,11 @@
+{
+  "commands": [
+    "sudo mkdir -p /opt/app",
+    "sudo chown -R ec2-user:docker /opt/app || true",
+    "echo SU1BR0VfTkFNRT1kZXZjdC9kZW1vLWphdmEtYXBwCklNQUdFX1RBRz0zLjAuMDAKSE9TVF9QT1JUPTMwODAKQ09OVEFJTkVSX1BPUlQ9MzA4MApDT05UQUlORVJfTkFNRT1qYXZhLWFwcAo= | base64 -d > /opt/app/.env",
+    "echo c2VydmljZXM6CgogICAgamF2YS1tYXZlbi1hcHA6CiAgICAgICAgY29udGFpbmVyX25hbWU6ICR7Q09OVEFJTkVSX05BTUV9CiAgICAgICAgaW1hZ2U6ICR7SU1BR0VfTkFNRX06JHtJTUFHRV9UQUd9CiAgICAgICAgcmVzdGFydDogdW5sZXNzLXN0b3BwZWQKICAgICAgICBwb3J0czoKICAgICAgICAgICAgLSAiJHtIT1NUX1BPUlR9OiR7Q09OVEFJTkVSX1BPUlR9IgoK | base64 -d > /opt/app/docker-compose.yaml",
+    "cd /opt/app",
+    "docker compose down --remove-orphans",
+    "docker compose up -d --quiet-pull"
+  ]
+}

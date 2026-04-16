@@ -1,129 +1,215 @@
-# Personal
-invoice/
+# ============================================================
+# 🔐 SECURITY FIRST — CREDENTIALS & SECRETS
+# ============================================================
 
+# ===== AWS =====
+.aws/
+.aws-sam/
+aws-exports.js
+amplify/team-provider-info.json
+*.pem
+*.key
+*.csr
+*.crt
+*.cer
+*.der
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.pkcs12
+credentials
+aws_credentials
+*_credentials
 
-# + Generated .gitignore file for: Node, Python, Java, React, VSCode, IntelliJ, Linux, npm, Maven, Gradle, MongoDB, MySQL, Terraform, Ansible, Kubernetes, Docker, Jenkins, GitHub Actions, SQLite, PostgreSQL
-# Created with FOSSA's DevOps Tools
+# ===== Generic secrets =====
+secrets/
+secret/
+private/
+vault/
+*.secret
+*.secrets
+*secret*
+*password*
+*passwd*
+*credential*
+*credentials*
+*token*
+*apikey*
+*api_key*
+*auth*
+.env
+.env.*
+!.env.example
+!.env.template
 
-# Node
+# ===== SSH =====
+.ssh/
+*_rsa*
+*_dsa*
+*_ecdsa*
+*_ed25519*
+*.ppk
+known_hosts*
+
+# ===== GCP / Firebase =====
+*-service-account.json
+service-account*.json
+firebase-adminsdk*.json
+gcloud/
+.gcloud/
+
+# ===== Azure =====
+.azure/
+azureauth.json
+
+# ===== Kubernetes =====
+kubeconfig
+*.kubeconfig
+kube-config.yml
+.kube/
+
+# ============================================================
+# 🧱 TERRAFORM / IaC
+# ============================================================
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+override.tf
+override.tf.json
+*_override.tf
+terraform.tfvars
+crash.log
+
+# ===== Ansible =====
+vault.yml
+vault.yaml
+*.vault
+group_vars/*/vault*
+host_vars/*/vault*
+
+# ============================================================
+# 🐳 DOCKER
+# ============================================================
+.docker/
+.dockerignore
+docker-compose.override.yml
+Dockerfile.override
+.docker/config.json
+
+# ============================================================
+# ⚙️ CI/CD
+# ============================================================
+.jenkins/
+.github/workflows/*.secrets.yml
+
+# ============================================================
+# 📦 NODE / JAVASCRIPT
+# ============================================================
 node_modules/
+dist/
+build/
+coverage/
+.cache/
 npm-debug.log*
-npm-error.log*
 yarn-debug.log*
 yarn-error.log*
-.env
-.DS_Store
-dist/
-.cache/
-coverage/
+pnpm-debug.log*
 
-# Python
+# ============================================================
+# 🐍 PYTHON
+# ============================================================
 __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
 .coverage
+htmlcov/
 venv/
 env/
-.env
+.venv/
+pip-wheel-metadata/
 *.so
 
-# Java
+# ============================================================
+# ☕ JAVA / JVM
+# ============================================================
 *.class
 *.jar
 *.war
 *.ear
-*.logs
-.mtj.tmp/
-hs_err_pid*
 target/
 build/
+.gradle/
+.gradle-cache/
+.mvn/
+mvnw
+mvnw.cmd
+gradle.properties
+!gradle/wrapper/gradle-wrapper.jar
+hs_err_pid*
 
-# React
-node_modules/
-build/
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# ============================================================
+# 🧠 IDE / EDITORS
+# ============================================================
 
 # VSCode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
-!.vscode/launch.json
 !.vscode/extensions.json
+!.vscode/launch.json
 
-# IntelliJ
-# Add IntelliJ-specific ignores here
+# JetBrains
+.idea/
+*.iml
+*.ipr
+*.iws
 
-# Linux
-# Add Linux-specific ignores here
+# Others
+*.sublime-*
 
-# npm
-# Add npm-specific ignores here
+# ============================================================
+# 🗄 DATABASES / DUMPS
+# ============================================================
+*.sqlite
+*.sqlite3
+*.db
+*.sql.gz
+*.dump
+pgpass
+.pgpass
+.my.cnf
 
-# Maven
-# Add Maven-specific ignores here
-target/
-.mvn/
-mvnw
-mvnw.cmd
-
-# Gradle
-# Add Gradle-specific ignores here
-!gradle/wrapper/gradle-wrapper.jar  # to use the same Gradle version (no need to install)
-.gradle/
-gradlew
-gradlew.bat
-gradle.properties
-
-# MongoDB
-# Add MongoDB-specific ignores here
-
-# MySQL
-# Add MySQL-specific ignores here
-
-# Terraform
-# Add Terraform-specific ignores here
-
-# Ansible
-# Add Ansible-specific ignores here
-
-# Kubernetes
-# Add Kubernetes-specific ignores here
-
-# Docker
-docker-compose.override.yml
-Dockerfile.override
-.dockerignore
-
-# Jenkins
-# Add Jenkins-specific ignores here
-
-# GitHub Actions
-# Add GitHub Actions-specific ignores here
-
-# SQLite
-# Add SQLite-specific ignores here
-
-# PostgreSQL
-# Add PostgreSQL-specific ignores here
-
-# Common
+# ============================================================
+# 🖥 OS FILES
+# ============================================================
 .DS_Store
 Thumbs.db
+.Trash-*
+.fuse_hidden*
+*~
+
+# ============================================================
+# 📜 LOGS & TEMP
+# ============================================================
+logs/
 *.log
 *.bak
 *.tmp
 *.swp
-*~
 
-# IDE and editor generated files
-.idea/
-*.sublime-*
+# ============================================================
+# 🧾 PERSONAL FILES
+# ============================================================
+invoice/
+notes/
+private_docs/
 
-# Local environment files
-.env
-.env.local
-.env.*.local
+# ============================================================
+# 🧪 SECURITY TOOLS
+# ============================================================
+.secrets.baseline
+detect-secrets-report.json

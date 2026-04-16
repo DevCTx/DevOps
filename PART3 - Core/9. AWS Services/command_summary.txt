@@ -1,0 +1,126 @@
+Sumary
+
+On AWS Console :
+    Creation of cli-user:
+    - Groups
+        - ECR Power User (login, docker push/pull, describe, scan)
+        - EC2 Read Only (describe, vpc, load balancer, cloudwatch, autoscale)
+    - Access Key
+        - cli-user_accessKey.csv : AKIA4IIAVZARQ7M5LIT6 
+
+Installation of AWS CLI on local PC
+    - Config caller cli-user with Access Key : ~/.aws/config and ~/.aws/credentials
+
+From local PC :
+    Describe security group : ec2:eu-west-3 / vpc-02226842aad505b94
+        default (sg-02d573c9b8f4c6b48): 
+            Ingress -> None 
+            Egress  -> All/Anywhere
+        launch-wizard-1 (sg-06eba0c7c35b35fe9): 
+            Ingress -> TCP/22:22 (SSH) : 88.173.128.66/32 (local PC), 209.38.240.211/32 (jenkins-server)
+                    -> TCP/3080:3080 (App) : All
+            Egress  -> All/Anywhere
+
+On AWS Console:
+    Change the group of cli-user:
+        x EC2 Read Only (describe, vpc, load balancer, cloudwatch, autoscale)
+        - EC2 Full Access (
+            - Create, start, stop, terminate EC2 instances
+            - Create/delete security groups
+            - Manage volumes, snapshots, AMIs
+            - Modify networking (ENIs, VPC attachments)
+            - Everything under Amazon EC2 servicedescribe, vpc, load balancer, cloudwatch, autoscale)
+            - Allows AWS services to create required IAM roles automatically when needed by EC2-related services
+          )
+
+From local PC :
+    Create security group : ec2:eu-west-3 / vpc-02226842aad505b94
+        my-sg (sg-0ddc6b1534d5e5051): 
+            Ingress -> None
+            Egress  -> All/Anywhere
+
+    Set SSH permissions to this group : ec2:eu-west-3 / vpc-02226842aad505b94
+        my-sg (sg-0ddc6b1534d5e5051): 
+            Ingress -> TCP/22:22 (SSH) : 88.173.128.66/32 (local PC)
+            Egress  -> All/Anywhere
+
+    Create a Key Pair > MyKpCli.pem (change permissions to 400)
+
+    List subnets : 
+        -> eu-west-3a : 172.31.0.0/20   (subnet-0b2deebb8c381bbc6)
+        -> eu-west-3b : 172.31.16.0/20  (subnet-09baa67a2cd31ac4f)
+        -> eu-west-3c : 172.31.32.0/20  (subnet-05eaab0ec2bc9fd7f)
+    
+    List EC2 instances :
+        -> my-instance (i-02fe0431bec8ef3ab) : 
+            Volume : gp3 (EBS: 1 instance / volume) : /dev/xvda (vol-0e7f17dcf5da6db0a)
+            System Image  : x86_64 / Amazon Linux 2023  / t3.micro (ami-05d43d5e94bb6eb95)
+            NetWork : Paris (vpc-02226842aad505b94) / eu-west-3c (subnet-05eaab0ec2bc9fd7f) / interface (eni-0130f5e8950262529)
+            Public IP : 13.38.130.100 / Private IP : 172.31.37.125
+            Security Group :  launch-wizard-1 (sg-06eba0c7c35b35fe9) : SSH [88.173.128.66/32 (local PC), 209.38.240.211/32 (jenkins-server)]
+            Access : docker-server (key-01332d52b78c13b6c)
+
+    Create an EC2 instance :
+        -> my-ami-2023 (i-00f5f71009106e19d) : 
+            Volume : gp3 (EBS: 1 instance / volume) : /dev/xvda (vol-0f3e18b042089b3de)
+            System Image : x86_64 / Amazon Linux 2023 / t3.micro (ami-05d43d5e94bb6eb95)
+            NetWork : Paris (vpc-02226842aad505b94) / eu-west-3a (subnet-0b2deebb8c381bbc6) / interface (eni-082bca2977eeca142) / 
+            Public IP : 35.180.127.195 / Private IP : 172.31.6.41
+            Security Group :  my-sg (sg-0ddc6b1534d5e5051) : SSH [88.173.128.66/32 (local PC)]
+            Access : MyKpCli (key-01332d52b78c13b6c)
+
+On AWS Console:
+    Add new group to cli-user:
+        - IAM Full Access (
+            - Create, update, delete IAM users, groups, roles, policies
+            - Attach/detach policies to users, groups, roles
+            - Manage MFA devices (virtual, hardware, U2F)
+            - Manage access keys, passwords, login profiles
+            - Create/manage instance profiles (used by EC2 to assume roles)
+            - Manage OpenID Connect (OIDC) and SAML identity providers
+            - Generate credential reports and access advisor data
+            - Manage SSH public keys and service-specific credentials
+            - Simulate IAM policies (policy evaluation / testing)
+            - Tag/untag IAM resources
+            - Everything under the IAM service
+          )
+
+From local PC :
+    Create new group : MyGroupCli
+
+    Create new user : MyUserCli
+
+    Add user to a group : MyUserCli
+        - Group : MyGroupCli
+
+    List EC2 Policies -> List EC2 Full Access policy -> get details of version v5
+
+    Attach policy to a group
+        Group : MyGroupCli
+        - EC2 Full Access
+    
+    Get lists of users, groups, roles, policies configured on my AWS account
+    Get lists of groups and roles per user
+    Get lists of policies per group
+
+    Create Console access for MyUserCli but need IAM ChangePassword permission
+
+    List IAM Policy related to Password -> List IAM User Change Password Policy -> get details of version v5
+
+    Create IAM Policy : changePwd.json with the IAMUserChangePassword Document details
+
+    Attach this policy to the MyGoupCli
+        Group : MyGroupCli
+        - EC2 Full Access
+        - ChangePwd
+
+    Create an access key for MyUserCli
+        Groups
+        - EC2 Full Access
+        - ChangePwd
+        Access Key
+        - MyUserCli.csv : AKIA4IIAVZARQFKVBMMD
+
+    Configure a profile : ~/.aws/credentials with the access key
+
+    
