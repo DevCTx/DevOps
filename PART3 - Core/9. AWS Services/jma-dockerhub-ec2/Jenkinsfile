@@ -61,6 +61,7 @@ pipeline {
                         ]]
                     ])
                     sh "pwd"
+                    stash name: 'source', includes: '**/*'
                 }
             }
         }
@@ -74,6 +75,7 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         sh "pwd"
+                        unstash 'source'
                         sh "ls -R"
                         sh "find . -name pom.xml"    
                         // build maven java app
