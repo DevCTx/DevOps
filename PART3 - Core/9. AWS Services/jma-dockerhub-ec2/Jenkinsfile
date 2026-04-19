@@ -48,6 +48,8 @@ pipeline {
             steps {
                 dir("${APP_DIR}/") {
                     checkout scm
+                    sh "pwd"
+                    sh "ls -R"
                     stash name: 'source', includes: "${APP_DIR}/**"
                 }
             }
@@ -61,7 +63,10 @@ pipeline {
             steps {
                 script {
                     dir("${APP_DIR}/") {
+                        sh "pwd"
                         unstash 'source'
+                        sh "ls -R"
+                        sh "find . -name pom.xml"    
                         // build maven java app
                         buildJar()  // calls the Library function
                     }
