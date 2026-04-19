@@ -59,6 +59,8 @@ pipeline {
                         credentialsId: 'github-token'
                     ]]
                 ])
+                sh "pwd"
+                sh "ls -R"
             }
         }
         
