@@ -47,6 +47,21 @@ pipeline {
 
             steps {
                 dir("${APP_DIR}/") {
+/*
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: "*/${env.BRANCH_NAME}"]],
+                        extensions: [[$class: 'SubmoduleOption',
+                            parentCredentials: true,
+                            recursiveSubmodules: true,
+                            disableSubmodules: false
+                        ]],
+                        userRemoteConfigs: [[
+                            url: 'https://github.com/DevCTx/DevOps.git',
+                            credentialsId: 'github-token'
+                        ]]
+                    ])
+*/
                     checkout scm
                     sh "pwd"
                     sh "ls -R"
@@ -73,6 +88,60 @@ pipeline {
                 }
             }
         }
+
+/*
+        stage("build and push image") {
+            agent { label 'docker-agent' }
+
+            when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
+
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        // build and push docker image on docker hub
+                        buildAndPushImage(params.IMAGE_NAME, env.IMAGE_TAG) // calls the Library function
+                    }
+                }
+            }
+        }
+
+        stage("deploy") {
+            agent { label 'aws-agent' }
+        
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        // deploy docker image on AWS EC2 server
+                        ec2Deploy(params.CONTAINER_NAME, params.HOST_PORT, params.CONTAINER_PORT, params.IMAGE_NAME, env.IMAGE_TAG)
+                    }
+                }
+            }
+        }
+        
+        stage("cleanup local and DockerHub Images") {
+            agent { label 'docker-agent' }
+
+            steps {
+                script {
+                    // clean docker image on Jenkins server
+                    localCleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
+
+                    // clean docker image on Docker Hub (because access to tag retention is not possible with a personal account)
+                    dockerhubCleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
+                }
+            }
+        }
+
+        stage("cleanup EC2 Images") {
+            agent { label 'aws-agent' }
+
+            steps {
+                script {
+                    // clean docker image on AWS EC2 server
+                    ec2CleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
+                }
+            }
+        }
+*/
     }
-  }
 } 
