@@ -50,7 +50,7 @@ pipeline {
                     checkout scm
                     sh "pwd"
                     sh "ls -R"
-                    stash name: 'source', includes: '**/*'
+                    // stash name: 'source', includes: '**/*'
                 }
             }
         }
@@ -64,7 +64,7 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         sh "pwd"
-                        unstash 'source'
+                        // unstash 'source'
                         sh "ls -R"
                         sh "find . -name pom.xml"    
                         // build maven java app
