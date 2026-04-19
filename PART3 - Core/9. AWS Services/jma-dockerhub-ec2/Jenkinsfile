@@ -46,11 +46,11 @@ pipeline {
             agent { label 'maven-agent' }
 
             steps {
-                dir("${APP_DIR}/") {
-                    checkout scm
-                    sh "pwd"
-                    sh "ls -R"
-                }
+//                dir("${APP_DIR}/") {
+                checkout scm
+                sh "pwd"
+//                    sh "ls -R"
+//                }
                 stash name: 'source', includes: "${APP_DIR}/**"
             }
         }
