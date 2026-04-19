@@ -47,7 +47,7 @@ pipeline {
 
             steps {
                 checkout scm
-                stash name: 'source', includes: "${APP_DIR}/**"
+                stash name: 'sources', includes: "${APP_DIR}/**"
             }
         }
         
@@ -59,15 +59,14 @@ pipeline {
             steps {
                 script {
                     deleteDir()
-                    unstash 'source'
+                    unstash 'sources'
 
                     dir("${APP_DIR}/") {
-                        sh "find . -name pom.xml"    
                         // build maven java app
                         buildJar()  // calls the Library function
                     }
 
-                    stash name: 'jar', includes: "${APP_DIR}/target/*.jar, ${APP_DIR}/Dockerfile"
+                    stash name: 'app_files', includes: "${APP_DIR}/target/*.jar, ${APP_DIR}/Dockerfile"
                 }
             }
         }
@@ -79,7 +78,7 @@ pipeline {
 
             steps {
                 script {
-                    unstash 'jar'
+                    unstash 'app_files'
 
                     dir("${APP_DIR}/") {
                         // build and push docker image on docker hub
