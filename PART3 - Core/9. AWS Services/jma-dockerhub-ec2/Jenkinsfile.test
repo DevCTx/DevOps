@@ -69,7 +69,7 @@ pipeline {
                         buildJar()  // calls the Library function
                     }
 
-                    stash name: 'jar', includes: 'target/*.jar'
+                    stash name: 'jar', includes: '${APP_DIR}/target/*.jar'
                 }
             }
         }    
