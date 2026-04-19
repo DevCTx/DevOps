@@ -46,19 +46,7 @@ pipeline {
             agent { label 'maven-agent' }
 
             steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: "*/${env.BRANCH_NAME}"]],
-                    extensions: [[$class: 'SubmoduleOption',
-                        parentCredentials: true,
-                        recursiveSubmodules: true,
-                        disableSubmodules: false
-                    ]],
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/DevCTx/DevOps.git',
-                        credentialsId: 'github-token'
-                    ]]
-                ])
+                checkout scm
                 stash name: 'source', includes: "${APP_DIR}/**"
             }
         }
@@ -74,6 +62,9 @@ pipeline {
                     unstash 'source'
 
                     dir("${APP_DIR}/") {
+                        sh "pwd"
+                        sh "ls -R"
+                        sh "find . -name pom.xml"    
                         // build maven java app
                         buildJar()  // calls the Library function
                     }
