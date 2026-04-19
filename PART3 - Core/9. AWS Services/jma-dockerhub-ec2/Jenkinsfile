@@ -16,16 +16,12 @@ def APP_DIR = "PART3 - Core/9. AWS Services/jma-dockerhub-ec2"
 
 pipeline {
 
-	agent any
+	agent none
 
     options {
         skipDefaultCheckout(true)   // disable the automatic checkout
     }
 	
-    tools {
-		maven "maven-3.9.12"
-	}
-
     parameters {        
         string( name: 'IMAGE_NAME', defaultValue: 'devct/demo-java-app', description: 'Image Name')
         string( name: 'VERSION', defaultValue: '3.0', description: 'App Version')
@@ -47,6 +43,8 @@ pipeline {
         // with the specified git and parent credentials
         //
         stage('Checkout SCM') {
+            agent { label 'docker-agent' }
+
             steps {
                 checkout([
                     $class: 'GitSCM',
@@ -65,7 +63,10 @@ pipeline {
         }
         
         stage("build jar") {
+            agent { label 'maven-agent' }
+
             when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
+            
             steps {
                 script {
                     dir("${APP_DIR}/") {
@@ -77,7 +78,10 @@ pipeline {
         }
 
         stage("build and push image") {
+            agent { label 'docker-agent' }
+
             when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
+
             steps {
                 script {
                     dir("${APP_DIR}/") {
@@ -89,6 +93,8 @@ pipeline {
         }
 
         stage("deploy") {
+            agent { label 'aws-agent' }
+        
             steps {
                 script {
                     dir("${APP_DIR}/") {
@@ -100,6 +106,8 @@ pipeline {
         }
         
         stage("cleanup") {
+            agent { label 'docker-agent' }
+
             steps {
                 script {
                     // clean docker image on Jenkins server
