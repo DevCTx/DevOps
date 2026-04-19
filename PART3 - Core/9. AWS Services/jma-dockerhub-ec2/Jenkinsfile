@@ -46,20 +46,22 @@ pipeline {
             agent { label 'docker-agent' }
 
             steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: "*/${env.BRANCH_NAME}"]],
-                    extensions: [[$class: 'SubmoduleOption',
-                        parentCredentials: true,
-                        recursiveSubmodules: true,
-                        disableSubmodules: false
-                    ]],
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/DevCTx/DevOps.git',
-                        credentialsId: 'github-token'
-                    ]]
-                ])
-                sh "pwd"
+                dir("${APP_DIR}/") {
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: "*/${env.BRANCH_NAME}"]],
+                        extensions: [[$class: 'SubmoduleOption',
+                            parentCredentials: true,
+                            recursiveSubmodules: true,
+                            disableSubmodules: false
+                        ]],
+                        userRemoteConfigs: [[
+                            url: 'https://github.com/DevCTx/DevOps.git',
+                            credentialsId: 'github-token'
+                        ]]
+                    ])
+                    sh "pwd"
+                }
             }
         }
         
@@ -71,11 +73,11 @@ pipeline {
             steps {
                 script {
                     dir("${APP_DIR}/") {
-                    sh "pwd"
-                    sh "ls -R"
-                    sh "find . -name pom.xml"    
-                    // build maven java app
-                    // buildJar()  // calls the Library function
+                        sh "pwd"
+                        sh "ls -R"
+                        sh "find . -name pom.xml"    
+                        // build maven java app
+                        // buildJar()  // calls the Library function
                     }
                 }
             }
