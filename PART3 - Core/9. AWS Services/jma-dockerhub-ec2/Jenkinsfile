@@ -51,7 +51,7 @@ pipeline {
                     sh "pwd"
                     sh "ls -R"
                 }
-                // stash name: 'source', includes: "${APP_DIR}/**"
+                stash name: 'source', includes: "${APP_DIR}/**"
             }
         }
         
@@ -63,15 +63,15 @@ pipeline {
             steps {
                 script {
                     deleteDir()
-                    // unstash 'source'
+                    unstash 'source'
 
-                    dir("${APP_DIR}/") {
+                    // dir("${APP_DIR}/") {
                         sh "pwd"
                         sh "ls -R"
                         sh "find . -name pom.xml"    
                         // build maven java app
                         buildJar()  // calls the Library function
-                    }
+                    // }
                 }
             }
         }    
