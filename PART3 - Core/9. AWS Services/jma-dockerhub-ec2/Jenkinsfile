@@ -47,6 +47,7 @@ pipeline {
 
             steps {
                 dir("${APP_DIR}/") {
+/*
                     checkout([
                         $class: 'GitSCM',
                         branches: [[name: "*/${env.BRANCH_NAME}"]],
@@ -60,7 +61,10 @@ pipeline {
                             credentialsId: 'github-token'
                         ]]
                     ])
+*/
+                    checkout scm
                     sh "pwd"
+                    sh "ls -R"
                     stash name: 'source', includes: '**/*'
                 }
             }
