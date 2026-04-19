@@ -59,8 +59,6 @@ pipeline {
                         credentialsId: 'github-token'
                     ]]
                 ])
-
-                stash name: 'source', includes: '**/*'
             }
         }
         
@@ -70,16 +68,12 @@ pipeline {
             when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
             
             steps {
-                unstash 'source'
-
                 script {
                     dir("${APP_DIR}/") {
                         // build maven java app
                         buildJar()  // calls the Library function
                     }
                 }
-
-                stash name: 'app', includes: '**/*'
             }
         }
 
@@ -89,8 +83,6 @@ pipeline {
             when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
 
             steps {
-                unstash 'source'
-
                 script {
                     dir("${APP_DIR}/") {
                         // build and push docker image on docker hub
