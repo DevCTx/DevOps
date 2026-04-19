@@ -46,7 +46,6 @@ pipeline {
             agent { label 'docker-agent' }
 
             steps {
-/*
                 checkout([
                     $class: 'GitSCM',
                     branches: [[name: "*/${env.BRANCH_NAME}"]],
@@ -60,7 +59,6 @@ pipeline {
                         credentialsId: 'github-token'
                     ]]
                 ])
-*/
                 sh "pwd"
             }
         }
