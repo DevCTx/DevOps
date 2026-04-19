@@ -59,6 +59,9 @@ pipeline {
                         credentialsId: 'github-token'
                     ]]
                 ])
+
+                // stash/unstash to be able to use elements from an agent to another
+                stash name: 'source', includes: '**/*'
             }
         }
         
@@ -68,12 +71,16 @@ pipeline {
             when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
             
             steps {
+                unstash 'source'
+
                 script {
                     dir("${APP_DIR}/") {
                         // build maven java app
                         buildJar()  // calls the Library function
                     }
                 }
+
+                stash name: 'app', includes: '**/*'
             }
         }
 
@@ -83,6 +90,8 @@ pipeline {
             when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
 
             steps {
+                unstash 'source'
+
                 script {
                     dir("${APP_DIR}/") {
                         // build and push docker image on docker hub
@@ -105,7 +114,7 @@ pipeline {
             }
         }
         
-        stage("cleanup") {
+        stage("cleanup local and DockerHub Images") {
             agent { label 'docker-agent' }
 
             steps {
@@ -113,11 +122,19 @@ pipeline {
                     // clean docker image on Jenkins server
                     localCleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
 
-                    // clean docker image on AWS EC2 server
-                    ec2CleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
-
                     // clean docker image on Docker Hub (because access to tag retention is not possible with a personal account)
                     dockerhubCleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
+                }
+            }
+        }
+
+        stage("cleanup EC2 Images") {
+            agent { label 'aws-agent' }
+
+            steps {
+                script {
+                    // clean docker image on AWS EC2 server
+                    ec2CleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
                 }
             }
         }
