@@ -43,30 +43,11 @@ pipeline {
         // with the specified git and parent credentials
         //
         stage('Checkout SCM') {
-            agent { label 'docker-agent' }
+            agent { label 'maven-agent' }
 
             steps {
-                dir("${APP_DIR}/") {
-/*
-                    checkout([
-                        $class: 'GitSCM',
-                        branches: [[name: "*/${env.BRANCH_NAME}"]],
-                        extensions: [[$class: 'SubmoduleOption',
-                            parentCredentials: true,
-                            recursiveSubmodules: true,
-                            disableSubmodules: false
-                        ]],
-                        userRemoteConfigs: [[
-                            url: 'https://github.com/DevCTx/DevOps.git',
-                            credentialsId: 'github-token'
-                        ]]
-                    ])
-*/
-                    checkout scm
-                    sh "pwd"
-                    sh "ls -R"
-                    stash name: 'source', includes: '**/*'
-                }
+                checkout scm
+                stash name: 'source', includes: "${APP_DIR}/**"
             }
         }
         
@@ -77,19 +58,22 @@ pipeline {
             
             steps {
                 script {
+                    deleteDir()
+                    unstash 'source'
+
                     dir("${APP_DIR}/") {
                         sh "pwd"
-                        unstash 'source'
                         sh "ls -R"
                         sh "find . -name pom.xml"    
                         // build maven java app
-                        // buildJar()  // calls the Library function
+                        buildJar()  // calls the Library function
                     }
+
+                    stash name: 'jar', includes: '${APP_DIR}/target/*.jar'
                 }
             }
         }
 
-/*
         stage("build and push image") {
             agent { label 'docker-agent' }
 
@@ -97,6 +81,8 @@ pipeline {
 
             steps {
                 script {
+                    unstash 'jar'
+
                     dir("${APP_DIR}/") {
                         // build and push docker image on docker hub
                         buildAndPushImage(params.IMAGE_NAME, env.IMAGE_TAG) // calls the Library function

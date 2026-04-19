@@ -69,65 +69,9 @@ pipeline {
                         buildJar()  // calls the Library function
                     }
 
-                    stash name: 'jar', includes: '${APP_DIR}/target/*.jar'
+                    stash name: 'jar', includes: 'target/*.jar'
                 }
             }
-        }
-
-        stage("build and push image") {
-            agent { label 'docker-agent' }
-
-            when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
-
-            steps {
-                script {
-                    unstash 'jar'
-
-                    dir("${APP_DIR}/") {
-                        // build and push docker image on docker hub
-                        buildAndPushImage(params.IMAGE_NAME, env.IMAGE_TAG) // calls the Library function
-                    }
-                }
-            }
-        }
-
-        stage("deploy") {
-            agent { label 'aws-agent' }
-        
-            steps {
-                script {
-                    dir("${APP_DIR}/") {
-                        // deploy docker image on AWS EC2 server
-                        ec2Deploy(params.CONTAINER_NAME, params.HOST_PORT, params.CONTAINER_PORT, params.IMAGE_NAME, env.IMAGE_TAG)
-                    }
-                }
-            }
-        }
-        
-        stage("cleanup local and DockerHub Images") {
-            agent { label 'docker-agent' }
-
-            steps {
-                script {
-                    // clean docker image on Jenkins server
-                    localCleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
-
-                    // clean docker image on Docker Hub (because access to tag retention is not possible with a personal account)
-                    dockerhubCleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
-                }
-            }
-        }
-
-        stage("cleanup EC2 Images") {
-            agent { label 'aws-agent' }
-
-            steps {
-                script {
-                    // clean docker image on AWS EC2 server
-                    ec2CleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
-                }
-            }
-        }
-*/
+        }    
     }
 } 
