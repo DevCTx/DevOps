@@ -60,7 +60,6 @@ pipeline {
                     ]]
                 ])
 
-                // stash/unstash to be able to use elements from an agent to another
                 stash name: 'source', includes: '**/*'
             }
         }
