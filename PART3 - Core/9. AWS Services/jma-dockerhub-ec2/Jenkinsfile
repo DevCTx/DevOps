@@ -71,17 +71,18 @@ pipeline {
             
             steps {
                 script {
-                    dir("${APP_DIR}/") {
-                        sh "pwd"
-                        sh "ls -R"
-                        sh "find . -name pom.xml"    
-                        // build maven java app
-                        buildJar()  // calls the Library function
-                    }
+//                    dir("${APP_DIR}/") {
+                    sh "pwd"
+                    sh "ls -R"
+                    sh "find . -name pom.xml"    
+                    // build maven java app
+                    buildJar()  // calls the Library function
+//                    }
                 }
             }
         }
 
+/*
         stage("build and push image") {
             agent { label 'docker-agent' }
 
@@ -134,5 +135,6 @@ pipeline {
                 }
             }
         }
+*/
     }
 } 
