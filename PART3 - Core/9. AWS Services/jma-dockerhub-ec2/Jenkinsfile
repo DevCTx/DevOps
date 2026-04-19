@@ -43,7 +43,7 @@ pipeline {
         // with the specified git and parent credentials
         //
         stage('Checkout SCM') {
-            agent { label 'docker-agent' }
+            agent { label 'maven-agent' }
 
             steps {
                 dir("${APP_DIR}/") {
