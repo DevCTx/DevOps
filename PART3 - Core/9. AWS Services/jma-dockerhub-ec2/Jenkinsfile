@@ -46,7 +46,19 @@ pipeline {
             agent { label 'maven-agent' }
 
             steps {
-                checkout scm
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: "*/${env.BRANCH_NAME}"]],
+                    extensions: [[$class: 'SubmoduleOption',
+                        parentCredentials: true,
+                        recursiveSubmodules: true,
+                        disableSubmodules: false
+                    ]],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/DevCTx/DevOps.git',
+                        credentialsId: 'github-token'
+                    ]]
+                ])
                 stash name: 'source', includes: "${APP_DIR}/**"
             }
         }
