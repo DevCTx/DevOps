@@ -62,14 +62,12 @@ pipeline {
                     unstash 'source'
 
                     dir("${APP_DIR}/") {
-                        sh "pwd"
-                        sh "ls -R"
                         sh "find . -name pom.xml"    
                         // build maven java app
                         buildJar()  // calls the Library function
                     }
 
-                    stash name: 'jar', includes: "${APP_DIR}/target/*.jar"
+                    stash name: 'jar', includes: "${APP_DIR}/target/*.jar, ${APP_DIR}/Dockerfile"
                 }
             }
         }
