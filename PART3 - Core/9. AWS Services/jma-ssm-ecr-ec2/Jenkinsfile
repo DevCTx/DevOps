@@ -131,8 +131,8 @@ CONTAINER_NAME=${env.APP_CONTAINER_NAME}
             when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
             steps {
                 script {
-                    // clean docker image on AWS EC2 server
-                    ec2CleanImageExceptTag(env.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
+                    // clean docker image on AWS EC2 server avec SSM
+                    ec2CleanImageExceptTagSSM(env.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
                 }
             }
         }
