@@ -43,7 +43,7 @@ pipeline {
         }
 
         stage('Checkout SCM') {
-            agent { label 'maven-agent' }
+            agent { label 'docker-agent' }
 
             steps {
                 checkout scm
@@ -94,9 +94,6 @@ pipeline {
             steps {
                 script {
                     dir("${APP_DIR}/") {
-                        // deploy docker image on AWS EC2 server
-                        // ec2Deploy(env.APP_CONTAINER_NAME, env.APP_HOST_PORT, env.APP_CONTAINER_PORT, env.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
-
                         // Write an environment file with the variables used into docker-compose.yaml
                         writeFile file: '.env', text: """
 IMAGE_NAME=${env.APP_IMAGE_NAME}
