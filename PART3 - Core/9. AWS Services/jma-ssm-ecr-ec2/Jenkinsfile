@@ -12,7 +12,7 @@ library identifier: "jenkins-limited-shared-library@main",
         credentialsId: "github-token"
     ])
 
-def APP_DIR = "PART3 - Core/9. AWS Services/jma-dockerhub-ec2"
+def APP_DIR = "PART3 - Core/9. AWS Services/jma-ssm-ecr-ec2"
 
 pipeline {
 
@@ -21,33 +21,33 @@ pipeline {
     options {
         skipDefaultCheckout(true)   // disable the automatic checkout
     }
-	
-    parameters {        
-        string( name: 'IMAGE_NAME', defaultValue: 'devct/demo-java-app', description: 'Image Name')
-        string( name: 'VERSION', defaultValue: '3.0', description: 'App Version')
-        string( name: 'HOST_PORT', defaultValue: '3080', description: 'Host Port')
-        string( name: 'CONTAINER_PORT', defaultValue: '3080', description: 'Container Port')
-        string( name: 'CONTAINER_NAME', defaultValue: 'java-app', description: 'Container Name')
-    }
 
     environment {
-        IMAGE_TAG = "${params.VERSION}.${BUILD_NUMBER}"
+        APP_IMAGE_NAME = 'devct/demo-java-app'
+        APP_VERSION = '3.0'
+        APP_HOST_PORT = '3080'
+        APP_CONTAINER_PORT = '3080'
+        APP_CONTAINER_NAME = 'java-app'
     }
 
     stages {
 
-        // define a custom checkout
-        //    on the same branch that triggered the pipeline
-        //    enabling submodules, and loading them recursively
-        //    reusing the same GitHub credentials than parent
-        // with the specified git and parent credentials
-        //
+        stage('Init env') {
+            agent { label 'maven-agent' }
+
+            steps {
+                script {
+                    env.APP_IMAGE_TAG = "${env.APP_VERSION}.${env.BUILD_NUMBER}"
+                }
+            }
+        }
+
         stage('Checkout SCM') {
             agent { label 'maven-agent' }
 
             steps {
                 checkout scm
-                stash name: 'source', includes: "${APP_DIR}/**"
+                stash name: 'sources', includes: "${APP_DIR}/**"
             }
         }
         
@@ -58,18 +58,14 @@ pipeline {
             
             steps {
                 script {
-                    deleteDir()
-                    unstash 'source'
+                    unstash 'sources'
 
                     dir("${APP_DIR}/") {
-                        sh "pwd"
-                        sh "ls -R"
-                        sh "find . -name pom.xml"    
                         // build maven java app
                         buildJar()  // calls the Library function
                     }
 
-                    stash name: 'jar', includes: '${APP_DIR}/target/*.jar'
+                    stash name: 'app_files', includes: "${APP_DIR}/target/*.jar, ${APP_DIR}/Dockerfile"
                 }
             }
         }
@@ -81,11 +77,11 @@ pipeline {
 
             steps {
                 script {
-                    unstash 'jar'
+                    unstash 'app_files'
 
                     dir("${APP_DIR}/") {
                         // build and push docker image on docker hub
-                        buildAndPushImage(params.IMAGE_NAME, env.IMAGE_TAG) // calls the Library function
+                        buildAndPushImage(env.APP_IMAGE_NAME, env.APP_IMAGE_TAG) // calls the Library function
                     }
                 }
             }
@@ -94,11 +90,24 @@ pipeline {
         stage("deploy") {
             agent { label 'aws-agent' }
         
+            when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
             steps {
                 script {
                     dir("${APP_DIR}/") {
                         // deploy docker image on AWS EC2 server
-                        ec2Deploy(params.CONTAINER_NAME, params.HOST_PORT, params.CONTAINER_PORT, params.IMAGE_NAME, env.IMAGE_TAG)
+                        // ec2Deploy(env.APP_CONTAINER_NAME, env.APP_HOST_PORT, env.APP_CONTAINER_PORT, env.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
+
+                        // Write an environment file with the variables used into docker-compose.yaml
+                        writeFile file: '.env', text: """
+IMAGE_NAME=${env.APP_IMAGE_NAME}
+IMAGE_TAG=${env.APP_IMAGE_TAG}
+HOST_PORT=${env.APP_HOST_PORT}
+CONTAINER_PORT=${env.APP_CONTAINER_PORT}
+CONTAINER_NAME=${env.APP_CONTAINER_NAME}
+"""
+
+                        // Deploy by copying docker-compose.yaml + .env
+                        ec2DockerComposeDeployEnvSSM()
                     }
                 }
             }
@@ -107,13 +116,14 @@ pipeline {
         stage("cleanup local and DockerHub Images") {
             agent { label 'docker-agent' }
 
+            when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
             steps {
                 script {
                     // clean docker image on Jenkins server
-                    localCleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
+                    localCleanImageExceptTag(env.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
 
                     // clean docker image on Docker Hub (because access to tag retention is not possible with a personal account)
-                    dockerhubCleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
+                    dockerhubCleanImageExceptTag(env.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
                 }
             }
         }
@@ -121,13 +131,13 @@ pipeline {
         stage("cleanup EC2 Images") {
             agent { label 'aws-agent' }
 
+            when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
             steps {
                 script {
                     // clean docker image on AWS EC2 server
-                    ec2CleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
+                    ec2CleanImageExceptTag(env.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
                 }
             }
         }
-*/
     }
 } 
