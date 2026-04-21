@@ -37,14 +37,8 @@ pipeline {
 
     stages {
 
-        // define a custom checkout
-        //    on the same branch that triggered the pipeline
-        //    enabling submodules, and loading them recursively
-        //    reusing the same GitHub credentials than parent
-        // with the specified git and parent credentials
-        //
         stage('Checkout SCM') {
-            agent { label 'maven-agent' }
+            agent { label 'docker-agent' }
 
             steps {
                 checkout scm
