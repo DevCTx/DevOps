@@ -19,7 +19,8 @@ pipeline {
 	agent none
 
     options {
-        skipDefaultCheckout(true)   // disable the automatic checkout
+        skipDefaultCheckout(true)       // disable the automatic checkout into each step
+        preserveStashes(buildCount: 5)  // to activate the restart from stage with stashes preserved
     }
 
     environment {
@@ -65,7 +66,7 @@ pipeline {
                         buildJar()  // calls the Library function
                     }
 
-                    stash name: 'app_files', includes: "${APP_DIR}/target/*.jar, ${APP_DIR}/Dockerfile"
+                    stash name: 'app_files', includes: "${APP_DIR}/target/*.jar, ${APP_DIR}/Dockerfile, ${APP_DIR}/docker-compose.yaml"
                 }
             }
         }
@@ -93,6 +94,8 @@ pipeline {
             when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
             steps {
                 script {
+                    unstash 'app_files'
+
                     dir("${APP_DIR}/") {
                         // Write an environment file with the variables used into docker-compose.yaml
                         writeFile file: '.env', text: """
