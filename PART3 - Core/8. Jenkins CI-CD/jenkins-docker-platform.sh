@@ -1,4 +1,14 @@
 #!/bin/bash
+#
+# This script install a full Jenkins Docker Controller with agents
+# 
+# Jenkins Controller → orchestration only, CI/CD Plugins
+# ├── jenkins-docker-agent → build Docker images, docker socket access
+# ├── jenkins-nodejs-agent → React/Node Builds
+# ├── jenkins-maven-agent → Java Builds
+# └── jenkins-aws-agent → AWS deployment
+#
+
 set -e
 
 echo "=== Install Docker ==="
@@ -19,20 +29,28 @@ mkdir -p ~/jenkins/agents/{docker,nodejs,maven,aws}
 # Jenkins Controller (clean)
 ########################################
 
-cat > ~/jenkins/controller/Dockerfile <<EOF
+cat > ~/jenkins/controller/Dockerfile <<'EOF'
 FROM jenkins/jenkins:lts
 
 USER root
 
 ARG DOCKER_GID=999
 
+RUN apt-get update && apt-get install -y ca-certificates curl gnupg && \
+    install -m 0755 -d /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
+    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian trixie stable" > /etc/apt/sources.list.d/docker.list
+
 RUN apt-get update && apt-get install -y \
     git \
     curl \
-    docker.io && \
+    docker-ce-cli && \
     apt-get clean
 
-RUN groupadd -g ${DOCKER_GID} docker || true &&  usermod -aG docker jenkins
+RUN getent group docker \
+    && groupmod -g ${DOCKER_GID} docker \
+    || groupadd -g ${DOCKER_GID} docker \
+    &&  usermod -aG docker jenkins
 
 # Plugins essentiels CI/CD
 RUN jenkins-plugin-cli --plugins \
@@ -49,7 +67,7 @@ EOF
 # Docker Agent (build images)
 ########################################
 
-cat > ~/jenkins/agents/docker/Dockerfile <<EOF
+cat > ~/jenkins/agents/docker/Dockerfile <<'EOF'
 FROM jenkins/inbound-agent
 
 USER root
@@ -64,7 +82,10 @@ RUN apt-get update && apt-get install -y \
     apt-get clean
 
 # accès docker host
-RUN groupmod -g ${DOCKER_GID} docker || true && usermod -aG docker jenkins
+RUN getent group docker \
+    && groupmod -g ${DOCKER_GID} docker \
+    || groupadd -g ${DOCKER_GID} docker \
+    &&  usermod -aG docker jenkins
 
 USER jenkins
 EOF
@@ -73,7 +94,7 @@ EOF
 # NodeJS Agent
 ########################################
 
-cat > ~/jenkins/agents/nodejs/Dockerfile <<EOF
+cat > ~/jenkins/agents/nodejs/Dockerfile <<'EOF'
 FROM jenkins/inbound-agent
 
 USER root
@@ -90,7 +111,7 @@ EOF
 # Maven Agent
 ########################################
 
-cat > ~/jenkins/agents/maven/Dockerfile <<EOF
+cat > ~/jenkins/agents/maven/Dockerfile <<'EOF'
 FROM jenkins/inbound-agent
 
 USER root
@@ -108,7 +129,7 @@ EOF
 # AWS Agent
 ########################################
 
-cat > ~/jenkins/agents/aws/Dockerfile <<EOF
+cat > ~/jenkins/agents/aws/Dockerfile <<'EOF'
 FROM jenkins/inbound-agent
 
 USER root
@@ -154,6 +175,16 @@ done
 # Test agent images
 ########################################
 
+echo ""
+echo "=== Testing jenkins-docker-agent ==="
+
+docker run --rm \
+  --name jenkins-docker-agent \
+  --entrypoint bash \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  jenkins-docker-agent \
+  -c "docker --version"
+
 test_agent () {
   IMAGE=$1
   CMD=$2
@@ -162,13 +193,12 @@ test_agent () {
   echo "=== Testing $IMAGE ==="
 
   docker run --rm \
+    --name $IMAGE \
     --entrypoint bash \
-    -v /var/run/docker.sock:/var/run/docker.sock \
     $IMAGE \
     -c "$CMD"
 }
 
-test_agent jenkins-docker-agent "docker version"
 test_agent jenkins-maven-agent "mvn -v"
 test_agent jenkins-nodejs-agent "node -v && npm -v"
 test_agent jenkins-aws-agent "aws --version"

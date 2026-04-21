@@ -58,7 +58,6 @@ pipeline {
             
             steps {
                 script {
-                    deleteDir()
                     unstash 'sources'
 
                     dir("${APP_DIR}/") {
