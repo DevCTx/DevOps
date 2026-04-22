@@ -14,7 +14,7 @@ def APP_DIR = "PART3 - Core/9. AWS Services/jma-ssh-dockerhub-ec2"
 library identifier: "jenkins-limited-shared-library@main", 
     retriever: modernSCM([
         $class: "GitSCMSource", 
-        remote: $GIT_SHARED_LIB,
+        remote: GIT_SHARED_LIB,
         credentialsId: "github-token"
     ])
 
