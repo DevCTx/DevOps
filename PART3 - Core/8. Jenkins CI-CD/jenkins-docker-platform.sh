@@ -47,12 +47,15 @@ RUN apt-get update && apt-get install -y \
     docker-ce-cli && \
     apt-get clean
 
-RUN getent group docker \
-    && groupmod -g ${DOCKER_GID} docker \
-    || groupadd -g ${DOCKER_GID} docker \
-    &&  usermod -aG docker jenkins
+RUN set -eux; \
+    if getent group docker; then \
+        groupmod -g ${DOCKER_GID} docker; \
+    else \
+        groupadd -g ${DOCKER_GID} docker; \
+    fi; \
+    usermod -aG docker jenkins
 
-# Plugins essentiels CI/CD
+# Essential CI/CD Plugins
 RUN jenkins-plugin-cli --plugins \
     workflow-aggregator \
     git \
@@ -81,11 +84,13 @@ RUN apt-get update && apt-get install -y \
     ca-certificates && \
     apt-get clean
 
-# accès docker host
-RUN getent group docker \
-    && groupmod -g ${DOCKER_GID} docker \
-    || groupadd -g ${DOCKER_GID} docker \
-    &&  usermod -aG docker jenkins
+RUN set -eux; \
+    if getent group docker; then \
+        groupmod -g ${DOCKER_GID} docker; \
+    else \
+        groupadd -g ${DOCKER_GID} docker; \
+    fi; \
+    usermod -aG docker jenkins
 
 USER jenkins
 EOF
