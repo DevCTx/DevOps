@@ -24,6 +24,7 @@ pipeline {
 
     options {
         skipDefaultCheckout(true)   // disable the automatic checkout
+        preserveStashes(buildCount: 5)  // to activate the restart from stage with stashes preserved
     }
 	
     parameters {        
@@ -102,8 +103,8 @@ pipeline {
             steps {
                 script {
                     dir("${APP_DIR}/") {
-                        // deploy docker image on AWS EC2 server
-                        ec2Deploy(params.CONTAINER_NAME, params.HOST_PORT, params.CONTAINER_PORT, params.IMAGE_NAME, env.IMAGE_TAG)
+                        // deploy docker image on AWS EC2 server via SSH
+                        ec2DeployDockerCmdSSH(params.CONTAINER_NAME, params.HOST_PORT, params.CONTAINER_PORT, params.IMAGE_NAME, env.IMAGE_TAG)
                     }
                 }
             }
