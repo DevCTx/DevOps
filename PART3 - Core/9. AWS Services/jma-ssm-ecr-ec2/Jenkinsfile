@@ -4,15 +4,18 @@
 //
 // This project uses a limited shared library within the project scope only
 
+def GIT_SHARED_LIB = "https://github.com/DevCTx/jenkins-limited-shared-library.git"
+def GIT_PROJECT_URL = "https://github.com/DevCTx/DevOps.git"
+def APP_DIR = "PART3 - Core/9. AWS Services/jma-ssm-ecr-ec2"
+
+
 // This tells Jenkins to download a Shared Library from GitHub before running this pipeline
 library identifier: "jenkins-limited-shared-library@main", 
     retriever: modernSCM([
         $class: "GitSCMSource", 
-        remote: "https://github.com/DevCTx/jenkins-limited-shared-library.git",
+        remote: GIT_SHARED_LIB,
         credentialsId: "github-token"
     ])
-
-def APP_DIR = "PART3 - Core/9. AWS Services/jma-ssm-ecr-ec2"
 
 pipeline {
 
@@ -34,7 +37,7 @@ pipeline {
     stages {
 
         stage('Init env') {
-            agent { label 'maven-agent' }
+            agent { label 'docker-agent' }
 
             steps {
                 script {
@@ -47,7 +50,17 @@ pipeline {
             agent { label 'docker-agent' }
 
             steps {
-                checkout scm
+                checkout([
+                  $class: 'GitSCM',
+                  branches: [[name: 'jenkins-jobs']],
+                  userRemoteConfigs: [[url: GIT_PROJECT_URL ]],
+                  extensions: [
+                    [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [
+                      [$class: 'SparseCheckoutPath', path: "${APP_DIR}/"]
+                    ]]
+                  ]
+                ])
+
                 stash name: 'sources', includes: "${APP_DIR}/**"
             }
         }
@@ -58,16 +71,17 @@ pipeline {
             when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
             
             steps {
-                script {
-                    unstash 'sources'
+                unstash 'sources'
 
+                script {
                     dir("${APP_DIR}/") {
                         // build maven java app
                         buildJar()  // calls the Library function
                     }
-
-                    stash name: 'app_files', includes: "${APP_DIR}/target/*.jar, ${APP_DIR}/Dockerfile, ${APP_DIR}/docker-compose.yaml"
                 }
+
+                stash name: 'app_files', includes: "${APP_DIR}/target/*.jar,${APP_DIR}/Dockerfile,${APP_DIR}/docker-compose.yaml"
+
             }
         }
 
@@ -77,9 +91,9 @@ pipeline {
             when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
 
             steps {
-                script {
-                    unstash 'app_files'
+                unstash 'app_files'
 
+                script {
                     dir("${APP_DIR}/") {
                         // build and push docker image on docker hub
                         buildAndPushImage(env.APP_IMAGE_NAME, env.APP_IMAGE_TAG) // calls the Library function
@@ -93,9 +107,9 @@ pipeline {
         
             when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
             steps {
-                script {
-                    unstash 'app_files'
+                unstash 'app_files'
 
+                script {
                     dir("${APP_DIR}/") {
                         // Write an environment file with the variables used into docker-compose.yaml
                         writeFile file: '.env', text: """
@@ -107,7 +121,7 @@ CONTAINER_NAME=${env.APP_CONTAINER_NAME}
 """
 
                         // Deploy by copying docker-compose.yaml + .env
-                        ec2DockerComposeDeployEnvSSM()
+                        ec2DeployEnvDockerComposeSSM()
                     }
                 }
             }
