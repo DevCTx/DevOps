@@ -111,6 +111,7 @@ pipeline {
 
                 script {
                     dir("${APP_DIR}/") {
+
                         // Write an environment file with the variables used into docker-compose.yaml
                         def envVars = [
                             IMAGE_NAME     : env.APP_IMAGE_NAME,
