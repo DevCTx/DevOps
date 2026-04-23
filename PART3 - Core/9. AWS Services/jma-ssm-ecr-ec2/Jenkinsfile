@@ -111,14 +111,24 @@ pipeline {
 
                 script {
                     dir("${APP_DIR}/") {
+
                         // Write an environment file with the variables used into docker-compose.yaml
-                        writeFile file: '.env', text: """
-IMAGE_NAME=${env.APP_IMAGE_NAME}
-IMAGE_TAG=${env.APP_IMAGE_TAG}
-HOST_PORT=${env.APP_HOST_PORT}
-CONTAINER_PORT=${env.APP_CONTAINER_PORT}
-CONTAINER_NAME=${env.APP_CONTAINER_NAME}
-"""
+                        def envVars = [
+                            IMAGE_NAME     : env.APP_IMAGE_NAME,
+                            IMAGE_TAG      : env.APP_IMAGE_TAG,
+                            HOST_PORT      : env.APP_HOST_PORT,
+                            CONTAINER_PORT : env.APP_CONTAINER_PORT,
+                            CONTAINER_NAME : env.APP_CONTAINER_NAME
+                        ]
+
+                        def writeEnvFile(path, vars) {
+                            writeFile(
+                                file: path,
+                                text: vars.collect { key, value -> "${key}=${value}" }.join('\n') + '\n'
+                            )
+                        }
+
+                        writeEnvFile('.env', envVars)
 
                         // Deploy by copying docker-compose.yaml + .env
                         ec2DeployEnvDockerComposeSSM()
