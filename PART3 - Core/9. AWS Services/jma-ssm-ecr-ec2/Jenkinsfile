@@ -17,6 +17,15 @@ library identifier: "jenkins-limited-shared-library@main",
         credentialsId: "github-token"
     ])
 
+
+def writeEnvFile(path, vars) {
+    writeFile(
+        file: path,
+        text: vars.collect { key, value -> "${key}=${value}" }.join('\n') + '\n'
+    )
+}
+
+
 pipeline {
 
 	agent none
@@ -119,13 +128,6 @@ pipeline {
                             CONTAINER_PORT : env.APP_CONTAINER_PORT,
                             CONTAINER_NAME : env.APP_CONTAINER_NAME
                         ]
-
-                        def writeEnvFile(path, vars) {
-                            writeFile(
-                                file: path,
-                                text: vars.collect { key, value -> "${key}=${value}" }.join('\n') + '\n'
-                            )
-                        }
 
                         writeEnvFile('.env', envVars)
 
