@@ -62,6 +62,8 @@ RUN jenkins-plugin-cli --plugins \
     git \
     pipeline-stage-view \
     credentials-binding \
+    docker-plugin \
+    docker-workflow \
     ssh-slaves
 
 USER jenkins
@@ -221,6 +223,7 @@ docker run -d \
   --restart unless-stopped \
   --init \
   -p 8080:8080 \
+  -p 50000:50000 \
   -v jenkins_home:/var/jenkins_home \
   -v /var/run/docker.sock:/var/run/docker.sock \
   --group-add $DOCKER_GID \
