@@ -106,6 +106,7 @@ pipeline {
                     dir("${APP_DIR}/") {
                         // build and push docker image on docker hub
                         buildAndPushImage(env.APP_IMAGE_NAME, env.APP_IMAGE_TAG) // calls the Library function
+                        echo "buildAndPushImage : env.APP_IMAGE_TA = $env.APP_IMAGE_TAG"
                     }
                 }
             }
@@ -130,6 +131,7 @@ pipeline {
                         ]
 
                         writeEnvFile('.env', envVars)
+                        echo "writeEnvFile : env.APP_IMAGE_TA = $env.APP_IMAGE_TAG"
 
                         // Deploy by copying docker-compose.yaml + .env
                         ec2DeployEnvDockerComposeSSM()
