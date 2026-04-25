@@ -128,7 +128,6 @@ pipeline {
                             CONTAINER_PORT : env.APP_CONTAINER_PORT,
                             CONTAINER_NAME : env.APP_CONTAINER_NAME
                         ]
-
                         writeEnvFile('.env', envVars)
 
                         // Deploy by copying docker-compose.yaml + .env
