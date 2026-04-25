@@ -66,7 +66,8 @@ RUN jenkins-plugin-cli --plugins \
     credentials-binding \
     docker-plugin \
     docker-workflow \
-    ssh-slaves
+    ssh-slaves \
+    multibranch-scan-webhook-trigger
 
 USER jenkins
 EOF
@@ -302,28 +303,59 @@ until curl -s http://localhost:8080/login >/dev/null; do
 done
 
 echo ""
-echo "✅ Jenkins ready:"
+echo "🚀 EC2 initialization..."
 
-echo ""
-PRIVATE_IP=$(hostname -I | awk '{print $1}')
-echo "PRIVATE_IP : http://${PRIVATE_IP}:8080"
-
-echo ""
+################################################
+# Get AWS metadata token (IMDSv2)
 # 169.254.169.254 is a special adress accessible only from the server
-# Ask for a token
+################################################
 TOKEN=$(curl -s -X PUT \
   "http://169.254.169.254/latest/api/token" \
   -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
-# Ask for private server information with the token
+
+################################################
+# Get EC2 Name tag → hostname
+# Accessing to private info with TOKEN
+#
+# Require :
+# Select instance > Actions > Instance Settings
+# > Allow tags in instance metadata > Allow
+#
+################################################
+INSTANCE_NAME=$(curl -s \
+  -H "X-aws-ec2-metadata-token: $TOKEN" \
+  http://169.254.169.254/latest/meta-data/tags/instance/Name)
+
+if [ -n "$INSTANCE_NAME" ]; then
+    sudo hostnamectl set-hostname "$INSTANCE_NAME"
+    echo "✅ Hostname set to: $INSTANCE_NAME"
+else
+    echo "⚠️ No Name tag found"
+fi
+
+################################################
+# Jenkins URLs
+################################################
+echo ""
+echo "✅ Jenkins ready:"
+echo ""
+
+PRIVATE_IP=$(hostname -I | awk '{print $1}')
+echo "PRIVATE_IP : http://${PRIVATE_IP}:8080"
+
 PUBLIC_IP=$(curl -s \
   -H "X-aws-ec2-metadata-token: $TOKEN" \
   http://169.254.169.254/latest/meta-data/public-ipv4)
+
 if [ -n "$PUBLIC_IP" ]; then
-  echo "PUBLIC_IP : http://${PUBLIC_IP}:8080"
+  echo "PUBLIC_IP  : http://${PUBLIC_IP}:8080"
 else
-  echo "PUBLIC_IP : not available"
+  echo "PUBLIC_IP  : not available"
 fi
 
+################################################
+# Jenkins admin password
+################################################
 echo ""
 echo "🔑 Admin password:"
 docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
