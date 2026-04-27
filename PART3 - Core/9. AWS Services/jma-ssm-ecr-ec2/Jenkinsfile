@@ -64,9 +64,7 @@ pipeline {
                   branches: [[name: 'jenkins-jobs']],
                   userRemoteConfigs: [[url: GIT_PROJECT_URL ]],
                   extensions: [
-                    [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [
-                      [$class: 'SparseCheckoutPath', path: "${APP_DIR}/"]
-                    ]]
+                    [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[$class: 'SparseCheckoutPath', path: "${APP_DIR}/"]]]
                   ]
                 ])
 
