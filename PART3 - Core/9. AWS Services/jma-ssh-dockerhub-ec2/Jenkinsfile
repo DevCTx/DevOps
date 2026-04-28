@@ -27,11 +27,11 @@ pipeline {
     }
 	
     parameters {        
-        string( name: 'IMAGE_NAME', defaultValue: 'devct/demo-java-app', description: 'Image Name')
-        string( name: 'VERSION', defaultValue: '3.0', description: 'App Version')
-        string( name: 'HOST_PORT', defaultValue: '3080', description: 'Host Port')
-        string( name: 'CONTAINER_PORT', defaultValue: '3080', description: 'Container Port')
-        string( name: 'CONTAINER_NAME', defaultValue: 'java-app', description: 'Container Name')
+        string( name: 'APP_IMAGE_NAME', defaultValue: 'demo-java-app', description: 'Image Name')
+        string( name: 'APP_VERSION', defaultValue: '3.0', description: 'App Version')
+        string( name: 'APP_HOST_PORT', defaultValue: '3080', description: 'Host Port')
+        string( name: 'APP_CONTAINER_PORT', defaultValue: '3080', description: 'Container Port')
+        string( name: 'APP_CONTAINER_NAME', defaultValue: 'java-app', description: 'Container Name')
     }
 
     stages {
@@ -41,7 +41,7 @@ pipeline {
 
             steps {
                 script {
-                    env.APP_IMAGE_TAG = "${params.VERSION}.${BUILD_NUMBER}"
+                    env.APP_IMAGE_TAG = "${params.APP_VERSION}.${BUILD_NUMBER}"
                 }
             }
         }
@@ -93,7 +93,7 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         // build and push docker image on docker hub
-                        dockerhubBuildAndPushImage(params.IMAGE_NAME, env.IMAGE_TAG) // calls the Library function
+                        dockerhubBuildAndPushImage(params.APP_IMAGE_NAME, env.APP_IMAGE_TAG) // calls the Library function
                     }
                 }
             }
@@ -101,12 +101,19 @@ pipeline {
 
         stage("deploy") {
             agent { label 'aws-agent' }
-        
             steps {
                 script {
                     dir("${APP_DIR}/") {
-                        // deploy docker image on AWS EC2 server via SSH
-                        ec2DeployDockerCmdSSH(params.CONTAINER_NAME, params.HOST_PORT, params.CONTAINER_PORT, params.IMAGE_NAME, env.IMAGE_TAG)
+                        withCredentials([string(credentialsId: 'DOCKER_HUB_REPOSITORY', variable: 'DOCKER_HUB_REPOSITORY')]) {
+                            ec2DeployDockerCmdSSH(
+                                params.APP_CONTAINER_NAME,
+                                params.APP_HOST_PORT,
+                                params.APP_CONTAINER_PORT,
+                                env.DOCKER_HUB_REPOSITORY,
+                                params.APP_IMAGE_NAME,
+                                env.APP_IMAGE_TAG
+                            )
+                        }
                     }
                 }
             }
@@ -119,7 +126,7 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         // clean docker image on AWS EC2 server
-                        ec2CleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
+                        ec2CleanImageExceptTag(params.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
                     }
                 }
             }
@@ -131,10 +138,10 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         // clean docker image on Docker Hub (because access to tag retention is not possible with a personal account)
-                        dockerhubCleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
+                        dockerhubCleanImageExceptTag(params.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
 
                         // clean docker image on Jenkins server
-                        localCleanImageExceptTag(params.IMAGE_NAME, env.IMAGE_TAG)
+                        localCleanImageExceptTag(params.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
                     }
                 }
             }

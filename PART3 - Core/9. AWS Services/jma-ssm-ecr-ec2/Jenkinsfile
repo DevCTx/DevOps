@@ -18,12 +18,12 @@ library identifier: "jenkins-limited-shared-library@main",
     ])
 
 
-def writeEnvFile(path, vars) {
-    writeFile(
-        file: path,
-        text: vars.collect { key, value -> "${key}=${value}" }.join('\n') + '\n'
-    )
-}
+// def writeEnvFile(path, vars) {
+//     writeFile(
+//         file: path,
+//         text: vars.collect { key, value -> "${key}=${value}" }.join('\n') + '\n'
+//     )
+// }
 
 
 pipeline {
@@ -36,7 +36,7 @@ pipeline {
     }
 
     environment {
-        APP_IMAGE_NAME = 'devct/demo-java-app'
+        APP_IMAGE_NAME = 'demo-java-app'
         APP_VERSION = '3.0'
         APP_HOST_PORT = '3080'
         APP_CONTAINER_PORT = '3080'
@@ -103,7 +103,7 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         // build and push docker image on docker hub
-                        buildAndPushImage(env.APP_IMAGE_NAME, env.APP_IMAGE_TAG) // calls the Library function
+                        ecrBuildAndPushImage() // calls the Library function
                     }
                 }
             }
@@ -119,22 +119,46 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         // Write an environment file with the variables used into docker-compose.yaml
-                        def envVars = [
-                            IMAGE_NAME     : env.APP_IMAGE_NAME,
-                            IMAGE_TAG      : env.APP_IMAGE_TAG,
-                            HOST_PORT      : env.APP_HOST_PORT,
-                            CONTAINER_PORT : env.APP_CONTAINER_PORT,
-                            CONTAINER_NAME : env.APP_CONTAINER_NAME
-                        ]
-                        writeEnvFile('.env', envVars)
+//                        def envVars = [
+//                            IMAGE_NAME     : env.APP_IMAGE_NAME,
+//                            IMAGE_TAG      : env.APP_IMAGE_TAG,
+//                            HOST_PORT      : env.APP_HOST_PORT,
+//                            CONTAINER_PORT : env.APP_CONTAINER_PORT,
+//                            CONTAINER_NAME : env.APP_CONTAINER_NAME
+//                        ]
+//                        writeEnvFile('.env', envVars)
 
                         // Deploy by copying docker-compose.yaml + .env
-                        ec2DeployEnvDockerComposeSSM()
+                        withCredentials([string(credentialsId: 'ECR_REPOSITORY', variable: 'ECR_REPOSITORY')]) {
+                            ec2DeployEnvDockerComposeSSM(
+                                    env.APP_CONTAINER_NAME,
+                                    env.APP_HOST_PORT,
+                                    env.APP_CONTAINER_PORT,
+                                    env.ECR_REPOSITORY,
+                                    env.APP_IMAGE_NAME,
+                                    env.APP_IMAGE_TAG
+                                )
+                        }
                     }
                 }
             }
         }
         
+        stage("cleanup EC2 Images") {
+            agent { label 'aws-agent' }
+
+            when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
+            steps {
+                script {
+                    // clean docker image on AWS EC2 instance server with SSM
+                    ec2CleanImageExceptTagSSM(env.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
+
+                    // clean docker image on AWS ECR repository server with SSM
+                    ecrCleanImageExceptTagSSM(env.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
+                }
+            }
+        }
+
         stage("cleanup local and DockerHub Images") {
             agent { label 'docker-agent' }
 
@@ -143,23 +167,9 @@ pipeline {
                 script {
                     // clean docker image on Jenkins server
                     localCleanImageExceptTag(env.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
-
-                    // clean docker image on Docker Hub (because access to tag retention is not possible with a personal account)
-                    dockerhubCleanImageExceptTag(env.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
                 }
             }
         }
 
-        stage("cleanup EC2 Images") {
-            agent { label 'aws-agent' }
-
-            when { expression { env.BRANCH_NAME == "jenkins-jobs" } }  //env.GIT_NAME == "origin/jenkins-jobs" in single pipeline
-            steps {
-                script {
-                    // clean docker image on AWS EC2 server avec SSM
-                    ec2CleanImageExceptTagSSM(env.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
-                }
-            }
-        }
     }
 } 
