@@ -155,7 +155,7 @@ echo "build image step : ${APP_IMAGE_NAME}:${APP_IMAGE_TAG}"
                         withCredentials( [
                             string(credentialsId: 'DOCKER_USERNAME', variable: 'DOCKER_USERNAME'),
                         ]) {
-                            localCleanImageExceptTag(${DOCKER_USERNAME})
+                            localCleanImageExceptTag("${DOCKER_USERNAME}")
                         }
                     }
                 }
