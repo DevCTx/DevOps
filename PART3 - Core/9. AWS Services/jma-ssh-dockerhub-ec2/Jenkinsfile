@@ -26,12 +26,28 @@ pipeline {
         preserveStashes(buildCount: 5)  // to activate the restart from stage with stashes preserved
     }
 	
-    parameters {        
-        string( name: 'APP_IMAGE_NAME', defaultValue: 'demo-java-app', description: 'Image Name')
-        string( name: 'APP_VERSION', defaultValue: '3.0', description: 'App Version')
-        string( name: 'APP_HOST_PORT', defaultValue: '3080', description: 'Host Port')
-        string( name: 'APP_CONTAINER_PORT', defaultValue: '3080', description: 'Container Port')
-        string( name: 'APP_CONTAINER_NAME', defaultValue: 'java-app', description: 'Container Name')
+//    parameters {        
+//        string( name: 'APP_IMAGE_NAME', defaultValue: 'demo-java-app', description: 'Image Name')
+//        string( name: 'APP_VERSION', defaultValue: '3.0', description: 'App Version')
+//        string( name: 'APP_HOST_PORT', defaultValue: '3080', description: 'Host Port')
+//        string( name: 'APP_CONTAINER_PORT', defaultValue: '3080', description: 'Container Port')
+//        string( name: 'APP_CONTAINER_NAME', defaultValue: 'java-app', description: 'Container Name')
+//    }
+//
+//    environment {
+//        APP_IMAGE_NAME = params.APP_IMAGE_NAME
+//        APP_VERSION = params.APP_VERSION
+//        APP_HOST_PORT = params.APP_HOST_PORT
+//        APP_CONTAINER_PORT = params.APP_CONTAINER_PORT
+//        APP_CONTAINER_NAME = params.APP_CONTAINER_NAME
+//    }
+    
+    environment {
+        APP_IMAGE_NAME = 'demo-java-app'
+        APP_VERSION = '3.0'
+        APP_HOST_PORT = '3080'
+        APP_CONTAINER_PORT = '3080'
+        APP_CONTAINER_NAME = 'java-app'
     }
 
     stages {
@@ -41,6 +57,7 @@ pipeline {
 
             steps {
                 script {
+                    // Only at this step to be sure to get the build version
                     env.APP_IMAGE_TAG = "${params.APP_VERSION}.${BUILD_NUMBER}"
                 }
             }
@@ -93,7 +110,7 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         // build and push docker image on docker hub
-                        dockerhubBuildAndPushImage(params.APP_IMAGE_NAME, env.APP_IMAGE_TAG) // calls the Library function
+                        dockerhubBuildAndPushImageSSH() // calls the Library function
                     }
                 }
             }
@@ -104,16 +121,8 @@ pipeline {
             steps {
                 script {
                     dir("${APP_DIR}/") {
-                        withCredentials([string(credentialsId: 'DOCKER_HUB_REPOSITORY', variable: 'DOCKER_HUB_REPOSITORY')]) {
-                            ec2DeployDockerCmdSSH(
-                                params.APP_CONTAINER_NAME,
-                                params.APP_HOST_PORT,
-                                params.APP_CONTAINER_PORT,
-                                env.DOCKER_HUB_REPOSITORY,
-                                params.APP_IMAGE_NAME,
-                                env.APP_IMAGE_TAG
-                            )
-                        }
+                        // Deploy with docker on EC2 via SSH
+                        ec2DeployDockerCmdSSH()
                     }
                 }
             }
@@ -125,8 +134,8 @@ pipeline {
             steps {
                 script {
                     dir("${APP_DIR}/") {
-                        // clean docker image on AWS EC2 server
-                        ec2CleanImageExceptTag(params.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
+                        // clean docker image on AWS EC2 server via SSH
+                        ec2CleanImageExceptTagSSH()
                     }
                 }
             }
@@ -137,11 +146,15 @@ pipeline {
             steps {
                 script {
                     dir("${APP_DIR}/") {
-                        // clean docker image on Docker Hub (because access to tag retention is not possible with a personal account)
-                        dockerhubCleanImageExceptTag(params.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
+                        // clean docker image on Docker Hub
+                        dockerhubCleanImageExceptTagSSH()
 
                         // clean docker image on Jenkins server
-                        localCleanImageExceptTag(params.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
+                        withCredentials( [
+                            string(credentialsId: 'DOCKER_USERNAME', variable: 'DOCKER_USERNAME'),
+                        ]) {
+                            localCleanImageExceptTag(${DOCKER_USERNAME})
+                        }
                     }
                 }
             }

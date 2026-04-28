@@ -50,6 +50,7 @@ pipeline {
 
             steps {
                 script {
+                    // Only at this step to be sure to get the build version
                     env.APP_IMAGE_TAG = "${env.APP_VERSION}.${env.BUILD_NUMBER}"
                 }
             }
@@ -118,26 +119,9 @@ pipeline {
 
                 script {
                     dir("${APP_DIR}/") {
-                        // Write an environment file with the variables used into docker-compose.yaml
-//                        def envVars = [
-//                            IMAGE_NAME     : env.APP_IMAGE_NAME,
-//                            IMAGE_TAG      : env.APP_IMAGE_TAG,
-//                            HOST_PORT      : env.APP_HOST_PORT,
-//                            CONTAINER_PORT : env.APP_CONTAINER_PORT,
-//                            CONTAINER_NAME : env.APP_CONTAINER_NAME
-//                        ]
-//                        writeEnvFile('.env', envVars)
-
                         // Deploy by copying docker-compose.yaml + .env
                         withCredentials([string(credentialsId: 'ECR_REPOSITORY', variable: 'ECR_REPOSITORY')]) {
-                            ec2DeployEnvDockerComposeSSM(
-                                    env.APP_CONTAINER_NAME,
-                                    env.APP_HOST_PORT,
-                                    env.APP_CONTAINER_PORT,
-                                    env.ECR_REPOSITORY,
-                                    env.APP_IMAGE_NAME,
-                                    env.APP_IMAGE_TAG
-                                )
+                            ec2DeployEnvDockerComposeSSM()
                         }
                     }
                 }
@@ -151,10 +135,10 @@ pipeline {
             steps {
                 script {
                     // clean docker image on AWS EC2 instance server with SSM
-                    ec2CleanImageExceptTagSSM(env.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
+                    ec2CleanImageExceptTagSSM()
 
                     // clean docker image on AWS ECR repository server with SSM
-                    ecrCleanImageExceptTagSSM(env.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
+                    ecrCleanImageExceptTagSSM()
                 }
             }
         }
@@ -166,7 +150,11 @@ pipeline {
             steps {
                 script {
                     // clean docker image on Jenkins server
-                    localCleanImageExceptTag(env.APP_IMAGE_NAME, env.APP_IMAGE_TAG)
+                    withCredentials( [
+                        string(credentialsId: 'ECR_REGISTRY', variable: 'ECR_REGISTRY')
+                    ]) {
+                        localCleanImageExceptTag(${ECR_REGISTRY})
+                    }
                 }
             }
         }
