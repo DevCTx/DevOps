@@ -58,7 +58,7 @@ pipeline {
             steps {
                 script {
                     // Only at this step to be sure to get the build version
-                    env.APP_IMAGE_TAG = "${params.APP_VERSION}.${BUILD_NUMBER}"
+                    env.APP_IMAGE_TAG = "${env.APP_VERSION}.${BUILD_NUMBER}"
                 }
             }
         }
@@ -110,6 +110,8 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         // build and push docker image on docker hub
+echo "build image step : ${APP_IMAGE_NAME}:${APP_IMAGE_TAG}"
+
                         dockerhubBuildAndPushImageSSH() // calls the Library function
                     }
                 }
