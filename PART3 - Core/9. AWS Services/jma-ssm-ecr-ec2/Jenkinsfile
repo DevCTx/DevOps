@@ -120,7 +120,7 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         // Deploy by copying docker-compose.yaml + .env
-                        withCredentials([string(credentialsId: 'ECR_REPOSITORY', variable: 'ECR_REPOSITORY')]) {
+                        withCredentials([string(credentialsId: 'ECR_REGISTRY', variable: 'ECR_REGISTRY')]) {
                             ec2DeployEnvDockerComposeSSM()
                         }
                     }

@@ -112,7 +112,7 @@ pipeline {
                         // build and push docker image on docker hub
 echo "build image step : ${APP_IMAGE_NAME}:${APP_IMAGE_TAG}"
 
-                        dockerhubBuildAndPushImageSSH() // calls the Library function
+                        dockerhubBuildAndPushImage() // calls the Library function
                     }
                 }
             }
@@ -149,7 +149,7 @@ echo "build image step : ${APP_IMAGE_NAME}:${APP_IMAGE_TAG}"
                 script {
                     dir("${APP_DIR}/") {
                         // clean docker image on Docker Hub
-                        dockerhubCleanImageExceptTagSSH()
+                        dockerhubCleanImageExceptTag()
 
                         // clean docker image on Jenkins server
                         withCredentials( [

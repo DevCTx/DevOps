@@ -73,7 +73,7 @@ USER jenkins
 EOF
 
 ########################################
-# Docker Agent (build images)
+# Docker-AWS Agent (build images)
 ########################################
 
 cat > ~/jenkins/agents/docker/Dockerfile <<'EOF'
@@ -91,6 +91,7 @@ RUN apt-get update && apt-get install -y ca-certificates curl gnupg && \
 RUN apt-get update && apt-get install -y \
     git \
     curl \
+    unzip \
     docker-ce-cli \
     ca-certificates && \
     apt-get clean
@@ -102,6 +103,12 @@ RUN set -eux; \
         groupadd -g ${DOCKER_GID} docker; \
     fi; \
     usermod -aG docker jenkins
+
+RUN ARCH=$(uname -m) && \
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-${ARCH}.zip" -o awscliv2.zip && \
+    unzip awscliv2.zip && \
+    ./aws/install && \
+    rm -rf awscliv2.zip aws
 
 USER jenkins
 EOF
@@ -158,7 +165,7 @@ USER jenkins
 EOF
 
 ########################################
-# AWS Agent
+# AWS-EKS Agent
 ########################################
 
 cat > ~/jenkins/agents/aws/Dockerfile <<'EOF'
@@ -244,14 +251,14 @@ if docker run --rm \
   --entrypoint bash \
   -v /var/run/docker.sock:/var/run/docker.sock \
   jenkins-docker-agent \
-  -c "docker --version" ; then
+  -c "docker --version && aws --version" ; then
     echo "✅ jenkins-docker-agent OK"
   else
     echo "❌ jenkins-docker-agent FAILED"
     exit 1
   fi
 
-
+# === Testing other agents ===
 test_agent jenkins-maven-agent  "mvn -v"
 test_agent jenkins-nodejs-agent "node -v && npm -v"
 test_agent jenkins-aws-agent    "aws --version && kubectl version --client"
