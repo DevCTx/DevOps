@@ -91,7 +91,7 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         // build maven java app
-                        buildJar()  // calls the Library function
+                        localBuildJar()  // calls the Library function
                     }
                 }
 
@@ -152,11 +152,7 @@ echo "build image step : ${APP_IMAGE_NAME}:${APP_IMAGE_TAG}"
                         dockerhubCleanImageExceptTag()
 
                         // clean docker image on Jenkins server
-                        withCredentials( [
-                            string(credentialsId: 'DOCKER_USERNAME', variable: 'DOCKER_USERNAME'),
-                        ]) {
-                            localCleanImageExceptTag("${DOCKER_USERNAME}")
-                        }
+                        localCleanDockerhubImageExceptTag()
                     }
                 }
             }

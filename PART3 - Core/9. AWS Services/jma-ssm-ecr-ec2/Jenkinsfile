@@ -84,7 +84,7 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         // build maven java app
-                        buildJar()  // calls the Library function
+                        localBuildJar()  // calls the Library function
                     }
                 }
 
@@ -104,7 +104,7 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         // build and push docker image on docker hub
-                        ecrBuildAndPushImage() // calls the Library function
+                        ecrBuildAndPushImageSSM() // calls the Library function
                     }
                 }
             }
@@ -120,9 +120,7 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         // Deploy by copying docker-compose.yaml + .env
-                        withCredentials([string(credentialsId: 'ECR_REGISTRY', variable: 'ECR_REGISTRY')]) {
-                            ec2DeployEnvDockerComposeSSM()
-                        }
+                        ec2DeployDockerComposeSSM()
                     }
                 }
             }
