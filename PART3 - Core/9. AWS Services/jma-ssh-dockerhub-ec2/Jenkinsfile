@@ -110,8 +110,6 @@ pipeline {
                 script {
                     dir("${APP_DIR}/") {
                         // build and push docker image on docker hub
-echo "build image step : ${APP_IMAGE_NAME}:${APP_IMAGE_TAG}"
-
                         dockerhubBuildAndPushImage() // calls the Library function
                     }
                 }
@@ -121,6 +119,8 @@ echo "build image step : ${APP_IMAGE_NAME}:${APP_IMAGE_TAG}"
         stage("deploy") {
             agent { label 'aws-agent' }
             steps {
+                unstash 'app_files'
+
                 script {
                     dir("${APP_DIR}/") {
                         // Deploy with docker on EC2 via SSH
