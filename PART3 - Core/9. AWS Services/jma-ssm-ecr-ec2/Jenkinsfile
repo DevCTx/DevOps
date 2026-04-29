@@ -119,7 +119,7 @@ pipeline {
 
                 script {
                     dir("${APP_DIR}/") {
-                        // Deploy by copying docker-compose.yaml + .env
+                        // Deploy by copying docker-compose.yaml
                         ec2DeployDockerComposeSSM()
                     }
                 }
@@ -148,11 +148,7 @@ pipeline {
             steps {
                 script {
                     // clean docker image on Jenkins server
-                    withCredentials( [
-                        string(credentialsId: 'ECR_REGISTRY', variable: 'ECR_REGISTRY')
-                    ]) {
-                        localCleanImageExceptTag("${DOCKER_USERNAME}")
-                    }
+                    localCleanImageExceptTag()
                 }
             }
         }
