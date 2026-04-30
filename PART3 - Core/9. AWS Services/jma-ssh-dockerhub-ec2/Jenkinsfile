@@ -61,6 +61,8 @@ pipeline {
                     env.APP_IMAGE_TAG = "${env.APP_VERSION}.${BUILD_NUMBER}"
                 }
             }
+            
+            post { always { cleanWs() } }   // Clean Workspace
         }
 
         stage('Checkout SCM') {
@@ -78,6 +80,8 @@ pipeline {
 
                 stash name: 'sources', includes: "${APP_DIR}/**"
             }
+
+            post { always { cleanWs() } }   // Clean Workspace
         }
         
         stage("build jar") {
@@ -97,6 +101,8 @@ pipeline {
 
                 stash name: 'app_files', includes: "${APP_DIR}/target/*.jar,${APP_DIR}/Dockerfile"
             }
+
+            post { always { cleanWs() } }   // Clean Workspace
         }
 
         stage("build and push image") {
@@ -114,6 +120,8 @@ pipeline {
                     }
                 }
             }
+
+            post { always { cleanWs() } }   // Clean Workspace
         }
 
         stage("deploy") {
@@ -128,6 +136,8 @@ pipeline {
                     }
                 }
             }
+
+            post { always { cleanWs() } }   // Clean Workspace
         }
         
         stage("cleanup EC2 Images") {
@@ -141,6 +151,8 @@ pipeline {
                     }
                 }
             }
+
+            post { always { cleanWs() } }   // Clean Workspace
         }
         stage("cleanup local and DockerHub Images") {
             agent { label 'docker-agent' }
@@ -156,7 +168,8 @@ pipeline {
                     }
                 }
             }
+  
+            post { always { cleanWs() } }   // Clean Workspace
         }
-
     }
 } 
