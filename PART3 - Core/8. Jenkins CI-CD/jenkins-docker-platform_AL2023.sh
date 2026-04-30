@@ -93,7 +93,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     unzip \
     docker-ce-cli \
-    ca-certificates && \
+    ca-certificates \
+    coreutils && \
     apt-get clean
 
 RUN set -eux; \
@@ -174,7 +175,7 @@ FROM jenkins/inbound-agent
 USER root
 
 RUN apt-get update && apt-get install -y \
-    curl unzip git ca-certificates && \
+    curl unzip git ca-certificates coreutils && \
     apt-get clean
 
 # AWS CLI v2
@@ -251,7 +252,7 @@ if docker run --rm \
   --entrypoint bash \
   -v /var/run/docker.sock:/var/run/docker.sock \
   jenkins-docker-agent \
-  -c "docker --version && aws --version" ; then
+  -c "docker --version && aws --version && base64 --version" ; then
     echo "✅ jenkins-docker-agent OK"
   else
     echo "❌ jenkins-docker-agent FAILED"
@@ -261,7 +262,7 @@ if docker run --rm \
 # === Testing other agents ===
 test_agent jenkins-maven-agent  "mvn -v"
 test_agent jenkins-nodejs-agent "node -v && npm -v"
-test_agent jenkins-aws-agent    "aws --version && kubectl version --client"
+test_agent jenkins-aws-agent    "aws --version && kubectl version --client && base64 --version"
 
 
 ########################################
