@@ -48,7 +48,10 @@ pipeline {
         APP_HOST_PORT = '3080'
         APP_CONTAINER_PORT = '3080'
         APP_CONTAINER_NAME = 'java-app'
+        
+        AWS_DEFAULT_REGION = 'eu-west-3'
     }
+
 
     stages {
 
