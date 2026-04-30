@@ -94,7 +94,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     docker-ce-cli \
     ca-certificates \
-    coreutils && \
+    coreutils \
+    jq && \
     apt-get clean
 
 RUN set -eux; \
@@ -175,7 +176,7 @@ FROM jenkins/inbound-agent
 USER root
 
 RUN apt-get update && apt-get install -y \
-    curl unzip git ca-certificates coreutils && \
+    curl unzip git ca-certificates coreutils jq && \
     apt-get clean
 
 # AWS CLI v2
@@ -285,9 +286,10 @@ docker run -d \
   -p 8080:8080 \
   -p 50000:50000 \
   -v jenkins_home:/var/jenkins_home \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  --group-add $DOCKER_GID \
   jenkins-controller
+
+#  -v /var/run/docker.sock:/var/run/docker.sock \
+#  --group-add $DOCKER_GID \
 
 ########################################
 # Output
