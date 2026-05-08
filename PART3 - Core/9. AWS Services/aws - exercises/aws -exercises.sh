@@ -447,7 +447,7 @@ $ aws ec2 describe-instances \
 ------------------------------------------------------
 |                  DescribeInstances                 |
 +---------------------+----------------+-------------+
-|  i-00bba5692c2336920|  13.37.215.69  |  10.0.0.10  |
+|  i-00bba5692c2336920|  <WEB_SERVER_PUBLIC_IP>  |  10.0.0.10  |
 +---------------------+----------------+-------------+
 
 
@@ -464,7 +464,7 @@ $ aws ec2 describe-instances \
 $ cat >> ~/.ssh/config <<EOF
 
 Host web-server
-  HostName 13.37.215.69
+  HostName <WEB_SERVER_PUBLIC_IP>
   User ec2-user
   IdentityFile ~/.ssh/my_web_server_key.pem
 EOF
@@ -480,7 +480,7 @@ $ ssh web-server
       ~~._.   _/
          _/ _/
        _/m/
-Last login: Fri May  8 15:04:19 2026 from 88.173.128.66
+Last login: Fri May  8 15:04:19 2026 from <LOCAL_IP>
 
 [ec2-user@ip-10-0-0-10 ~]$ sudo yum update
 ...
