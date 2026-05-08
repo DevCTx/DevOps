@@ -1,0 +1,300 @@
+#!/usr/bin/env bash
+
+# Exercises for Module "AWS Services"
+# Your company has decided that they will use AWS as a cloud provider to deploy their applications. 
+# It's too much overhead to manage multiple platforms, including the billing etc.
+# 
+# So you need to deploy the previous NodeJS application on an EC2 instance now. 
+# This means you need to create and prepare an EC2 server with the AWS Command Line Tool to run your 
+# NodeJS app container on it.
+# 
+# You know there are many steps to set this up, so you go through it with step by step exercises.
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# EXERCISE 1: Create IAM user
+# First of all, you need an IAM user with correct permissions to execute the tasks below.
+# 
+# Create a new IAM user using "your name" as a username and "devops" as the user-group
+# Give the "devops" group all needed permissions to execute the tasks below 
+# - with login and CLI credentials. 
+# Note: Do that using the AWS UI with Admin User
+ 
+1. we need to check that we are connected to the client AWS
+$ aws configure
+AWS Access Key ID [****************LIT6]: 
+AWS Secret Access Key [****************mrw+]: 
+Default region name [eu-west-3]: 
+Default output format [json]: 
+
+2. create a new IAM user
+$ aws iam create-user --user-name my_name
+{
+    "User": {
+        "Path": "/",
+        "UserName": "my_name",
+        "UserId": "AIDA4IIAVZARYUVQEJPNK",
+        "Arn": "arn:aws:iam::842351888419:user/my_name",
+        "CreateDate": "2026-05-08T08:14:07+00:00"
+    }
+}
+
+3. Create the devops group
+$ aws iam list-groups
+shows that devops group does not exist
+
+$ aws iam create-group --group-name devops
+{
+    "Group": {
+        "Path": "/",
+        "GroupName": "devops",
+        "GroupId": "AGPA4IIAVZARSIW45YOKO",
+        "Arn": "arn:aws:iam::842351888419:group/devops",
+        "CreateDate": "2026-05-08T08:17:26+00:00"
+    }
+}
+
+4. associate the devops group to the my_name user
+$ aws iam add-user-to-group --user-name my_name --group-name devops
+
+$ aws iam get-group --group-name devops
+{
+    "Users": [
+        {
+            "Path": "/",
+            "UserName": "my_name",
+            "UserId": "AIDA4IIAVZARYUVQEJPNK",
+            "Arn": "arn:aws:iam::842351888419:user/my_name",
+            "CreateDate": "2026-05-08T08:14:07+00:00"
+        }
+    ],
+    "Group": {
+        "Path": "/",
+        "GroupName": "devops",
+        "GroupId": "AGPA4IIAVZARSIW45YOKO",
+        "Arn": "arn:aws:iam::842351888419:group/devops",
+        "CreateDate": "2026-05-08T08:17:26+00:00"
+    }
+}
+    
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# EXERCISE 2: Configure AWS CLI
+# You want to use the AWS CLI for the following tasks. So, to be able to interact with the AWS account 
+# from the AWS Command Line tool you need to configure it correctly:
+# Set credentials for that user for AWS CLI
+# Configure correct region for your AWS CLI
+
+Got to IAM > IAM users > my_name > Create access key
+* Use Case : Command Line Interface (CLI)
+* Tag : aws-exercises
+* Download .csv file with AKIA4IIAVZARYECAYSWV / 9zzOWzUiOTF08FrX2Go7R/Wy6WzGw8WbKKpOxNWl
+
+or use :
+$ aws iam create-access-key --user-name my_name > my_name_key.txt
+
+
+Got to IAM > IAM users > my_name > Enable console access
+* Custom password : MyP45$word
+* Download .csv file 
+
+or use :
+$ aws iam create-login-profile --user-name my_name --password MyP45$word
+
+Go to the link : http://<ACCOUNT_ID>.signin.aws.amazon.com/console
+Enter credentials : my_name / MyP45$word
+Update region to eu-west-3 (Europe - Paris)
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# EXERCISE 3: Create VPC
+# You want to create the EC2 Instance in a dedicated VPC, instead of using the default one. So, using 
+# the AWS CLI, you:
+# 
+# create a new VPC with 1 subnet
+# create a security group in the VPC that will allow you access on ssh port 22 and will allow browser 
+# access to your Node application
+
+List the policy of VPC
+$ aws iam list-policies | grep VPCFullAccess
+            "PolicyName": "AmazonVPCFullAccess",
+            "Arn": "arn:aws:iam::aws:policy/AmazonVPCFullAccess",
+
+Add it to devops group
+$ aws iam attach-group-policy --group-name devops --policy-arn arn:aws:iam::aws:policy/AmazonVPCFullAccess
+
+Login as my_name
+$ aws configure
+AWS Access Key ID [****************]: <my_name_key>
+AWS Secret Access Key [****************]: <my_name_secret_key>
+Default region name [eu-west-3]: eu-west-3
+Default output format [json]: json
+
+Create a VPC (256 IP addresses)
+$ aws ec2 create-vpc --cidr-block 10.0.0.0/24
+{
+    "Vpc": {
+        "OwnerId": "842351888419",
+        "InstanceTenancy": "default",
+        "Ipv6CidrBlockAssociationSet": [],
+        "CidrBlockAssociationSet": [
+            {
+                "AssociationId": "vpc-cidr-assoc-06b675567563a5ba6",
+                "CidrBlock": "10.0.0.0/24",
+                "CidrBlockState": {
+                    "State": "associated"
+                }
+            }
+        ],
+        "IsDefault": false,
+        "VpcId": "vpc-0a7d03e6f6e56c279",
+        "State": "pending",
+        "CidrBlock": "10.0.0.0/24",
+        "DhcpOptionsId": "dopt-0c77f77d609ebf473"
+    }
+}
+
+Create a subnet into this VPC (16 IP addresses)
+$ aws ec2 create-subnet --cidr-block 10.0.0.0/28 --vpc-id vpc-0a7d03e6f6e56c279
+{
+    "Subnet": {
+        "AvailabilityZoneId": "euw3-az3",
+        "MapCustomerOwnedIpOnLaunch": false,
+        "OwnerId": "842351888419",
+        "AssignIpv6AddressOnCreation": false,
+        "Ipv6CidrBlockAssociationSet": [],
+        "SubnetArn": "arn:aws:ec2:eu-west-3:842351888419:subnet/subnet-0c581dd5f125e2d77",
+        "EnableDns64": false,
+        "Ipv6Native": false,
+        "PrivateDnsNameOptionsOnLaunch": {
+            "HostnameType": "ip-name",
+            "EnableResourceNameDnsARecord": false,
+            "EnableResourceNameDnsAAAARecord": false
+        },
+        "SubnetId": "subnet-0c581dd5f125e2d77",
+        "State": "available",
+        "VpcId": "vpc-0a7d03e6f6e56c279",
+        "CidrBlock": "10.0.0.0/28",
+        "AvailableIpAddressCount": 11,
+        "AvailabilityZone": "eu-west-3c",
+        "DefaultForAz": false,
+        "MapPublicIpOnLaunch": false
+    }
+}
+
+Create a Internet GateWay to be able to be accessed from internet
+$ aws ec2 create-internet-gateway
+{
+    "InternetGateway": {
+        "Attachments": [],
+        "InternetGatewayId": "igw-02633dfe601243d44",
+        "OwnerId": "842351888419",
+        "Tags": []
+    }
+}
+
+Then Attach it to the VPC
+$ aws ec2 attach-internet-gateway --vpc-id vpc-0a7d03e6f6e56c279 --internet-gateway-id igw-02633dfe601243d44
+
+Create a Route Table for this VPC
+$ aws ec2 create-route-table --vpc-id vpc-0a7d03e6f6e56c279
+{
+    "RouteTable": {
+        "Associations": [],
+        "PropagatingVgws": [],
+        "RouteTableId": "rtb-07b2a54b62c46df2e",
+        "Routes": [
+            {
+                "DestinationCidrBlock": "10.0.0.0/24",
+                "GatewayId": "local",
+                "Origin": "CreateRouteTable",
+                "State": "active"
+            }
+        ],
+        "Tags": [],
+        "VpcId": "vpc-0a7d03e6f6e56c279",
+        "OwnerId": "842351888419"
+    },
+    "ClientToken": "f9a81b66-a5d4-4a95-b129-f45d28846aa0"
+}
+
+And define a route to handle out of local IPs to the IGW
+$ aws ec2 create-route \
+  --route-table-id rtb-07b2a54b62c46df2e \
+  --destination-cidr-block 0.0.0.0/0 \
+  --gateway-id igw-02633dfe601243d44
+{
+    "Return": true
+}
+
+Associate it to the subnet of our VPC
+$ aws ec2 associate-route-table  --subnet-id subnet-0c581dd5f125e2d77 --route-table-id rtb-07b2a54b62c46df2e
+{
+    "AssociationId": "rtbassoc-07485072bfecba60b",
+    "AssociationState": {
+        "State": "associated"
+    }
+}
+
+
+
+
+
+
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# EXERCISE 4: Create EC2 Instance
+# Once the VPC is created, using the AWS CLI, you:
+# 
+# Create an EC2 instance in that VPC with the security group you just created and ssh key file
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# EXERCISE 5: SSH into the server and install Docker on it
+# Once the EC2 instance is created successfully, you want to prepare the server to run Docker containers. 
+# So you:
+# 
+# ssh into the server and
+# install Docker on it to run the dockerized application later
+# 
+# Set up Continuous Deployment
+
+
+# Now you don't want to deploy manually to the server all the time, because it's time-consuming and 
+# also sometimes you miss it, when changes are made and the new docker image is built by the pipeline. 
+# When you forget to check the pipeline, your team members need to write you and ask you to deploy the 
+# new version.
+# 
+# As a solution, you want to automate this thing to save you and your team members time and energy.
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# EXERCISE 6: Add docker-compose for deployment
+# First:
+# add docker-compose to your NodeJS application
+# This is because you want to have the whole configuration for starting the docker container in a file, 
+# in case you need to make change or add a database later, instead of a plain docker command with parameters.
+# 
+# Use repository: https://gitlab.com/twn-devops-bootcamp/latest/09-aws/aws-exercises
+# 
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# EXERCISE 7: Add "deploy to EC2" step to your existing pipeline
+# Add a deployment step to the Jenkinsfile from the previous exercise’s project to deploy to EC2.
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# EXERCISE 8: Configure access from browser (EC2 Security Group)
+# After executing the Jenkins pipeline successfully, the application is deployed, but you still can't access 
+# it from the browser. You need to open the correct port on the server. For that, using the AWS CLI, you:
+# 
+# Configure the EC2 security group to access your application from a browser
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# EXERCISE 9: Configure automatic triggering of multi-branch pipeline
+# Your team members are creating branches to add new features to the application or fix any issues, so you 
+# don't want to build and deploy these half-done features or bug fixes. You want to build and deploy only 
+# to the master branch. All # other branches should only run tests. Add this logic to the Jenkinsfile:
+# 
+# Add branch based logic to Jenkinsfile
+# Add webhook to trigger pipeline automatically
+# 
