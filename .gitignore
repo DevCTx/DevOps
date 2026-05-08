@@ -7,7 +7,9 @@
 .aws-sam/
 aws-exports.js
 amplify/team-provider-info.json
+**/*.pem
 *.pem
+**/*.key
 *.key
 *.csr
 *.crt
@@ -38,6 +40,7 @@ vault/
 *apikey*
 *api_key*
 *auth*
+**/.env
 .env
 .env.*
 !.env.example
