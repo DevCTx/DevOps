@@ -81,25 +81,30 @@ pipeline {
                                     set -euo pipefail
                                     echo "Deploy ${IMAGE}:${VERSION} on EC2"
 
-                                    ssh -o StrictHostKeyChecking=no \\
-                                        ec2-user@$WEB_SERVER_PUBLIC_IP \\
+                                    ssh -o StrictHostKeyChecking=no ec2-user@$WEB_SERVER_PUBLIC_IP \\
                                         "sudo mkdir -p /home/app && sudo chown ec2-user /home/app"
 
-                                    scp -o StrictHostKeyChecking=no \\
-                                        ./docker-compose.yaml \\
+                                    scp -o StrictHostKeyChecking=no ./docker-compose.yaml \\
                                         ec2-user@${WEB_SERVER_PUBLIC_IP}:/home/app/
 
                                     # On Jenkins, prepare a Bash with Env Vars :
-                                    ssh -o StrictHostKeyChecking=no         \\
-                                        ec2-user@$WEB_SERVER_PUBLIC_IP      \\
-                                        "export CONTAINER_NAME=${env.IMAGE} \\
-                                                IMAGE_NAME=${env.IMAGE}     \\
-                                                IMAGE_TAG=${env.VERSION}    \\
-                                                HOST_PORT=3000              \\
-                                                CONTAINER_PORT=3000         \\
-                                         docker compose -f docker-compose.yaml up --detach"
-                                '''
-                                
+                                    ssh -o StrictHostKeyChecking=no bash -s <<EOF
+set -euo pipefail
+cd /home/app
+
+export CONTAINER_NAME=${IMAGE}
+export IMAGE_NAME=${IMAGE}
+export IMAGE_TAG=${VERSION}
+export HOST_PORT=3000
+export CONTAINER_PORT=3000
+
+echo "Pulling and starting ${IMAGE}:${VERSION}..."
+docker compose -f docker-compose.yaml up --detach
+docker compose ps
+EOF
+
+                                    echo "Deploy completed"
+                                '''                                
                             }
                         }
                     }
