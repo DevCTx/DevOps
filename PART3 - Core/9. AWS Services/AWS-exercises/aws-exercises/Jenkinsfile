@@ -78,7 +78,7 @@ pipeline {
                             string(credentialsId: 'WEB_SERVER_PUBLIC_IP', variable: 'WEB_SERVER_PUBLIC_IP')
                         ]) {
                             sshagent(['EC2_WEB_SERVER_SSH_KEY']) {
-                                sh '''#!/bin/bash
+                                sh """#!/bin/bash
                                     set -euo pipefail
                                     echo "Deploy ${DOCKER_USERNAME}/${env.IMAGE}:${env.VERSION} on EC2"
 
@@ -102,7 +102,7 @@ pipeline {
 #echo "End of script"
 #SCRIPT
 
-                                '''
+                                """
                             }
                         }
 
