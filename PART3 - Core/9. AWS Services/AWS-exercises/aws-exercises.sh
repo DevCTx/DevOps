@@ -638,6 +638,25 @@ services:
             - "${HOST_PORT}:${CONTAINER_PORT}"
 EOF
 
+- Authorize SSH connection on port 22 from the jenkins server IP
+$ aws ec2 authorize-security-group-ingress --group-id sg-02ec557ec33cd2f7a --protocol tcp --port 22 --cidr 209.38.240.211/32
+{
+    "Return": true,
+    "SecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-05e85085bbc0dfe7e",
+            "GroupId": "sg-02ec557ec33cd2f7a",
+            "GroupOwnerId": "842351888419",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "CidrIpv4": "209.38.240.211/32",
+            "SecurityGroupRuleArn": "arn:aws:ec2:eu-west-3:842351888419:security-group-rule/sgr-05e85085bbc0dfe7e"
+        }
+    ]
+}
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # EXERCISE 8: Configure access from browser (EC2 Security Group)

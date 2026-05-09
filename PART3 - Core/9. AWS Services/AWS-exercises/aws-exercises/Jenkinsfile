@@ -83,7 +83,7 @@ pipeline {
 
                                     ssh -o StrictHostKeyChecking=no ec2-user@$WEB_SERVER_PUBLIC_IP "sudo mkdir -p /home/app && sudo chown ec2-user /home/app"
 
-                                    scp -o StrictHostKeyChecking=no docker-compose.yaml ec2-user@${WEB_SERVER_PUBLIC_IP}:/home/app/
+                                    scp -o StrictHostKeyChecking=no ./docker-compose.yaml ec2-user@${WEB_SERVER_PUBLIC_IP}:/home/app/
 
 
                                 '''
