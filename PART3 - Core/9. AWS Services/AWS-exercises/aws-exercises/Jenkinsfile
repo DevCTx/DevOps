@@ -65,6 +65,55 @@ pipeline {
             }
         }
 
+        stage("deploy EC2 Web-Server") {
+            steps {
+                script {
+                    dir("${ROOT_DIR}/") {
+                        echo "Deploying ${env.IMAGE}:${env.VERSION} on EC2 ... "
+
+                        withCredentials( [
+                            string(credentialsId: 'DOCKER_USERNAME', variable: 'DOCKER_USERNAME'),
+                            string(credentialsId: 'WEB_SERVER_PUBLIC_IP', variable: 'WEB_SERVER_PUBLIC_IP')
+                        ]) {
+                            sshagent(['EC2_WEB_SERVER_SSH_KEY']) {
+                                sh '''
+                                    set -euo pipefail
+                                    echo "Deploy ${DOCKER_USERNAME}/${env.IMAGE}:${env.VERSION} on EC2"
+
+                                    ssh web-server "sudo mkdir -p /home/app && sudo chown ec2-user /home/app"
+                                    scp docker-compose.yaml $WEB_SERVER_PUBLIC_IP:/home/app/
+
+#                                    # On Jenkins, prepare a Bash with Env Vars :
+#                                    ssh -o StrictHostKeyChecking=no ec2-user@$WEB_SERVER_PUBLIC_IP \
+#                                        "CONTAINER_NAME=${env.IMAGE} \
+#                                         IMAGE_NAME=${DOCKER_USERNAME}/${env.IMAGE} \
+#                                         IMAGE_TAG=${env.VERSION}
+#                                         HOST_PORT=3000 \
+#                                         CONTAINER_PORT=3000 \
+#                                         bash -s" << 'SCRIPT'
+## On EC2 :
+#set -euo pipefail
+#echo "Deploying $IMAGE_NAME:$IMAGE_TAG"
+#
+#docker compose -f docker-compose.yaml up --detach                    
+#
+#echo "End of script"
+#SCRIPT
+
+                                '''
+                            }
+                        }
+
+                        BuildAndPushDockerImage(
+                            "docker-credentials", 
+                            env.IMAGE,
+                            env.VERSION
+                        )
+                    }
+                }
+            }
+        }
+
         stage("commit version") {
             steps {
                 script {

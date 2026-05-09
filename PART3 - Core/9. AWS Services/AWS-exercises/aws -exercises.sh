@@ -527,10 +527,114 @@ Docker Compose version v5.1.3
 # Use repository: https://gitlab.com/twn-devops-bootcamp/latest/09-aws/aws-exercises
 # 
 
+In Jenskins, check :
+- Installation of NodeJS Plugin + Installation NodeJs into Tools (nodejs-24.12.0)
+- Installation of SCM Skip Plugin to avoid infinity loop when version incrementing
+- Settings of docker-credentials to push the created image
+- Settings of github-token to push the incremented version
+- Check with the version of ./PART3 - Core/8. Jenkins CI-CD/Jenkins-exercises/jenkins-exercises/Jenkinsfile
+- Then go ./PART3 - Core/9. AWS Services/AWS-exercises/aws-exercises
+
+$ git clone https://gitlab.com/twn-devops-bootcamp/latest/09-aws/aws-exercises
+$ rm -r */.git
+
+- Check with the version of ./PART3 - Core/9. AWS Services/AWS-exercises/aws-exercises/Jenkinsfile
+
+When OK, a aws-nodejs-exercise:1.2.9-10 is created into your Docker Hub (mine is devct)
+
+$ cat > docker-compose.yaml <<EOF
+services:
+
+    nodejs-app:
+       container_name: aws-nodejs-app
+       image: devct/aws-nodejs-exercise:1.2.9-10
+       restart: unless-stopped
+       ports:
+           - "3000:3000"
+EOF
+
+- Test the composing of the images on local
+$ docker compose -f docker-compose.yaml up
+$ docker images
+                                                                                                                                                                                                                          i Info →   U  In Use
+IMAGE                                ID             DISK USAGE   CONTENT SIZE   EXTRA
+devct/aws-nodejs-exercise:1.2.9-10   922919bcc73d        449MB         89.9MB        
+
+$ docker ps -a
+CONTAINER ID   IMAGE                                COMMAND                  CREATED          STATUS          PORTS                                         NAMES
+7d3e010ac412   devct/aws-nodejs-exercise:1.2.9-10   "docker-entrypoint.s…"   1 minutes ago    Up 1 minutes    0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp   aws-nodejs-app
+
+- Stop and Delete
+$ docker compose -f docker-compose.yaml down
+$ docker rmi devct/aws-nodejs-exercise:1.2.9-10
+
+- Transfert to web-server
+$ ssh web-server "sudo mkdir -p /home/app && sudo chown ec2-user /home/app"
+$ scp docker-compose.yaml web-server:/home/app/
+docker-compose.yaml                                                                                                                                                                                         100%  189     9.2KB/s   00:00    
+
+- Try on web-server
+[ec2-user@ip-10-0-0-10 app]$ docker images
+REPOSITORY                  TAG        IMAGE ID       CREATED          SIZE
+devct/aws-nodejs-exercise   1.2.9-10   3bc8fce7df45   57 minutes ago   301MB
+
+[ec2-user@ip-10-0-0-10 app]$ docker ps -a
+CONTAINER ID   IMAGE                                COMMAND                  CREATED          STATUS          PORTS                                       NAMES
+62eb99c7171a   devct/aws-nodejs-exercise:1.2.9-10   "docker-entrypoint.s…"   26 seconds ago   Up 24 seconds   0.0.0.0:3000->3000/tcp, :::3000->3000/tcp   aws-nodejs-app
+
+- Open the port 3000 on EC2 Web Server
+$ aws ec2 authorize-security-group-ingress --group-id sg-02ec557ec33cd2f7a --protocol tcp --port 3000 --cidr 0.0.0.0/0
+{
+    "Return": true,
+    "SecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-0db6b4789ac8360e5",
+            "GroupId": "sg-02ec557ec33cd2f7a",
+            "GroupOwnerId": "<ACCOUNT_ID>",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 3000,
+            "ToPort": 3000,
+            "CidrIpv4": "0.0.0.0/0",
+            "SecurityGroupRuleArn": "arn:aws:ec2:eu-west-3:<ACCOUNT_ID>:security-group-rule/sgr-0db6b4789ac8360e5"
+        }
+    ]
+}
+
+- Access on http://<WEB_SERVER_PUBLIC_IP>:3000/ => OK
+
+[ec2-user@ip-10-0-0-10 app]$ docker compose down
+[+] down 2/2
+ ✔ Container aws-nodejs-app Removed                                                                                                                                                                                                      10.5s
+ ✔ Network app_default      Removed                                                                                                                                                                                                       0.5s
+
+[ec2-user@ip-10-0-0-10 app]$ docker images
+REPOSITORY                  TAG        IMAGE ID       CREATED             SIZE
+devct/aws-nodejs-exercise   1.2.9-10   3bc8fce7df45   About an hour ago   301MB
+
+[ec2-user@ip-10-0-0-10 app]$ docker ps -a 
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # EXERCISE 7: Add "deploy to EC2" step to your existing pipeline
 # Add a deployment step to the Jenkinsfile from the previous exercise’s project to deploy to EC2.
 
+- Add the Public IP Address of the EC2 web server into secret text of Jenkins as WEB_SERVER_PUBLIC_IP
+- Add the Docker Username of the Docker Hub Repository into secret text of Jenkins as DOCKER_USERNAME
+- Add the EC2 web server SSH Key into SSH Username and private key of Jenkins as EC2_WEB_SERVER_SSH_KEY
+
+- Update docker-compose.yaml with environmental variables
+$ cat > docker-compose.yaml <<EOF
+services:
+
+    nodejs-app:
+        container_name: ${CONTAINER_NAME}
+        image: ${IMAGE_NAME}:${IMAGE_TAG}
+        restart: unless-stopped
+        ports:
+            - "${HOST_PORT}:${CONTAINER_PORT}"
+EOF
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
