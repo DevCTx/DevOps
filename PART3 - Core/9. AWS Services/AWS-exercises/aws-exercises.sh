@@ -638,6 +638,55 @@ services:
             - "${HOST_PORT}:${CONTAINER_PORT}"
 EOF
 
+- Update Jenkinsfile with the deploy stage :
+
+        stage("deploy EC2 Web-Server") {
+            steps {
+                script {
+                    dir("${ROOT_DIR}/") {
+
+                        echo "Deploying ${env.IMAGE}:${env.VERSION} on EC2 ... "
+                            
+                        withCredentials( [
+                            string(credentialsId: 'WEB_SERVER_PUBLIC_IP', variable: 'WEB_SERVER_PUBLIC_IP')
+                        ]) {
+                            sshagent(['EC2_WEB_SERVER_SSH_KEY']) {
+                                sh '''#!/bin/bash
+                                    set -euo pipefail
+                                    echo "Deploy ${IMAGE}:${VERSION} on EC2"
+
+                                    ssh -o StrictHostKeyChecking=no ec2-user@$WEB_SERVER_PUBLIC_IP \\
+                                        "sudo mkdir -p /home/app && sudo chown ec2-user /home/app"
+
+                                    scp -o StrictHostKeyChecking=no ./docker-compose.yaml \\
+                                        ec2-user@${WEB_SERVER_PUBLIC_IP}:/home/app/
+
+                                    # On Jenkins, prepare a Bash with Env Vars :
+                                    ssh -o StrictHostKeyChecking=no ec2-user@$WEB_SERVER_PUBLIC_IP \\
+                                        bash -s <<EOF
+set -euo pipefail
+cd /home/app
+
+export CONTAINER_NAME=aws-nodejs-app
+export IMAGE_NAME=${IMAGE}
+export IMAGE_TAG=${VERSION}
+export HOST_PORT=3000
+export CONTAINER_PORT=3000
+
+echo "Pulling and starting ${IMAGE}:${VERSION}..."
+docker compose -f docker-compose.yaml up --detach
+docker compose ps
+EOF
+
+                                    echo "Deploy completed"
+                                '''                                
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
 - Authorize SSH connection on port 22 from the jenkins server IP
 $ aws ec2 authorize-security-group-ingress --group-id sg-02ec557ec33cd2f7a --protocol tcp --port 22 --cidr 209.38.240.211/32
 {
@@ -665,6 +714,8 @@ $ aws ec2 authorize-security-group-ingress --group-id sg-02ec557ec33cd2f7a --pro
 # 
 # Configure the EC2 security group to access your application from a browser
 
+Already done before.
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # EXERCISE 9: Configure automatic triggering of multi-branch pipeline
 # Your team members are creating branches to add new features to the application or fix any issues, so you 
@@ -674,3 +725,5 @@ $ aws ec2 authorize-security-group-ingress --group-id sg-02ec557ec33cd2f7a --pro
 # Add branch based logic to Jenkinsfile
 # Add webhook to trigger pipeline automatically
 # 
+
+Already done before.
