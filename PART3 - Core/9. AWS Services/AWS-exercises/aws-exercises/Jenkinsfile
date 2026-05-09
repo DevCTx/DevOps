@@ -81,29 +81,25 @@ pipeline {
                                     set -euo pipefail
                                     echo "Deploy ${IMAGE}:${VERSION} on EC2"
 
-                                    ssh -o StrictHostKeyChecking=no ec2-user@$WEB_SERVER_PUBLIC_IP "sudo mkdir -p /home/app && sudo chown ec2-user /home/app"
+                                    ssh -o StrictHostKeyChecking=no \\
+                                        ec2-user@$WEB_SERVER_PUBLIC_IP \\
+                                        "sudo mkdir -p /home/app && sudo chown ec2-user /home/app"
 
-                                    scp -o StrictHostKeyChecking=no ./docker-compose.yaml ec2-user@${WEB_SERVER_PUBLIC_IP}:/home/app/
+                                    scp -o StrictHostKeyChecking=no \\
+                                        ./docker-compose.yaml \\
+                                        ec2-user@${WEB_SERVER_PUBLIC_IP}:/home/app/
 
-
+                                    # On Jenkins, prepare a Bash with Env Vars :
+                                    ssh -o StrictHostKeyChecking=no         \\
+                                        ec2-user@$WEB_SERVER_PUBLIC_IP      \\
+                                        "export CONTAINER_NAME=${env.IMAGE} \\
+                                                IMAGE_NAME=${env.IMAGE}     \\
+                                                IMAGE_TAG=${env.VERSION}    \\
+                                                HOST_PORT=3000              \\
+                                                CONTAINER_PORT=3000         \\
+                                         docker compose -f docker-compose.yaml up --detach"
                                 '''
                                 
-// #                                    # On Jenkins, prepare a Bash with Env Vars :
-// #                                    ssh -o StrictHostKeyChecking=no ec2-user@$WEB_SERVER_PUBLIC_IP \
-// #                                        "CONTAINER_NAME=${env.IMAGE} \
-// #                                         IMAGE_NAME=${DOCKER_USERNAME}/${env.IMAGE} \
-// #                                         IMAGE_TAG=${env.VERSION}
-// #                                         HOST_PORT=3000 \
-// #                                         CONTAINER_PORT=3000 \
-// #                                         bash -s" << 'SCRIPT'
-// ## On EC2 :
-// #set -euo pipefail
-// #echo "Deploying $IMAGE_NAME:$IMAGE_TAG"
-// #
-// #docker compose -f docker-compose.yaml up --detach                    
-// #
-// #echo "End of script"
-// #SCRIPT
                             }
                         }
                     }
