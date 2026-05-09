@@ -93,7 +93,7 @@ pipeline {
 set -euo pipefail
 cd /home/app
 
-export CONTAINER_NAME=${IMAGE}
+export CONTAINER_NAME=aws-nodejs-app
 export IMAGE_NAME=${IMAGE}
 export IMAGE_TAG=${VERSION}
 export HOST_PORT=3000
