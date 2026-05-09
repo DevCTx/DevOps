@@ -4,7 +4,7 @@
 
 @Library('jenkins-shared-library') _ // underscore needed if no instruction before pipeline
 
-def ROOT_DIR = "PART3 - Core/8. Jenkins CI-CD/Jenkins-exercises/jenkins-exercises"
+def ROOT_DIR = "PART3 - Core/9. AWS Services/AWS-exercises/aws-exercises"
 def APP_DIR = "${ROOT_DIR}/app"
 
 def CI_MSG = 'CI: version update'
