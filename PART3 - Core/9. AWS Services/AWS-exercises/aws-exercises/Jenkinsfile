@@ -23,47 +23,47 @@ pipeline {
 
     stages {
 
-        // stage('Check commit') {
-        //     steps {
-        //         scmSkip(deleteBuild: true, skipPattern: ".*${CI_MSG}.*")
-        //     }
-        // }
+        stage('Check commit') {
+            steps {
+                scmSkip(deleteBuild: true, skipPattern: ".*${CI_MSG}.*")
+            }
+        }
 
-        // stage('Increment Version') {
-        //     steps {
-        //         script {
-        //             dir("${APP_DIR}/") {
-        //                 def version = IncrementNodejsPatchVersion()
-        //                 env.VERSION = "$version-$BUILD_NUMBER"
-        //                 echo "env.VERSION = ${env.VERSION}"
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Increment Version') {
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        def version = IncrementNodejsPatchVersion()
+                        env.VERSION = "$version-$BUILD_NUMBER"
+                        echo "env.VERSION = ${env.VERSION}"
+                    }
+                }
+            }
+        }
 
-        // stage("Run tests") {
-        //     steps {
-        //         script {
-        //             dir("${APP_DIR}/") {
-        //                 RunNodejsTests()
-        //             }
-        //         }
-        //     }
-        // }
+        stage("Run tests") {
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        RunNodejsTests()
+                    }
+                }
+            }
+        }
 
-        // stage("build and push image") {
-        //     steps {
-        //         script {
-        //             dir("${ROOT_DIR}/") {
-        //                 BuildAndPushDockerImage(
-        //                     "docker-credentials", 
-        //                     env.IMAGE,
-        //                     env.VERSION
-        //                 )
-        //             }
-        //         }
-        //     }
-        // }
+        stage("build and push image") {
+            steps {
+                script {
+                    dir("${ROOT_DIR}/") {
+                        BuildAndPushDockerImage(
+                            "docker-credentials", 
+                            env.IMAGE,
+                            env.VERSION
+                        )
+                    }
+                }
+            }
+        }
 
         stage("deploy EC2 Web-Server") {
             steps {
@@ -113,14 +113,14 @@ EOF
             }
         }
 
-        // stage("commit version") {
-        //     steps {
-        //         script {
-        //             dir("${ROOT_DIR}/") {
-        //                 CommitVersionToGit("github-token", CI_MSG)
-        //             }
-        //         }
-        //     }
-        // }
+        stage("commit version") {
+            steps {
+                script {
+                    dir("${ROOT_DIR}/") {
+                        CommitVersionToGit("github-token", CI_MSG)
+                    }
+                }
+            }
+        }
     }
 }
