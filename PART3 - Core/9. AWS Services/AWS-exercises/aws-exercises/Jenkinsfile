@@ -79,15 +79,11 @@ pipeline {
                             sshagent(['EC2_WEB_SERVER_SSH_KEY']) {
                                 sh '''#!/bin/bash
                                     set -euo pipefail
-                                    echo "Deploy ${env.IMAGE}:${env.VERSION} on EC2"
+                                    echo "Deploy ${IMAGE}:${VERSION} on EC2"
 
-                                    ssh -o StrictHostKeyChecking=no \
-                                        ec2-user@$WEB_SERVER_PUBLIC_IP \
-                                        "sudo mkdir -p /home/app && sudo chown ec2-user /home/app"
+                                    ssh -o StrictHostKeyChecking=no ec2-user@$WEB_SERVER_PUBLIC_IP "sudo mkdir -p /home/app && sudo chown ec2-user /home/app"
 
-                                    scp -o StrictHostKeyChecking=no \
-                                        docker-compose.yaml \
-                                        ec2-user@${WEB_SERVER_PUBLIC_IP}:/home/app/
+                                    scp -o StrictHostKeyChecking=no docker-compose.yaml ec2-user@${WEB_SERVER_PUBLIC_IP}:/home/app/
 
 
                                 '''
