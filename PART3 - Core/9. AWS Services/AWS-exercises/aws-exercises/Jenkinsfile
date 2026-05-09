@@ -74,13 +74,12 @@ pipeline {
                         echo "Deploying ${env.IMAGE}:${env.VERSION} on EC2 ... "
                             
                         withCredentials( [
-                            string(credentialsId: 'DOCKER_USERNAME', variable: 'DOCKER_USERNAME'),
                             string(credentialsId: 'WEB_SERVER_PUBLIC_IP', variable: 'WEB_SERVER_PUBLIC_IP')
                         ]) {
                             sshagent(['EC2_WEB_SERVER_SSH_KEY']) {
-                                sh """#!/bin/bash
+                                sh '''#!/bin/bash
                                     set -euo pipefail
-                                    echo "Deploy ${DOCKER_USERNAME}/${env.IMAGE}:${env.VERSION} on EC2"
+                                    echo "Deploy ${env.IMAGE}:${env.VERSION} on EC2"
 
                                     ssh -o StrictHostKeyChecking=no \
                                         ec2-user@$WEB_SERVER_PUBLIC_IP \
@@ -91,7 +90,7 @@ pipeline {
                                         ec2-user@${WEB_SERVER_PUBLIC_IP}:/home/app/
 
 
-                                """
+                                '''
                                 
 // #                                    # On Jenkins, prepare a Bash with Env Vars :
 // #                                    ssh -o StrictHostKeyChecking=no ec2-user@$WEB_SERVER_PUBLIC_IP \
