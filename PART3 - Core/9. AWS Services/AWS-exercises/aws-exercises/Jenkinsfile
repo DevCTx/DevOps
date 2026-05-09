@@ -79,6 +79,7 @@ pipeline {
                         ]) {
                             sshagent(['EC2_WEB_SERVER_SSH_KEY']) {
                                 sh """#!/bin/bash
+
                                     set -euo pipefail
                                     echo "Deploy ${DOCKER_USERNAME}/${env.IMAGE}:${env.VERSION} on EC2"
 
