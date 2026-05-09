@@ -623,6 +623,8 @@ CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 - Add the Public IP Address of the EC2 web server into secret text of Jenkins as WEB_SERVER_PUBLIC_IP
 - Add the Docker Username of the Docker Hub Repository into secret text of Jenkins as DOCKER_USERNAME
 - Add the EC2 web server SSH Key into SSH Username and private key of Jenkins as EC2_WEB_SERVER_SSH_KEY
+- Update the webhook on GitHub : Payload URL : http://<JENKINS_IP>:8080/github-webhook/
+- Activate the option GitHub hook trigger for GITScm polling into the Build Triggers options of Jenkins
 
 - Update docker-compose.yaml with environmental variables
 $ cat > docker-compose.yaml <<EOF

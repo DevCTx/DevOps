@@ -106,12 +106,6 @@ pipeline {
                                 """
                             }
                         }
-
-                        BuildAndPushDockerImage(
-                            "docker-credentials", 
-                            env.IMAGE,
-                            env.VERSION
-                        )
                     }
                 }
             }
