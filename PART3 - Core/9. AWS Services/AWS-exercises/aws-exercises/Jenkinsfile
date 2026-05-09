@@ -69,8 +69,6 @@ pipeline {
             steps {
                 script {
                     dir("${ROOT_DIR}/") {
-                        env.VERSION = "1.2.10-11"
-
                         echo "Deploying ${env.IMAGE}:${env.VERSION} on EC2 ... "
                             
                         withCredentials( [
