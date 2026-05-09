@@ -88,7 +88,8 @@ pipeline {
                                         ec2-user@${WEB_SERVER_PUBLIC_IP}:/home/app/
 
                                     # On Jenkins, prepare a Bash with Env Vars :
-                                    ssh -o StrictHostKeyChecking=no bash -s <<EOF
+                                    ssh -o StrictHostKeyChecking=no ec2-user@$WEB_SERVER_PUBLIC_IP \\
+                                        bash -s <<EOF
 set -euo pipefail
 cd /home/app
 
