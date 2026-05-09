@@ -10,7 +10,9 @@
   "author": "NJ",
   "license": "ISC",
   "dependencies": {
-    "express": "latest",
-    "jest": "latest"
+    "express": "latest"
+  },
+  "devDependencies": {
+    "jest": "^30.4.1"
   }
 }

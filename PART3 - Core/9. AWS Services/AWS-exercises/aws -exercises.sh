@@ -459,7 +459,6 @@ $ aws ec2 describe-instances \
 # ssh into the server and
 # install Docker on it to run the dockerized application later
 # 
-# Set up Continuous Deployment
 
 $ cat >> ~/.ssh/config <<EOF
 
@@ -508,6 +507,8 @@ Created symlink /etc/systemd/system/multi-user.target.wants/docker.service → /
 Docker Compose version v5.1.3
 
 
+# Set up Continuous Deployment
+#
 # Now you don't want to deploy manually to the server all the time, because it's time-consuming and 
 # also sometimes you miss it, when changes are made and the new docker image is built by the pipeline. 
 # When you forget to check the pipeline, your team members need to write you and ask you to deploy the 
@@ -529,6 +530,8 @@ Docker Compose version v5.1.3
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # EXERCISE 7: Add "deploy to EC2" step to your existing pipeline
 # Add a deployment step to the Jenkinsfile from the previous exercise’s project to deploy to EC2.
+
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # EXERCISE 8: Configure access from browser (EC2 Security Group)

@@ -1,0 +1,78 @@
+#!/usr/bin/env groovy
+
+// This project used the global shared library
+
+@Library('jenkins-shared-library') _ // underscore needed if no instruction before pipeline
+
+def ROOT_DIR = "PART3 - Core/8. Jenkins CI-CD/Jenkins-exercises/jenkins-exercises"
+def APP_DIR = "${ROOT_DIR}/app"
+
+def CI_MSG = 'CI: version update'
+
+pipeline {
+    
+    agent any
+
+    tools {
+        nodejs "nodejs-24.12.0"
+    }
+
+    environment {
+        IMAGE = "devct/aws-nodejs-exercise"
+    }
+
+    stages {
+
+        stage('Check commit') {
+            steps {
+                scmSkip(deleteBuild: true, skipPattern: ".*${CI_MSG}.*")
+            }
+        }
+
+        stage('Increment Version') {
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        def version = IncrementNodejsPatchVersion()
+                        env.VERSION = "$version-$BUILD_NUMBER"
+                        echo "env.VERSION = ${env.VERSION}"
+                    }
+                }
+            }
+        }
+
+        stage("Run tests") {
+            steps {
+                script {
+                    dir("${APP_DIR}/") {
+                        RunNodejsTests()
+                    }
+                }
+            }
+        }
+
+        stage("build and push image") {
+            steps {
+                script {
+                    dir("${ROOT_DIR}/") {
+                        BuildAndPushDockerImage(
+                            "docker-credentials", 
+                            env.IMAGE,
+                            env.VERSION
+                        )
+                    }
+                }
+            }
+        }
+
+        stage("commit version") {
+            steps {
+                script {
+                    dir("${ROOT_DIR}/") {
+                        CommitVersionToGit("github-token", CI_MSG)
+                    }
+                }
+            }
+        }
+    }
+}
