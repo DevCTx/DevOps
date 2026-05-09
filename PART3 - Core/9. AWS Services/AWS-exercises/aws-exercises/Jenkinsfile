@@ -69,9 +69,9 @@ pipeline {
             steps {
                 script {
                     dir("${ROOT_DIR}/") {
-                        echo "Deploying ${env.IMAGE}:${env.VERSION} on EC2 ... "
-
                         env.VERSION = "1.2.10-11"
+
+                        echo "Deploying ${env.IMAGE}:${env.VERSION} on EC2 ... "
                             
                         withCredentials( [
                             string(credentialsId: 'DOCKER_USERNAME', variable: 'DOCKER_USERNAME'),
@@ -82,8 +82,13 @@ pipeline {
                                     set -euo pipefail
                                     echo "Deploy ${DOCKER_USERNAME}/${env.IMAGE}:${env.VERSION} on EC2"
 
-                                    ssh -i $EC2_WEB_SERVER_SSH_KEY ec2-user@$WEB_SERVER_PUBLIC_IP "sudo mkdir -p /home/app && sudo chown ec2-user /home/app"
-                                    scp docker-compose.yaml $WEB_SERVER_PUBLIC_IP:/home/app/
+                                    ssh -o StrictHostKeyChecking=no \
+                                        ec2-user@$WEB_SERVER_PUBLIC_IP \
+                                        "sudo mkdir -p /home/app && sudo chown ec2-user /home/app"
+
+                                    scp -o StrictHostKeyChecking=no \
+                                        docker-compose.yaml \
+                                        ec2-user@${WEB_SERVER_PUBLIC_IP}:/home/app/
 
 
                                 """
