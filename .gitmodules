@@ -1,6 +1,6 @@
 [submodule "PART3 - Core/8. Jenkins CI-CD/jenkins-limited-shared-library"]
 	path = PART3-Core/9.Jenkins_CI-CD/jenkins-limited-shared-library
 	url = https://github.com/DevCTx/jenkins-limited-shared-library.git
-[submodule "PART2 - Fundamentals/Nginx"]
-	path = PART2-Fundamentals/8.Nginx/
+[submodule "PART2-Fundamentals/8.Nginx"]
+	path = PART2-Fundamentals/8.Nginx
 	url = git@github.com:DevCTx/Nginx.git
