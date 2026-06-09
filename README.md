@@ -3,7 +3,7 @@
 > **Learning journal + technical portfolio** documenting my progression through modern DevOps practices.
 
 [![Bootcamp](https://img.shields.io/badge/Bootcamp-TechWorld%20with%20Nana-orange)](https://www.techworld-with-nana.com/devops-bootcamp)
-[![Notes](https://img.shields.io/badge/📝%20Notes-My--DevOps--Notes--and--Journey-green)](https://twn-devops-notes.super.site/)
+[![Notes](https://img.shields.io/badge/📝%20Notes-Notes%20on%20my%20DevOps%20journey-green)](https://twn-devops-notes.super.site/)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Cédric%20Tonquèze-0077B5?logo=linkedin)](https://www.linkedin.com/in/cedrictonqueze/)
 
 
@@ -121,7 +121,7 @@ and soon ...
 
 ## 🔗 Resources
 
-- 📝 **Full Notes Website**: [My DevOps Notes and Journey](https://twn-devops-notes.super.site/)
+- 📝 **Full Notes Website**: [Notes on my DevOps journey](https://twn-devops-notes.super.site/)
 - 🎓 **Bootcamp**: [TechWorld with Nana — DevOps Bootcamp](https://www.techworld-with-nana.com/devops-bootcamp)
 - 🗺️ **Roadmap**: [DevOps_Roadmap_V4.pdf](./DevOps_Roadmap_V4.pdf)
 - 💼 **LinkedIn**: [Cédric Tonquèze](https://www.linkedin.com/in/cedrictonqueze/)
