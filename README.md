@@ -3,7 +3,7 @@
 > **Learning journal + technical portfolio** documenting my progression through modern DevOps practices.
 
 [![Bootcamp](https://img.shields.io/badge/Bootcamp-TechWorld%20with%20Nana-orange)](https://www.techworld-with-nana.com/devops-bootcamp)
-[![Notes](https://img.shields.io/badge/📝%20Notes-TWN--Bootcamp--Notes-green)](https://twn-devops-notes.super.site/)
+[![Notes](https://img.shields.io/badge/📝%20Notes-My--DevOps--Notes--and--Journey-green)](https://twn-devops-notes.super.site/)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Cédric%20Tonquèze-0077B5?logo=linkedin)](https://www.linkedin.com/in/cedrictonqueze/)
 
 
