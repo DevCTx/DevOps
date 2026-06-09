@@ -5,7 +5,7 @@ mkdir ~/last_npm_hosted
 cd last_npm_hosted/
 touch ./last_npm_hosted.sh
 chmod +x ./last_npm_hosted.sh
-vi ./last_nom_hosted.sh
+vi ./last_npm_hosted.sh
 
 ########################################
 #!/bin/bash
