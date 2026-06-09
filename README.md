@@ -43,7 +43,7 @@ DevOps/
 │   ├── 10.AWS_Services/              # CI/CD projects: SSH+DockerHub+EC2, SSM+ECR+EC2
 │   ├── 11.Kubernetes_Orchestration/  # YAML manifests: deployments, services, ingress, volumes
 │   └── 12.Kubernetes_on_AWS-EKS/
-├── PART4-Advanced/                   # 🚧 In progress
+└── PART4-Advanced/                   # 🚧 In progress
 │   ├── 13-Terraform/
 │   ├── 14-Python/
 │   ├── 15-Ansible/
@@ -121,7 +121,7 @@ and soon ...
 
 ## 🔗 Resources
 
-- 📝 **Full Notes Website**: [twn-devops-notes.super.site](https://twn-devops-notes.super.site/)
+- 📝 **Full Notes Website**: [My DevOps Notes and Journey](https://twn-devops-notes.super.site/)
 - 🎓 **Bootcamp**: [TechWorld with Nana — DevOps Bootcamp](https://www.techworld-with-nana.com/devops-bootcamp)
 - 🗺️ **Roadmap**: [DevOps_Roadmap_V4.pdf](./DevOps_Roadmap_V4.pdf)
 - 💼 **LinkedIn**: [Cédric Tonquèze](https://www.linkedin.com/in/cedrictonqueze/)
