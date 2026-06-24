@@ -23,46 +23,16 @@ I started in **December 2025**, dedicating **30-40 hours/week** - going well bey
 
 ---
 
-## 🗂️ Repository Structure
-
-```
-DevOps/
-├── PART1-Prerequisites/
-│   ├── 1.Introduction/               # Roles of DevOps and List of Projects built
-│   ├── 2.1.OS_Linux_basics/          # Shell exercises (Ex_2 → Ex_6_7_8_9)
-│   ├── 2.2.Databases/                # Types explainations
-│   ├── 3.Git_Version_Control/        # 10 scripted git exercises + Gradle Java app
-│   └── 4.Build_and_Package_Manager_Tools/  # java-app, java-maven-app, react-nodejs-example
-├── PART2-Fundamentals/
-│   ├── 5.Cloud_And_Iaas/             # Node.js + Java/React apps deployed on DigitalOcean
-│   ├── 6.Nexus_Repo_Manager/         # Gradle/Maven apps + 9 scripted exercises
-│   ├── 7.Docker_Containers/          # js-app-db, docker-compose, Dockerfiles, secrets
-│   └── 8.Nginx/                      # [submodule] webapp + nginx config
-├── PART3-Core/
-│   ├── 9.Jenkins_CI-CD/              # Multiple pipelines, shared libraries, server install scripts
-│   ├── 10.AWS_Services/              # CI/CD projects: SSH+DockerHub+EC2, SSM+ECR+EC2
-│   ├── 11.Kubernetes_Orchestration/  # YAML manifests: deployments, services, ingress, volumes
-│   └── 12.Kubernetes_on_AWS-EKS/
-└── PART4-Advanced/                   # 🚧 In progress
-│   ├── 13-Terraform/
-│   ├── 14-Python/
-│   ├── 15-Ansible/
-│   └── 16-Prometheus/
-└── DevOps_Roadmap.md
-```
-
----
-
 ## 📚 Content Overview
 
 ### PART 1 — Prerequisites
 
-| Topic | Key Concepts | What's in the repo |
+| Topic | Key Concepts | What is in the repository |
 |---|---|---|
-| **VirtualBox** | Extension Pack, clean install, version checks |
-| **Linux Basics** | OS info, package managers, Vim, users/groups, permissions, SSH |  `script_install_java.sh` — Install Java + version check<br>`ps_user.sh` — List & sort user processes by CPU/mem<br>`install_server_js.sh` — Full Node.js app deployment (env vars, background run, log dir, service user)
-| **Database Types** | Relational vs NoSQL, organization patterns | Schema of Database's types
-| **Bash Scripting** | Variables, conditions, loops, functions, I/O | scripts with conditions, loops, functions with local scope and return codes, I/O: args, user input, file/CSV parsing, process substitution, file check |
+| **VirtualBox** | Extension Pack<br>  clean install<br>  version checks |
+| **Linux Basics** | OS info<br>  package managers<br>  Vim<br>  users/groups<br>  permissions<br>  SSH |  `script_install_java.sh` — Install Java + version check<br>`ps_user.sh` — List & sort user processes by CPU/mem<br>`install_server_js.sh` — Full Node.js app deployment (env vars, background run, log dir, service user)
+| **Database Types** | Relational vs NoSQL<br>  organization patterns | Schema of Database's types
+| **Bash Scripting** | Variables, conditions<br>  loops, functions, I/O | scripts with conditions, loops, functions with local scope and return codes, I/O: args, user input, file/CSV parsing, process substitution, file check |
 | **Git Version Control** | Commands, branches, conflicts, stash, reset/revert |10 scripted exercises: clone, .gitignore, feature/bugfix branches, merge requests, conflict resolution, revert & reset commits, branch cleanup |
 | **Build Tools & Package Managers** | Artifacts, Maven/Gradle, Webpack, Docker basics |6 exercises on a Gradle Java app (fix test, build, run jar, add params) + React/Node.js full-stack example with Webpack and Dockerfile |
 
@@ -85,7 +55,7 @@ DevOps/
 |---|---|---|
 | **Jenkins CI/CD** | Freestyle jobs<br> Pipelines<br> Jenkinsfiles<br> Multibranch<br> Shared libraries<br> Webhooks<br> Auto-Versioning | `java-maven-app/` — freestyle → Jenkinsfile + script.groovy<br> `java-dockerhub-pipeline/` — pipeline CI to Docker Hub<br> `java-dockerhub-shared/` — global shared library<br> `java-dockerhub-limited-shared/` — project-scoped shared library (submodule, DockerHub/ECR, EC2 SSH/SSM) <br> `auto-versioning-pipeline/` — Maven patch auto-increment + SCM skip <br> `Jenkins-exercises/` — Node.js full pipeline: Jest, Docker Hub push, Git commit-back <br> `jenkins-docker-platform*.sh` — auto-install Jenkins+Docker (Ubuntu, AL2023) + scalable agents platform (docker/maven/nodejs/aws)<br> |
 | **AWS Services** | IAM, VPC, EC2, ECR, S3, CLI — with full CI/CD projects via SSH and SSM |  `react-nodejs-example/` — React + Node.js API (Webpack) + Dockerfile <br> `js-app-db/` — Node.js + MongoDB + docker-compose <br> `AWS-exercises/` : Node.js app with Jenkinsfile and docker-compose <br> `jma-ssh-dockerhub-ec2/` — Java Maven app -> Git -> Jenkins -> Docker Hub -> EC2 via SSH <br> `jma-ssm-ecr-ec2/` — Java Maven app -> Git -> Jenkins -> ECR -> EC2 via SSM (IAM policies) + Docker Compose <br> `SSH-vs-SSM.drawio` — architecture comparison
-| **Kubernetes** | Architecture, kubectl, YAML configs, Namespaces, Services, Ingress, Volumes, Helm, RBAC, Microservices |
+| **Kubernetes Orchestration** | Core components<br> architecture<br> Minikube/kubectl<br> YAML manifests<br> Namespaces<br> Services<br> Ingress + TLS<br> Gateway API<br> Volumes<br> ConfigMap/Secret<br> | `nginx-deployment.yaml` / `nginx-service.yaml` — basic Deployment + Service <br> `MongoDB-Express-Deployment/` — MongoDB + Mongo Express, Secret + ConfigMap, NodePort access <br> `Test_Services/nginx-deployment.yaml` — Pod replication across nodes <br> `Test_Services/nginx-dpl-svc.NodePort.yaml` — NodePort service demo <br> `Test_Services/nginx-dpl-svc.LoadBalancer.yaml` — LoadBalancer service (minikube tunnel) <br> `Test_Services/nginx-prometheus-deploy.yaml` — multi-port named service (nginx + exporter) <br> `Test_Services/mongodb-replicaset.yaml` — Headless service for StatefulSet <br> `Test_Services/nginx-ingress.yaml` — Ingress routing <br> `Test_Ingress/` — dashboard Ingress + self-signed TLS <br> `Test_ConfigMap_Volume/Mosquitto_deployment/` — MQTT broker, ConfigMap + Secret mounted as volumes <br> `Test_ConfigMap_Volume/nginx_tls_to_ingress/` — TLS termination at Ingress <br> `Test_ConfigMap_Volume/nginx_tls_to_pods/` — end-to-end TLS re-encryption to Pods <br> `11-Kubernetes_Checklist.pdf` / `kubectl_Quick_Reference_Kubernetes.pdf` — reference docs |
 | **Kubernetes on AWS** | EKS managed clusters |
 
 ---

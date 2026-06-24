@@ -182,7 +182,7 @@
       Full Example with a NodeJS App
 
       Automated installation of Docker and Jenkins on a new server with Maven 3.9.12 / NodeJS 20.x and the Pipeline-Stage-View Plugin
-      
+
       📌 Better ! Configure a Jenkins Controller Server with Docker, Node, Maven and AWS CLI Agents making it scalable and CI/CD properly.
 
 ### AWS Services
@@ -200,28 +200,36 @@
     CLI - Client Line Interface (and CloudShell)
     S3 - Simple Storage Service
     
-    PROJECT : Java App CI/CD : Git / Jenkins / AWS ECR / AWS EC2 via SSM and Docker Compose for the Run
+    PROJECT : Java App CI/CD : Git / Jenkins / AWS ECR / AWS EC2 via SSH and Docker Compose for the Run
     
     ADDON
     Set the terminal prompt with the EC2 instance’s name (tag)
+
+    Understand the difference between SSH and SSM (need IAM privileges)
+
+    PROJECT : Java App CI/CD : Git / Jenkins / AWS ECR / AWS EC2 via SSM and Docker Compose for the Run    
+    
 
 ### Kubernetes Orchestration
   
     PART 1 
       Introduction to Kubernestes (K8s)
+      
       Basic Concepts and Main K8s Components
       Kubernetes Architecture
+      
       Minikube and kubectl - Local Setup
-      Kubernetes CLI - Main kubectl commands
-      Kubernetes YAML - Introduction to Configuration File
-      Demo project deploying an app and a database : Mongo DB & Express
+      CLI - Main kubectl commands
+      YAML - Introduction to Configuration File
+      
+      PROJECT : deploying an app and a database : Mongo DB & Express
   
     PART 2
       Namespaces - Organize components
       Services - Configure connectivity
-      Make App available - Ingress
-      Persist data - Volumes
-      Config Map & Secret as Volumes Types
+      Ingress - Make App available
+      Volumes - Persisting data
+      Config Map & Secret - set as Volumes Types
 
 I’m currently at this stage and will continue on …
 
