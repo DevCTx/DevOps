@@ -1,0 +1,306 @@
+# ========================================================================================================
+#  Complete Gateway API stack for *.myapp.com  (NGINX Gateway Fabric)
+#  demo apps (analytics / shopping) serving an HTML page into related namespaces by HTTP
+#  kubernetes dashboard accessible through dashboard.myapp.com through HTTPS only
+#  Gateway + Routes separated for :
+#    http://analytics.myapp.com/   -> analytics-service:3000   (ns: analytics)
+#    http://shopping.myapp.com/    -> shopping-service:8080    (ns: shopping)
+#    http://dashboard.myapp.com/   -> 301 redirect to https://dashboard.myapp.com/
+#    https://dashboard.myapp.com/  -> kubernetes-dashboard:80  (ns: kubernetes-dashboard, TLS terminate)
+# ========================================================================================================
+#
+#  The TLS Secret is NOT created in this file, and must be created before using :
+#
+#    kubectl create secret tls dashboard-secret-tls \
+#      --cert=tls/selfsigned.crt \
+#      --key=tls/selfsigned.key \
+#      -n kubernetes-dashboard
+#
+#  Assumes namespace "kubernetes-dashboard" + its Service (:80) already exist.
+# ========================================================================================================
+---
+# =============================================================================
+#  NAMESPACES  —  analytics and shopping
+# =============================================================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: analytics
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: shopping
+---
+# =============================================================================
+#  ANALYTICS APP  —  analytics-service : 3000  (namespace: analytics)
+# =============================================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: analytics-page
+  namespace: analytics
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <title>Analytics Service</title>
+      <style>
+        body{font-family:system-ui,sans-serif;background:#0f172a;color:#e2e8f0;
+             display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+        .card{background:#1e293b;padding:2.5rem 3rem;border-radius:16px;
+              border:1px solid #334155;text-align:center;max-width:480px}
+        h1{margin:0 0 1rem;color:#38bdf8;font-size:1.8rem}
+        code{background:#0f172a;padding:.2rem .5rem;border-radius:6px;color:#7dd3fc}
+        p{line-height:1.7}
+      </style>
+    </head>
+    <body>
+      <div class="card">
+        <h1>&#128202; Analytics Service</h1>
+        <p>Reached via <code>analytics.myapp.com</code> (HTTP&nbsp;:80)</p>
+        <p>HTTPRoute <code>analytics-route</code><br>namespace <code>analytics</code> &middot; Service port <code>3000</code></p>
+      </div>
+    </body>
+    </html>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analytics
+  namespace: analytics
+  labels:
+    app: analytics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: analytics
+  template:
+    metadata:
+      labels:
+        app: analytics
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: page
+              mountPath: /usr/share/nginx/html
+              readOnly: true
+      volumes:
+        - name: page
+          configMap:
+            name: analytics-page
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: analytics-service
+  namespace: analytics
+spec:
+  selector:
+    app: analytics
+  ports:
+    - port: 3000          # port referenced by the HTTPRoute backendRef
+      targetPort: 80      # nginx listens on 80 inside the pod
+---
+# =============================================================================
+#  SHOPPING APP  —  shopping-service : 8080  (namespace: shopping)
+# =============================================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shopping-page
+  namespace: shopping
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <title>Shopping Service</title>
+      <style>
+        body{font-family:system-ui,sans-serif;background:#1a0f1f;color:#f3e8ff;
+             display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+        .card{background:#2d1b33;padding:2.5rem 3rem;border-radius:16px;
+              border:1px solid #4c2a57;text-align:center;max-width:480px}
+        h1{margin:0 0 1rem;color:#e879f9;font-size:1.8rem}
+        code{background:#1a0f1f;padding:.2rem .5rem;border-radius:6px;color:#f0abfc}
+        p{line-height:1.7}
+      </style>
+    </head>
+    <body>
+      <div class="card">
+        <h1>&#128722; Shopping Service</h1>
+        <p>Reached via <code>shopping.myapp.com</code> (HTTP&nbsp;:80)</p>
+        <p>HTTPRoute <code>shopping-route</code><br>namespace <code>shopping</code> &middot; Service port <code>8080</code></p>
+      </div>
+    </body>
+    </html>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shopping
+  namespace: shopping
+  labels:
+    app: shopping
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shopping
+  template:
+    metadata:
+      labels:
+        app: shopping
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: page
+              mountPath: /usr/share/nginx/html
+              readOnly: true
+      volumes:
+        - name: page
+          configMap:
+            name: shopping-page
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shopping-service
+  namespace: shopping
+spec:
+  selector:
+    app: shopping
+  ports:
+    - port: 8080          # port referenced by the HTTPRoute backendRef
+      targetPort: 80
+---
+# =============================================================================
+#  GATEWAY API  —  class, gateway, routes
+# =============================================================================
+#  GatewayClass is already managed by Nginx Gateway Fabric
+# =============================================================================
+# apiVersion: gateway.networking.k8s.io/v1
+# kind: GatewayClass    # requires the Gateway API CRDs for this kind
+# metadata:
+#   name: nginx-gatewayclass
+# spec:
+#   controllerName: gateway.nginx.org/nginx-gateway-controller
+# ---
+# =============================================================================
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway         # requires the Gateway API CRDs for this kind
+metadata:
+  name: myapp-gateway
+  namespace: kubernetes-dashboard
+spec:
+  gatewayClassName: nginx    # name required by NGINX Gateway Fabric
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      hostname: "*.myapp.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: dashboard.myapp.com
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: dashboard-secret-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: dashboard-route
+  namespace: kubernetes-dashboard
+spec:
+  parentRefs:
+    - name: myapp-gateway
+      sectionName: https
+  hostnames:
+    - dashboard.myapp.com
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: kubernetes-dashboard
+          port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: dashboard-http-redirect
+  namespace: kubernetes-dashboard
+spec:
+  parentRefs:
+    - name: myapp-gateway
+      sectionName: http
+  hostnames:
+    - dashboard.myapp.com
+  rules:
+    - filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            statusCode: 301
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: analytics-route
+  namespace: analytics
+spec:
+  parentRefs:
+    - name: myapp-gateway
+      namespace: kubernetes-dashboard
+  hostnames:
+    - analytics.myapp.com
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: analytics-service
+          port: 3000
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: shopping-route
+  namespace: shopping
+spec:
+  parentRefs:
+    - name: myapp-gateway
+      namespace: kubernetes-dashboard
+  hostnames:
+    - shopping.myapp.com
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: shopping-service
+          port: 8080

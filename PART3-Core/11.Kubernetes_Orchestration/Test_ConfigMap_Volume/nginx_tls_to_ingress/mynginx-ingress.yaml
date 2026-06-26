@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mynginx-ingress
+  namespace: default
+spec:
+  tls:
+  - hosts: 
+    - mynginx.com
+    secretName: mynginx-tls-secret
+  rules:
+  - host: mynginx.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-http-service
+            port:
+              number: 8080

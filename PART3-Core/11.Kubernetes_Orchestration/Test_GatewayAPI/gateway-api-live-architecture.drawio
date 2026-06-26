@@ -1,0 +1,110 @@
+<mxfile host="app.diagrams.net" agent="Claude" version="24.0.0">
+  <diagram id="ngf-live-arch" name="NGF Live Architecture">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1550" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Architecture réelle — Gateway API / NGINX Gateway Fabric (minikube 3 nœuds)" style="text;html=1;align=center;verticalAlign=middle;fontSize=17;fontStyle=1;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="420" y="15" width="720" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- nginx-gateway namespace (control plane) -->
+        <mxCell id="ns-ngfcp" value="namespace: nginx-gateway" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;verticalAlign=top;fontSize=11;fontStyle=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="790" y="60" width="340" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="cp" value="NGF Control Plane&#10;deployment nginx-gateway&#10;image nginx-gateway-fabric:2.1.0&#10;watches Gateway API + pilote le data plane" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="810" y="92" width="300" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- Client -->
+        <mxCell id="client" value="Client&#10;curl / navigateur" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="470" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- LoadBalancer -->
+        <mxCell id="lb" value="Service (LoadBalancer)&#10;myapp-gateway-nginx&#10;10.97.101.71&#10;80:31049 / 443:32431" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="240" y="450" width="200" height="115" as="geometry" />
+        </mxCell>
+
+        <!-- kubernetes-dashboard namespace (big container) -->
+        <mxCell id="ns-dash" value="namespace: kubernetes-dashboard" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;verticalAlign=top;fontSize=12;fontStyle=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="200" width="610" height="650" as="geometry" />
+        </mxCell>
+
+        <!-- Data plane pod -->
+        <mxCell id="dp" value="NGF Data Plane (NGINX)&#10;pod myapp-gateway-nginx&#10;10.244.2.7 @ minikube-m03&#10;écoute :80 et :443" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="250" width="250" height="115" as="geometry" />
+        </mxCell>
+
+        <!-- Gateway config -->
+        <mxCell id="gwcfg" value="Gateway myapp-gateway (config)&#10;• listener http :80  *.myapp.com&#10;• listener https :443  dashboard.myapp.com (Terminate)&#10;HTTPRoutes : analytics, shopping,&#10;dashboard-route, dashboard-http-redirect" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="800" y="245" width="270" height="125" as="geometry" />
+        </mxCell>
+
+        <!-- Secret -->
+        <mxCell id="secret" value="Secret dashboard-secret-tls&#10;(kubernetes.io/tls)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="800" y="390" width="270" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- dashboard service -->
+        <mxCell id="dash-svc" value="Service kubernetes-dashboard&#10;ClusterIP 10.99.160.22 : 80 → :9090" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="545" width="260" height="50" as="geometry" />
+        </mxCell>
+        <!-- dashboard pod -->
+        <mxCell id="dash-pod" value="Pod kubernetes-dashboard&#10;10.244.2.3 @ m03 : 9090&#10;dashboard:v2.7.0" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="500" y="620" width="260" height="65" as="geometry" />
+        </mxCell>
+        <!-- metrics scraper -->
+        <mxCell id="scraper" value="dashboard-metrics-scraper&#10;ClusterIP :8000 — pod 10.244.1.2 @ m02&#10;(interne au dashboard)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=9;align=left;spacingLeft=8;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="710" width="260" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- analytics namespace -->
+        <mxCell id="ns-an" value="namespace: analytics" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;verticalAlign=top;fontSize=11;fontStyle=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="235" width="330" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="an-svc" value="Service analytics-service&#10;ClusterIP 10.106.64.245 : 3000 → :80" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="275" width="290" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="an-pod" value="Pod analytics (nginx:alpine)&#10;10.244.1.11 @ m02 : 80&#10;sert la page 📊 (ConfigMap)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="340" width="290" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- shopping namespace -->
+        <mxCell id="ns-sh" value="namespace: shopping" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;verticalAlign=top;fontSize=11;fontStyle=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="450" width="330" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="sh-svc" value="Service shopping-service&#10;ClusterIP : 8080 → :80" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="490" width="290" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="sh-pod" value="Pod shopping (nginx:alpine)&#10;ns shopping : 80&#10;sert la page 🛒 (ConfigMap)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="555" width="290" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ===== TRAFFIC EDGES (solid) ===== -->
+        <mxCell id="e-cl-lb" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#6c8ebf;strokeWidth=2;" edge="1" parent="1" source="client" target="lb"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e-lb-dp" value="80 / 443" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#6c8ebf;strokeWidth=2;fontSize=10;" edge="1" parent="1" source="lb" target="dp"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="e-dp-an" value="HTTP  host=analytics → :3000" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#82b366;strokeWidth=2;fontSize=10;" edge="1" parent="1" source="dp" target="an-svc"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e-dp-sh" value="HTTP  host=shopping → :8080" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#82b366;strokeWidth=2;fontSize=10;" edge="1" parent="1" source="dp" target="sh-svc"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e-dp-dash" value="HTTPS Terminate&#10;host=dashboard → :80&#10;(http → 301 → https)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#82b366;strokeWidth=2;fontSize=10;" edge="1" parent="1" source="dp" target="dash-svc"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="e-an" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#9673a6;strokeWidth=2;" edge="1" parent="1" source="an-svc" target="an-pod"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e-sh" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#9673a6;strokeWidth=2;" edge="1" parent="1" source="sh-svc" target="sh-pod"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e-dash" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#9673a6;strokeWidth=2;" edge="1" parent="1" source="dash-svc" target="dash-pod"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- ===== CONTROL / CONFIG EDGES (dashed) ===== -->
+        <mxCell id="e-cp-dp" value="configure via NGINX Agent (gRPC, mTLS)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;dashed=1;strokeColor=#b85450;strokeWidth=2;fontSize=9;" edge="1" parent="1" source="cp" target="dp"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e-gw-cp" value="watch" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;dashed=1;strokeColor=#d79b00;fontSize=9;" edge="1" parent="1" source="gwcfg" target="cp"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e-sec-gw" value="certificateRef" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;dashed=1;strokeColor=#d6b656;fontSize=9;" edge="1" parent="1" source="secret" target="gwcfg"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="Légende&#10;━━ vert : trafic data plane → services (HTTP/HTTPS)&#10;━━ bleu : entrée (client → LB → data plane)&#10;━━ violet : Service → Pod&#10;┈┈ rouge : control plane configure le data plane&#10;┈┈ orange : control plane surveille la config Gateway API&#10;┈┈ jaune : référence du certificat TLS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;align=left;spacingLeft=8;fontSize=10;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="40" y="600" width="370" height="150" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

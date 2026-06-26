@@ -1,0 +1,99 @@
+<mxfile host="app.diagrams.net" agent="Claude">
+  <diagram id="gateway-api-topology" name="Gateway API Topology">
+    <mxGraphModel dx="1138" dy="633" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="826" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=18;fontStyle=1;fontColor=#1A1A1A;" value="Gateway API — myapp.com (NGINX Gateway Fabric)" vertex="1">
+          <mxGeometry height="30" width="560" x="300" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="clients" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" value="Clients&#xa;DNS: *.myapp.com&#xa;→ Gateway LoadBalancer IP" vertex="1">
+          <mxGeometry height="80" width="170" x="40" y="285" as="geometry" />
+        </mxCell>
+        <mxCell id="gwclass" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" value="GatewayClass&#xa;nginx-gatewayclass&#xa;controllerName:&#xa;gateway.nginx.org/&#xa;nginx-gateway-controller" vertex="1">
+          <mxGeometry height="100" width="200" x="365" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ns-dash" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;verticalAlign=top;fontSize=12;fontStyle=1;dashed=1;" value="namespace: kubernetes-dashboard" vertex="1">
+          <mxGeometry height="420" width="450" x="280" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="gateway" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=top;fontSize=13;fontStyle=1;" value="Gateway: myapp-gateway" vertex="1">
+          <mxGeometry height="170" width="330" x="300" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="listener-http" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;" value="Listener: http&#xa;protocol: HTTP   port: 80&#xa;hostname: *.myapp.com&#xa;allowedRoutes.from: All" vertex="1">
+          <mxGeometry height="60" width="300" x="315" y="275" as="geometry" />
+        </mxCell>
+        <mxCell id="listener-https" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;" value="Listener: https&#xa;protocol: HTTPS   port: 443&#xa;hostname: dashboard.myapp.com&#xa;tls.mode: Terminate&#xa;allowedRoutes.from: All" vertex="1">
+          <mxGeometry height="60" width="300" x="315" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="secret" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" value="Secret (tls)&#xa;dashboard-secret-tls&#xa;selfsigned.crt / .key" vertex="1">
+          <mxGeometry height="70" width="180" x="540" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="route-dash" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=left;spacingLeft=8;" value="HTTPRoute: dashboard-route&#xa;parentRef sectionName: https&#xa;host: dashboard.myapp.com&#xa;path: / (PathPrefix)" vertex="1">
+          <mxGeometry height="80" width="230" x="300" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-dash" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="Service&#xa;kubernetes-dashboard : 80" vertex="1">
+          <mxGeometry height="50" width="200" x="315" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="ns-analytics" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;verticalAlign=top;fontSize=12;fontStyle=1;dashed=1;" value="namespace: analytics" vertex="1">
+          <mxGeometry height="170" width="330" x="820" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="route-analytics" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=left;spacingLeft=8;" value="HTTPRoute: analytics-route&#xa;parentRef ns: kubernetes-dashboard&#xa;host: analytics.myapp.com&#xa;path: / (PathPrefix)" vertex="1">
+          <mxGeometry height="70" width="290" x="840" y="225" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-analytics" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="Service&#xa;analytics-service : 3000" vertex="1">
+          <mxGeometry height="45" width="240" x="865" y="305" as="geometry" />
+        </mxCell>
+        <mxCell id="ns-shopping" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;verticalAlign=top;fontSize=12;fontStyle=1;dashed=1;" value="namespace: shopping" vertex="1">
+          <mxGeometry height="170" width="330" x="820" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="route-shopping" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=left;spacingLeft=8;" value="HTTPRoute: shopping-route&#xa;parentRef ns: kubernetes-dashboard&#xa;host: shopping.myapp.com&#xa;path: / (PathPrefix)" vertex="1">
+          <mxGeometry height="70" width="290" x="840" y="435" as="geometry" />
+        </mxCell>
+        <mxCell id="svc-shopping" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="Service&#xa;shopping-service : 8080" vertex="1">
+          <mxGeometry height="45" width="240" x="865" y="515" as="geometry" />
+        </mxCell>
+        <mxCell id="e-clients-gw" edge="1" parent="1" source="clients" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#6c8ebf;strokeWidth=2;" target="gateway">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-gwc-gw" edge="1" parent="1" source="gwclass" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;dashed=1;strokeColor=#d79b00;fontSize=10;" target="gateway" value="implemented by">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-secret-https" edge="1" parent="1" source="secret" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;dashed=1;strokeColor=#d6b656;fontSize=10;" target="listener-https" value="certificateRef">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-https-dash" edge="1" parent="1" source="listener-https" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#82b366;strokeWidth=2;fontSize=10;" target="route-dash" value="HTTPS :443">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-dashroute-svc" edge="1" parent="1" source="route-dash" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#9673a6;strokeWidth=2;" target="svc-dash">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-http-analytics" edge="1" parent="1" source="listener-http" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#82b366;strokeWidth=2;fontSize=10;" target="route-analytics" value="HTTP :80">
+          <mxGeometry relative="1" x="0.3846" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="770" y="305" />
+              <mxPoint x="770" y="260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-http-shopping" edge="1" parent="1" source="listener-http" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#82b366;strokeWidth=2;fontSize=10;" target="route-shopping" value="HTTP :80">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="305" />
+              <mxPoint x="770" y="470" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-analyticsroute-svc" edge="1" parent="1" source="route-analytics" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#9673a6;strokeWidth=2;" target="svc-analytics">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-shoppingroute-svc" edge="1" parent="1" source="route-shopping" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#9673a6;strokeWidth=2;" target="svc-shopping">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;align=left;spacingLeft=8;fontSize=10;verticalAlign=top;" value="Legend&#xa;━━ green: Gateway / listeners (HTTP path)&#xa;━━ purple: HTTPRoute → backend&#xa;┈┈ orange: GatewayClass binding&#xa;┈┈ yellow: TLS certificateRef" vertex="1">
+          <mxGeometry height="110" width="220" x="40" y="470" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

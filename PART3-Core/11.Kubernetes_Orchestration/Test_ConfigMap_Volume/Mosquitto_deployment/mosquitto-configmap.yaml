@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mosquitto-configmap
+data:
+  # name of the file
+  # the pipe | is important
+  # followed by the content 
+  mosquitto.conf: | 
+    listener 1883
+    allow_anonymous false
+    password_file /mosquitto/config/passwd

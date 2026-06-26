@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-tls-configmap
+data:
+  default.conf: |
+    server {
+      listen 443 ssl;
+      http2 on;
+      ssl_certificate     /etc/nginx/certs/tls.crt;
+      ssl_certificate_key /etc/nginx/certs/tls.key;
+      location / {
+        root /usr/share/nginx/html;
+      }
+    }
